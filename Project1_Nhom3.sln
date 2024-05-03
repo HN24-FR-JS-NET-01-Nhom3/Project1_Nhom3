@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryCheque.Core", "LotteryCheque.Core\LotteryCheque.Core.csproj", "{EF0D51C5-F223-4311-926A-7C47700BFBA3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryChecker.Core", "LotteryChecker.Core\LotteryChecker.Core.csproj", "{EF0D51C5-F223-4311-926A-7C47700BFBA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,4 +1,4 @@
-namespace LotteryCheque.Core.Data;
+namespace LotteryChecker.Core.Data;
 
 public class LotteryInitializer
 {

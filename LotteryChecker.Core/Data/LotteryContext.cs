@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace LotteryCheque.Core.Data;
+namespace LotteryChecker.Core.Data;
 
 public class LotteryContext : DbContext
 {
