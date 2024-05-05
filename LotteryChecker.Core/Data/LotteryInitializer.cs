@@ -73,21 +73,21 @@ public static class LotteryInitializer
         builder.Entity<SearchHistory>().HasData(
             new SearchHistory
             {
-                SearchId = 1,
+                SearchHistoryId = 1,
                 SearchDate = new DateTime(2024, 5, 10),
                 LotteryNumber = 123456,
                 UserId = new Guid("36B35306-154C-4518-8FC1-D7E756522111")
             },
             new SearchHistory
             {
-                SearchId = 2,
+                SearchHistoryId = 2,
                 SearchDate = new DateTime(2024, 5, 11),
                 LotteryNumber = 234567,
                 UserId = new Guid("57FA9A8E-3105-49A0-B0F2-6D88FDFCFF8D")
             },
             new SearchHistory
             {
-                SearchId = 3,
+                SearchHistoryId = 3,
                 SearchDate = new DateTime(2024, 5, 12),
                 LotteryNumber = 345678,
                 UserId = new Guid("57FA9A8E-3105-49A0-B0F2-6D88FDFCFF8D")

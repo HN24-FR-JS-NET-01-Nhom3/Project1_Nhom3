@@ -1,10 +1,9 @@
-﻿namespace LotteryChecker.Core.Enums
+﻿namespace LotteryChecker.Core.Enums;
+
+public enum TimeUnit
 {
-    public enum TimeUnit
-    {
-        Week,
-        Month,
-        Quarter,
-        Year
-    }
+    Week,
+    Month,
+    Quarter,
+    Year
 }

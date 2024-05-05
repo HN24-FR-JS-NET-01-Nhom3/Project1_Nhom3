@@ -3,12 +3,11 @@ using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
 using LotteryChecker.Core.IRepositories;
 
-namespace LotteryChecker.Core.Repositories
+namespace LotteryChecker.Core.Repositories;
+
+public class PurchaseTicketRepository : BaseRepository<PurchaseTicket>, IPurchaseTicketRepository
 {
-    public class PurchaseTicketRepository : BaseRepository<PurchaseTicket>, IPurchaseTicketRepository
+    public PurchaseTicketRepository(LotteryContext context) : base(context)
     {
-        public PurchaseTicketRepository(LotteryContext context) : base(context)
-        {
         }
-    }
 }
