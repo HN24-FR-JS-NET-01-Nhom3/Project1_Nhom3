@@ -1,9 +1,11 @@
 using LotteryChecker.Core.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LotteryChecker.Core.Data;
 
-public class LotteryContext : DbContext
+public class LotteryContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>
 {
 	public DbSet<Lottery> Lotteries { get; set; }
 	public DbSet<Reward> Rewards { get; set; }
