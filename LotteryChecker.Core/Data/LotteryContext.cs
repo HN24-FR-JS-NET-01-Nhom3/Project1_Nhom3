@@ -9,14 +9,15 @@ public class LotteryContext : DbContext
 	public DbSet<Reward> Rewards { get; set; }
 	public DbSet<SearchHistory> SearchHistories { get; set; }
 	public DbSet<PurchaseTicket> PurchaseTickets { get; set; }
-
-	// public LotteryContext(DbContextOptions options) : base(options)
-	// {
-	// }
-	//
-	// protected LotteryContext()
-	// {
-	// }
+	public DbSet<RefreshToken> RefreshTokens { get; set; }
+	
+	protected LotteryContext()
+	{
+	}
+	
+	public LotteryContext(DbContextOptions options) : base(options)
+	{
+	}
     
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
