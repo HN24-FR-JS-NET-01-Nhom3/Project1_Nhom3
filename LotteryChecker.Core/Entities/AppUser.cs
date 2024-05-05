@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace LotteryChecker.Core.Entities
 {
@@ -6,5 +7,6 @@ namespace LotteryChecker.Core.Entities
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public DateTime? LastLogin { get; set; }
     }
 }

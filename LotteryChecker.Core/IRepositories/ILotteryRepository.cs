@@ -5,6 +5,12 @@ namespace LotteryChecker.Core.IRepositories
 {
     public interface ILotteryRepository : IBaseRepository<Lottery>
     {
+        public IList<Lottery> GetLotteriesByCompany(string company);
+        public IList<Lottery> GetLotteriesByDate(DateTime dateSart , DateTime dateEnd);
+        public IList<Lottery> GetLotteriesByDateAndCompany(DateTime dateSart, DateTime dateEnd, string company);
+        public IList<Lottery> GetLotteriesPublished();
+        public IList<Lottery> GetLotteriesUnpublished();
+        public IList<Lottery> GetLotteriesExpired();
 
     }
 }
