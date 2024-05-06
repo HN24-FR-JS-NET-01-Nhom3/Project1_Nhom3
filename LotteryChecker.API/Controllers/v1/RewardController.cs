@@ -3,7 +3,6 @@ using AutoMapper;
 using LotteryChecker.API.Models.Entities;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LotteryChecker.API.Controllers.v1
@@ -48,7 +47,7 @@ namespace LotteryChecker.API.Controllers.v1
         {
             if (rewardVm == null)
             {
-                return RedirectToAction("Index");
+                return NotFound();
             }
 
             var reward = _mapper.Map<Reward>(rewardVm);
@@ -74,7 +73,7 @@ namespace LotteryChecker.API.Controllers.v1
         {
             if (rewardVm == null)
             {
-                return RedirectToAction("Index");
+                return NotFound();
             }
 
             var reward = _mapper.Map<Reward>(rewardVm);
