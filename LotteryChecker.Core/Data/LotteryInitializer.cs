@@ -1,7 +1,6 @@
 using LotteryChecker.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace LotteryChecker.Core.Data;
 public static class LotteryInitializer
