@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using LotteryChecker.API.Models.Entities;
 using LotteryChecker.Core.Entities;
+using LotteryChecker.MVC.Models.Entities;
 
-namespace LotteryChecker.API.AutoMapper;
+namespace LotteryChecker.MVC.AutoMapper;
 
 public class AutoMapper : Profile
 {
