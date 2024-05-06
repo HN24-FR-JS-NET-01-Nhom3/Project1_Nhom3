@@ -1,4 +1,6 @@
 using LotteryChecker.Core.Data;
+using LotteryChecker.Core.Entities;
+using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,8 +13,17 @@ builder.Services.AddDbContext<LotteryContext>(options =>
 	options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-	.AddEntityFrameworkStores<LotteryContext>();
+builder.Services.AddDefaultIdentity<AppUser>(
+		options =>
+		{
+			options.SignIn.RequireConfirmedAccount = false;
+			options.SignIn.RequireConfirmedEmail = false;
+		}).AddRoles<IdentityRole<Guid>>()
+	.AddEntityFrameworkStores<LotteryContext>().AddDefaultTokenProviders();
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
