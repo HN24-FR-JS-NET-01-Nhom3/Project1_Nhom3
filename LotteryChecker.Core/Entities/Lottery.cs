@@ -12,7 +12,7 @@ public class Lottery
 	public DateTime? PublishDate { get; set; }
 	
 	[Required(ErrorMessage = "Lottery number is required")]
-    [RegularExpression(@"^\d{6}$", ErrorMessage = "Lottery number must be a 6-digit number")]
+    [RegularExpression(@"^\d{5}$", ErrorMessage = "Lottery number must be a 5-digit number")]
     public int LotteryNumber { get; set; }
     
     [DefaultValue(true)]
