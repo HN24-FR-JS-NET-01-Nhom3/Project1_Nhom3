@@ -2,7 +2,6 @@
 using LotteryChecker.API.Models.Entities;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
@@ -25,27 +24,43 @@ namespace LotteryChecker.API.Controllers.v1
         [HttpGet("get-all-users")]
         public IActionResult GetAllUsers()
         {
-            var users = _unitOfWork.UserRepository.GetAll();
-            if(users == null)
-                return NotFound();
-            else
+            try
             {
-                var usersVm = _mapper.Map<IEnumerable<UserVm>>(users);
-                return Ok(usersVm);
-            }           
+                var users = _unitOfWork.UserRepository.GetAll();
+                if (users == null)
+                    return NotFound();
+                else
+                {
+                    var usersVm = _mapper.Map<IEnumerable<UserVm>>(users);
+                    return Ok(usersVm);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }       
         }
 
         [HttpGet("get-user/{email}")]
         public async Task<IActionResult> GetUser(string email)
         {
-            var user =  await _userManager.FindByEmailAsync(email);
-            if (user == null)
-                return NotFound();
-            else
+            try
             {
-                var userVm = _mapper.Map<UserVm>(user);
-                return Ok(userVm);
-            }    
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                    return NotFound();
+                else
+                {
+                    var userVm = _mapper.Map<UserVm>(user);
+                    return Ok(userVm);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("create-user")]
@@ -88,53 +103,68 @@ namespace LotteryChecker.API.Controllers.v1
         [HttpPut("update-user/{email}")]
         public async Task<IActionResult> UpdateUser(string email, [FromBody] CreateUserVm userVm)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            try
             {
-                return NotFound($"User {userVm.Email} not found.");
-            }
-            if (!string.IsNullOrEmpty(userVm.Email) && userVm.Email != email)
-            {
-                var existingUser = await _userManager.FindByEmailAsync(userVm.Email);
-                if (existingUser != null)
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
                 {
-                    return BadRequest($"Email {userVm.Email} is already in use.");
+                    return NotFound($"User {userVm.Email} not found.");
                 }
-            }
-            PropertyInfo[] properties = typeof(CreateUserVm).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            foreach (var property in properties)
-            {
-                // Lấy giá trị của thuộc tính trong userVm
-                var value = property.GetValue(userVm);
-
-                // Nếu giá trị không null và không phải chuỗi rỗng, cập nhật vào user
-                if (value != null && !string.IsNullOrEmpty(value.ToString()))
+                if (!string.IsNullOrEmpty(userVm.Email) && userVm.Email != email)
                 {
-                    // Kiểm tra xem user có thuộc tính tương ứng không
-                    var userProperty = user.GetType().GetProperty(property.Name);
-                    if (userProperty != null && userProperty.CanWrite)
+                    var existingUser = await _userManager.FindByEmailAsync(userVm.Email);
+                    if (existingUser != null)
                     {
-                        // Gán giá trị từ userVm vào user
-                        userProperty.SetValue(user, value);
+                        return BadRequest($"Email {userVm.Email} is already in use.");
                     }
                 }
+                PropertyInfo[] properties = typeof(CreateUserVm).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                foreach (var property in properties)
+                {
+                    // Lấy giá trị của thuộc tính trong userVm
+                    var value = property.GetValue(userVm);
+
+                    // Nếu giá trị không null và không phải chuỗi rỗng, cập nhật vào user
+                    if (value != null && !string.IsNullOrEmpty(value.ToString()))
+                    {
+                        // Kiểm tra xem user có thuộc tính tương ứng không
+                        var userProperty = user.GetType().GetProperty(property.Name);
+                        if (userProperty != null && userProperty.CanWrite)
+                        {
+                            // Gán giá trị từ userVm vào user
+                            userProperty.SetValue(user, value);
+                        }
+                    }
+                }
+                await _userManager.UpdateAsync(user);
+                return Ok($"User {userVm.Email} updated.");
             }
-            await _userManager.UpdateAsync(user);
-            return Ok($"User {userVm.Email} updated.");  
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
         }
         [HttpPatch("update-block-user")]
         public async Task<IActionResult> UpdateBlockUser(string email, [FromBody] UserVm appUser)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-                return NotFound();
-            user.IsActive = appUser.IsActive;
-            var result = await _userManager.UpdateAsync(user);
-            if(!result.Succeeded)
+            try
             {
-                return BadRequest("User could not be update.");
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                    return NotFound();
+                user.IsActive = appUser.IsActive;
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded)
+                {
+                    return BadRequest("User could not be update.");
+                }
+                return Ok($"User {appUser.Email} updated.");
             }
-            return Ok($"User {appUser.Email} updated.");
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

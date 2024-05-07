@@ -24,77 +24,112 @@ namespace LotteryChecker.API.Controllers.v1
         [HttpGet("get-all-lotteries")]
         public IActionResult GetAllLotteries([FromQuery] LotteryQuery query, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var lotteries =  _unitOfWork.LotteryRepository.GetAll();     
-            if(lotteries != null)
+            try
             {
-                lotteries = query.Filters
-                .Aggregate(lotteries, (current, filter) => current.Where(filter).ToList());
-                var lotteryPaging = _unitOfWork.LotteryRepository
-                    .GetPaging(lotteries, null, page, pageSize).ToList();
-
-                return Ok(new
+                var lotteries = _unitOfWork.LotteryRepository.GetAll();
+                if (lotteries != null)
                 {
-                    Result = lotteryPaging.Select(lottery => _mapper.Map<LotteryVm>(lottery)),
-                    Meta = new
+                    lotteries = query.Filters
+                    .Aggregate(lotteries, (current, filter) => current.Where(filter).ToList());
+                    var lotteryPaging = _unitOfWork.LotteryRepository
+                        .GetPaging(lotteries, null, page, pageSize).ToList();
+
+                    return Ok(new
                     {
-                        page,
-                        pageSize = pageSize > lotteryPaging.Count ? lotteryPaging.Count : pageSize,
-                        totalPages = (int)Math.Ceiling((decimal)lotteries.Count() / pageSize)
-                    }
-                });
+                        Result = lotteryPaging.Select(lottery => _mapper.Map<LotteryVm>(lottery)),
+                        Meta = new
+                        {
+                            page,
+                            pageSize = pageSize > lotteryPaging.Count ? lotteryPaging.Count : pageSize,
+                            totalPages = (int)Math.Ceiling((decimal)lotteries.Count() / pageSize)
+                        }
+                    });
+                }
+                return NotFound();
             }
-            return NotFound();
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            } 
         }
      
         [HttpGet("get-lottery-by-id")]
         public IActionResult GetLotteryById(int id)
         {
-            var lottery = _unitOfWork.LotteryRepository.GetById(id);
-            var lotteryVM = _mapper.Map<LotteryVm>(lottery);
-            if(lottery == null)
-                return NotFound();
-            return Ok(lotteryVM);
+            try
+            {
+                var lottery = _unitOfWork.LotteryRepository.GetById(id);
+                var lotteryVM = _mapper.Map<LotteryVm>(lottery);
+                if (lottery == null)
+                    return NotFound();
+                return Ok(lotteryVM);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("create-lottery")]
         public IActionResult CreateLottery([FromBody] LotteryVm lotteryVm)
         {
-
-            var lottery = _mapper.Map<Lottery>(lotteryVm);
-            _unitOfWork.LotteryRepository.Create(lottery);
-            int result = _unitOfWork.SaveChanges();
-            if(result > 0)
-                return Ok();
-            return BadRequest();
+            try
+            {
+                var lottery = _mapper.Map<Lottery>(lotteryVm);
+                _unitOfWork.LotteryRepository.Create(lottery);
+                int result = _unitOfWork.SaveChanges();
+                if (result > 0)
+                    return Ok(lottery);
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut("update-lottery")]
         public IActionResult UpdateLottery([FromBody] LotteryVm lotteryVm)
         {
-            var lottery = _mapper.Map<Lottery>(lotteryVm);
-            _unitOfWork.LotteryRepository.Update(lottery);
-            int result = _unitOfWork.SaveChanges();
-            if(result > 0)
-                return Ok();
-            return BadRequest();
+            try
+            {
+                var lottery = _mapper.Map<Lottery>(lotteryVm);
+                _unitOfWork.LotteryRepository.Update(lottery);
+                int result = _unitOfWork.SaveChanges();
+                if (result > 0)
+                    return Ok();
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete("delete-lottery")]
         public IActionResult DeleteLottery(int id)
         {
-            var lottery = _unitOfWork.LotteryRepository.GetById(id);
-            if(lottery == null)
+            try
             {
-                return NotFound();
+                var lottery = _unitOfWork.LotteryRepository.GetById(id);
+                if (lottery == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    _unitOfWork.LotteryRepository.Delete(id);
+                    int result = _unitOfWork.SaveChanges();
+                    if (result > 0)
+                        return Ok();
+                    return BadRequest();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                _unitOfWork.LotteryRepository.Delete(id);
-                int result = _unitOfWork.SaveChanges();
-                if (result > 0)
-                    return Ok();
-                return BadRequest();
-            }    
+
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
