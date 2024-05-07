@@ -21,9 +21,9 @@ public class LotteryQuery
 			if (StartDate.HasValue)
 				filters.Add((p, _) => p.PublishDate > StartDate);
 			if (EndDate.HasValue)
-				filters.Add((p, _) => p.DueDate > EndDate);
+				filters.Add((p, _) => p.DrawDate.AddDays(30) > EndDate);
 			if (Expired.HasValue)
-				filters.Add((p, _) => p.DueDate < DateTime.Now);
+				filters.Add((p, _) => p.DrawDate.AddDays(30) < DateTime.Now);
 			if (Published.HasValue)
 				filters.Add((p, _) => p.IsPublished == Published);
 

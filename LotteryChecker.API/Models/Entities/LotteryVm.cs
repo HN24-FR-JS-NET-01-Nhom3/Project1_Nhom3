@@ -15,4 +15,6 @@ public class LotteryVm
 	[StringLength(50)]
 	public string? Company { get; set; }
 	public int RewardId { get; set; }
+	public string RewardName { get; set; }
+	public int RewardValue { get; set; }
 }

@@ -7,13 +7,13 @@ public class Lottery
 {
 	public int LotteryId { get; set; }
 	
-	[Required(ErrorMessage = "Due date is required")]
-	public DateTime DueDate { get; set; }
+	[Required(ErrorMessage = "Drawing date is required")]
+	public DateTime DrawDate { get; set; }
 	public DateTime? PublishDate { get; set; }
 	
 	[Required(ErrorMessage = "Lottery number is required")]
-    [RegularExpression(@"^\d{5}$", ErrorMessage = "Lottery number must be a 5-digit number")]
-    public int LotteryNumber { get; set; }
+    [RegularExpression(@"^\d{1,6}$", ErrorMessage = "Lottery number must be a 6-digit number")]
+    public string LotteryNumber { get; set; }
     
     [DefaultValue(true)]
 	public bool IsPublished { get; set; }
