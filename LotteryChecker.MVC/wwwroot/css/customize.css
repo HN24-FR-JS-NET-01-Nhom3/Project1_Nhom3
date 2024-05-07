@@ -1,7 +1,3 @@
-body {
-    /*overflow-x: hidden;*/
-}
-
 .main-table tbody tr:first-child, .main-table tbody tr:last-child {
     font-weight: bold;
     color: #FF2020 !important;
@@ -72,6 +68,7 @@ body {
     width: 100%;
     background-color: #E8E8E8;
 }
+
 .content li {
     font-size: 1rem;
     margin-bottom: 0.5rem;
@@ -100,6 +97,7 @@ body {
     font-size: 1rem;
     cursor: pointer;
     text-align: center;
+
     &:hover {
         background-color: #a2d7e7;
     }
@@ -108,4 +106,9 @@ body {
 .btn-date a {
     height: 100%;
     display: block;
+}
+
+.btn-date-select {
+    font-weight: bold;;
+    background-color: #FF2020 !important;
 }

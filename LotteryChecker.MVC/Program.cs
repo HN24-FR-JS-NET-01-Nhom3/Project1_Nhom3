@@ -22,7 +22,6 @@ builder.Services.AddDefaultIdentity<AppUser>(
 	.AddEntityFrameworkStores<LotteryContext>().AddDefaultTokenProviders();
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllersWithViews();
 

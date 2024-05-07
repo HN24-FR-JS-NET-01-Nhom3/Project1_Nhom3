@@ -169,6 +169,11 @@ public class LotteryController : ControllerBase
         {
             lotteryResult = _unitOfWork.LotteryRepository.GetLotteryResult(dateTime.AddDays(-1));
         }
+
+        if (year != null && month != null && day != null && DateTime.Now < new DateTime((int)year, (int)month, (int)day).Date)
+        {
+            lotteryResult = _unitOfWork.LotteryRepository.GetLotteryResult(DateTime.Now);
+        }
         return Ok(_mapper.Map<List<LotteryVm>>(lotteryResult));
     }
 }

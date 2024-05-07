@@ -15,7 +15,7 @@
 
 <div class="px-2">
     <div class="row">
-        <div class="col-lg-3 text-center d-flex flex-column justify-content-center" style="background-color:#FFD7D7;">
+        <div class="col-lg-3 text-center d-flex flex-column justify-content-center left-banner" style="background-color:#FFD7D7;">
             <h3>Liên hệ quảng cáo</h3>
             <h5>0123 456 789</h5>
         </div>
@@ -133,16 +133,16 @@
                             if (!Model.RewardVms.IsNullOrEmpty())
                             {
                                 <table class="table">
-                                   @foreach (var reward in Model.RewardVms)
+                                    @foreach (var reward in Model.RewardVms)
                                     {
-                                    <tr>
-                                        <td class="fs-6 text-center fw-bold">
-                                            @reward.RewardName
-                                        </td>
-                                        <td class="fs-6 text-center fw-bold">
-                                            @reward.RewardValue.ToString("N0", new CultureInfo("vi-VN")) VND
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td class="fs-6 text-center fw-bold">
+                                                @reward.RewardName
+                                            </td>
+                                            <td class="fs-6 text-center fw-bold">
+                                                @reward.RewardValue.ToString("N0", new CultureInfo("vi-VN")) VND
+                                            </td>
+                                        </tr>
                                     }
                                 </table>
                             }
@@ -155,10 +155,25 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 d-flex flex-column align-items-center">
-            <div class="text-center w-100 py-5" style="background-color:#FFD7D7;">
-                <h3>Liên hệ quảng cáo</h3>
-                <h5>0123 456 789</h5>
+        <div class="col-lg-3 d-flex flex-column align-items-center right-banner">
+            <div class="w-100">
+                <div class="d-flex justify-content-between mb-4">
+                    <h4>Kỳ trao giải kế tiếp sẽ diễn ra sau</h4>
+                </div>
+                <h5 id="demo">
+                    <table class="table text-center">
+                        <tr>
+                            <td colspan="3">
+                                Đang tính toán...
+                            </td>
+                        </tr>
+                        <tr class="fw-normal">
+                            <td>Giờ</td>
+                            <td>Phút</td>
+                            <td>Giây</td>
+                        </tr>
+                    </table>
+                </h5>
             </div>
             <div class="mt-4 w-100">
                 <div class="d-flex justify-content-between mb-4">
@@ -174,4 +189,5 @@
 {
     <script src="~/js/lottery.js" asp-append-version="true"></script>
     <script src="~/js/calendar.js" asp-append-version="true"></script>
+    <script src="~/js/countdown.js" asp-append-version="true"></script>
 }

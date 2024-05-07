@@ -54,7 +54,7 @@ function showCalendar(day, month, year) {
                 
                 // coloring today's date
                 if (date === day && year === currentYear && month === currentMonth) {
-                    cell.classList.add("bg-info");
+                    cell.classList.add("btn-date-select");
                 } 
                 cell.classList.add("btn-date");
 
