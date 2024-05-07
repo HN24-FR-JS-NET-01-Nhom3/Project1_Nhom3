@@ -12,13 +12,11 @@ namespace LotteryChecker.API.Controllers.v1
     [ApiController]
     public class LotteryController : ControllerBase
     {
-        private readonly LotteryContext _context;
         private readonly IUnitOfWork _unitOfWork;
         private IMapper _mapper;
 
-        public LotteryController(LotteryContext context, IUnitOfWork unitOfWork, IMapper mapper)
+        public LotteryController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
