@@ -14,5 +14,6 @@ public class AutoMapper : Profile
 			.ReverseMap();
 		CreateMap<PurchaseTicket, PurchaseTicketVm>().ReverseMap();
 		CreateMap<Reward, RewardVm>().ReverseMap();
+		CreateMap<AppUser, UserVm>().ReverseMap();
 	}
 }

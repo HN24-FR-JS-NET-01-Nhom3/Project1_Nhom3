@@ -70,7 +70,9 @@ public class AuthenticationController : ControllerBase
 		{
 			var roles = await _userManager.GetRolesAsync(user);
 			var tokenValue = await GenerateJwtToken(user, roles);
-			return Ok(tokenValue);
+			user.LastLogin = DateTime.Now;
+            await _userManager.UpdateAsync(user);
+            return Ok(tokenValue);
 		}
 
 		return Unauthorized();
