@@ -18,15 +18,32 @@ namespace LotteryChecker.API.Controllers.v1
 
         public RewardController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            this._unitOfWork = unitOfWork;
-            this._mapper = mapper;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         [HttpGet("get-all-rewards")]
-        public IActionResult GetAllRewards()
+        public IActionResult GetAllRewards([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             var rewards = _unitOfWork.RewardRepository.GetAll();
-            return Ok(rewards);
+
+            if (rewards == null)
+            {
+                var rewardPaging = _unitOfWork.RewardRepository.GetPaging(rewards, null, page, pageSize).ToList();
+
+                return Ok(new
+                {
+                    Result = rewardPaging.Select(reward => _mapper.Map<RewardVm>(reward)),
+                    Meta = new
+                    {
+                        page,
+                        pageSize = pageSize > rewardPaging.Count ? rewardPaging.Count : pageSize,
+                        totalPages = (int)System.Math.Ceiling((decimal)rewards.Count() / pageSize)
+                    }
+                });
+            }
+
+            return NotFound();
         }
 
         [HttpGet("get-reward/{id}")]
