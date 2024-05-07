@@ -1,0 +1,114 @@
+.main-table tbody tr:first-child, .main-table tbody tr:last-child {
+    font-weight: bold;
+    color: #FF2020 !important;
+}
+
+.main-table table, tbody, tr, td {
+    border-width: 1px;
+    border-color: #dee2e6;
+}
+
+.main-table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.unset-width {
+    width: unset !important;
+}
+
+/* Style the button that is used to open and close the collapsible content */
+.collapsible {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible:hover {
+    background-color: #ccc;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+/* Add a transition for the collapsible content to achieve animation */
+.content {
+    background-color: white;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    width: 100%;
+}
+
+/* Rotate the plus and minus icon when the collapsible is clicked */
+.collapsible:after {
+    content: '\02795'; /* Unicode character for "plus" sign (+) */
+    font-size: 1.3rem;
+    color: white;
+    float: right;
+    margin-left: 5px;
+    transition: transform 0.3s ease; /* Add transition for the icon rotation */
+}
+
+/* Rotate the plus and minus icon when the collapsible is clicked */
+.active:after {
+    content: "\2796"; /* Unicode character for "minus" sign (-) */
+    transform: rotate(180deg); /* Rotate the icon to show as "minus" sign */
+}
+
+.content ul {
+    padding: 10px 50px;
+    width: 100%;
+    background-color: #E8E8E8;
+}
+
+.content li {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.card thead {
+    font-size: 1rem;
+}
+
+.card th {
+    width: 14.28%;
+    text-align: center;
+}
+
+#month, #year {
+    display: inline-block;
+    width: 45%;
+}
+
+.card .form-control {
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-date {
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+
+    &:hover {
+        background-color: #a2d7e7;
+    }
+}
+
+.btn-date a {
+    height: 100%;
+    display: block;
+}
+
+.btn-date-select {
+    font-weight: bold;;
+    background-color: #FF2020 !important;
+}
