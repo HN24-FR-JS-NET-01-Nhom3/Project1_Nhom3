@@ -9,11 +9,13 @@
     <link rel="icon" type="image/x-icon" href="@Url.Content("~/favicon.ico")"/>
     <!-- Font Awesome icons (free version)-->
     <script src="~/fontawesome/all.js" crossorigin="anonymous"></script>
+    
+    @await RenderSectionAsync("Styles")
 </head>
 <body>
 <!-- Navigation-->
 <nav class="navbar navbar-expand-lg navbar-light" id="mainNav" style="background-image: linear-gradient(#fff, #E9E9E9)">
-    <div class="container px-2">
+    <div class="container-fluid mx-5 px-2">
         <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
             <span style="color: red">XOSO</span><span style="color: black">KIENTHIET</span>
         </a>
@@ -52,32 +54,13 @@
 </nav>
 <header class="masthead" style="background-image: url(@Url.Content("~/images/banner.png"))">
 </header>
-<div class="container">
-    <main role="main" class="pb-3">
+<div class="container-fluid mx-5 unset-width">
+    <main role="main" class="py-3">
         @RenderBody()
     </main>
 </div>
 
 @await Html.PartialAsync("_Footer")
-
-<!-- Footer-->
-<footer style="background-image: linear-gradient(#E9E9E9, #fff)">
-    <div class="container px-2 d-flex justify-content-between">
-        <div class="">
-            <div class="fs-6 fw-bold text-start text-decoration-underline mb-3">Thông tin liên hệ</div>
-            <div class="fs-6 text-start mb-1">(84) 123 456 789</div>
-            <div class="fs-6 text-start text-decoration-underline mb-1">js.fs.group3@fpt.com</div>
-            <div class="fs-6 text-start mb-4">Toà FSA - Twitter Beans Coffee - Khu Công nghệ cao Hoà Lạc – Hà Nội, Việt Nam</div>
-            <div class="fs-6 fw-bold text-start text-decoration-underline mb-3">Disclaimer</div>
-            <img src="images/disclaimer.png" alt="disclaimer"/>
-        </div>
-        <div class="d-flex flex-column align-items-end">
-            <img src="images/bottom_logo.png" alt="logo" class="mb-3"/>
-            <div class="fs-6 text-end mt-auto">Must be 18 years or older to purchase. Please Play Responsibly.</div>
-            <div class="fs-6 text-end">© 2024 Group 3 FPT Software. All Rights Reserved</div>
-        </div>
-    </div>
-</footer>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

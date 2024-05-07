@@ -7,6 +7,6 @@ namespace LotteryChecker.Core.IRepositories;
 public interface ILotteryRepository : IBaseRepository<Lottery>
 {
     public IEnumerable<Lottery> GenerateLotteryResult(DateTime dateTime);
-    public IEnumerable<Lottery> GetLatestResult();
+    public IEnumerable<Lottery> GetLotteryResult(DateTime dateTime);
 
 }

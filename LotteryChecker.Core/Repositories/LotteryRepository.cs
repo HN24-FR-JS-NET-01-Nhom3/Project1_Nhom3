@@ -124,18 +124,10 @@ public class LotteryRepository : BaseRepository<Lottery>, ILotteryRepository
 		return lotteryList.AsEnumerable();
 	}
 
-	public IEnumerable<Lottery> GetLatestResult()
+	public IEnumerable<Lottery> GetLotteryResult(DateTime dateTime)
 	{
-		if (DateTime.Now.Hour < 19)
-		{
-			var temp = GetById(7);
-			return Find(x => x.DrawDate.Day == DateTime.Now.AddDays(-1).Day
-			                 && x.DrawDate.Month == DateTime.Now.AddDays(-1).Month
-			                 && x.DrawDate.Year == DateTime.Now.AddDays(-1).Year);
-		}
-
-		return Find(x => x.DrawDate.Day == DateTime.Now.Day
-		                 && x.DrawDate.Month == DateTime.Now.Month
-		                 && x.DrawDate.Year == DateTime.Now.Year);
+		return Find(x => x.DrawDate.Day == dateTime.Day
+		                 && x.DrawDate.Month == dateTime.Month
+		                 && x.DrawDate.Year == dateTime.Year);
 	}
 }

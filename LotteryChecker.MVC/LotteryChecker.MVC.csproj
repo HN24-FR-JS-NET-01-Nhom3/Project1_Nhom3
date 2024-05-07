@@ -20,8 +20,4 @@
       <ProjectReference Include="..\LotteryChecker.Core\LotteryChecker.Core.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Views\Lottery\" />
-    </ItemGroup>
-
 </Project>

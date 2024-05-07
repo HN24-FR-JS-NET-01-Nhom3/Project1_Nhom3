@@ -1,114 +1,50 @@
 using System.Net.Http.Headers;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
 namespace LotteryChecker.MVC.Utils;
 
 public class HttpUtils<TEntity> where TEntity : class
 {
-	public static async Task<IEnumerable<TEntity>?> GetAll(string url, string accessToken)
-	{
-		using (var client = new HttpClient())
-		{
-			client.DefaultRequestHeaders.Add("Content-Type", "application/json");
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-			try
-			{
-				var response = await client.GetAsync(url);
-				response.EnsureSuccessStatusCode();
-				return JsonConvert.DeserializeObject<IEnumerable<TEntity>>(await response.Content.ReadAsStringAsync());
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex);
-				return null;
-			}
-		}
-	}
-	
-	public static async Task<TEntity?> Get(string url, string accessToken)
-	{
-		using (var client = new HttpClient())
-		{
-			client.DefaultRequestHeaders.Add("Content-Type", "application/json");
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-			try
-			{
-				var response = await client.GetAsync(url);
-				response.EnsureSuccessStatusCode();
-				return JsonConvert.DeserializeObject<TEntity>(await response.Content.ReadAsStringAsync());
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex);
-				return null;
-			}
-		}
-	}
+    private static async Task<HttpResponseMessage> SendRequest(HttpMethod method, string url, string? body = null, string? accessToken = null)
+    {
+        using (var client = new HttpClient())
+        {
+            if (!accessToken.IsNullOrEmpty())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            }
 
-	public static async Task<TEntity?> Post(string url, string body, string accessToken)
-	{
-		using (var client = new HttpClient())
-		{
-			client.DefaultRequestHeaders.Add("Content-Type", "application/json");
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-			try
-			{
-				var request = new HttpRequestMessage(HttpMethod.Post, url);
-				request.Content = new StringContent(body);
-				
-				var response = await client.SendAsync(request);
-				response.EnsureSuccessStatusCode();
-				return JsonConvert.DeserializeObject<TEntity>(await response.Content.ReadAsStringAsync());
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex);
-				return null;
-			}
-		}
-	}
-	
-	public static async Task<TEntity?> Put(string url, string body, string accessToken)
-	{
-		using (var client = new HttpClient())
-		{
-			client.DefaultRequestHeaders.Add("Content-Type", "application/json");
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-			try
-			{
-				var request = new HttpRequestMessage(HttpMethod.Put, url);
-				request.Content = new StringContent(body);
-				
-				var response = await client.SendAsync(request);
-				response.EnsureSuccessStatusCode();
-				return JsonConvert.DeserializeObject<TEntity>(await response.Content.ReadAsStringAsync());
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex);
-				return null;
-			}
-		}
-	}
-	
-	public static async Task<TEntity?> Delete(string url, string accessToken)
-	{
-		using (var client = new HttpClient())
-		{
-			client.DefaultRequestHeaders.Add("Content-Type", "application/json");
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-			try
-			{
-				var request = new HttpRequestMessage(HttpMethod.Delete, url);
-				var response = await client.SendAsync(request);
-				response.EnsureSuccessStatusCode();
-				return JsonConvert.DeserializeObject<TEntity>(await response.Content.ReadAsStringAsync());
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex);
-				return null;
-			}
-		}
-	}
+            var request = new HttpRequestMessage(new HttpMethod(method.ToString()), url);
+
+            if (!body.IsNullOrEmpty())
+            {
+                request.Content = new StringContent(body ?? "");
+                request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            }
+
+            return await client.SendAsync(request);
+        }
+    }
+
+    private static async Task<TEntity?> ProcessResponse(HttpResponseMessage response)
+    {
+        response.EnsureSuccessStatusCode();
+        var responseData = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<TEntity>(responseData);
+    }
+
+    public static async Task<TEntity?> SendRequestAndProcessResponse(HttpMethod method, string url, string? body = null, string? accessToken = null)
+    {
+        try
+        {
+            var response = await SendRequest(method, url, body, accessToken);
+            return await ProcessResponse(response);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return null;
+        }
+    }
 }
