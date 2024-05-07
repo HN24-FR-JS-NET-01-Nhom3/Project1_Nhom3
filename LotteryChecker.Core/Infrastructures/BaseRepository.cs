@@ -5,9 +5,11 @@ namespace LotteryChecker.Core.Infrastructures;
 public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
 {
     private readonly DbSet<TEntity> _dbSet;
+    protected readonly DbContext Context;
 
     protected BaseRepository(DbContext context)
     {
+        Context = context;
         _dbSet = context.Set<TEntity>();
     }
     public void Create(TEntity entity)
