@@ -18,15 +18,16 @@ namespace LotteryChecker.API.Controllers.v1
 
         public RewardController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            this._unitOfWork = unitOfWork;
-            this._mapper = mapper;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         [HttpGet("get-all-rewards")]
         public IActionResult GetAllRewards()
         {
             var rewards = _unitOfWork.RewardRepository.GetAll();
-            return Ok(rewards);
+            var rewardsVm = _mapper.Map<IEnumerable<RewardVm>>(rewards);
+            return Ok(rewardsVm);
         }
 
         [HttpGet("get-reward/{id}")]
