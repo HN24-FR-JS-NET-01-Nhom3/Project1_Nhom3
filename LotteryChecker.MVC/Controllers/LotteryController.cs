@@ -1,34 +1,31 @@
 using AutoMapper;
-using LotteryChecker.Core.Infrastructures;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Models.Entities;
 using LotteryChecker.MVC.Models.ViewModels;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace LotteryChecker.MVC.Controllers;
 
+[Route("lottery")]
 public class LotteryController : Controller
 {
-	private readonly IUnitOfWork _unitOfWork;
 	private readonly IMapper _mapper;
-	public LotteryController(IUnitOfWork unitOfWork, IMapper mapper)
+	public LotteryController(IMapper mapper)
 	{
-		_unitOfWork = unitOfWork;
 		_mapper = mapper;
 	}
 
-	[Route("Lottery")]
-	[Route("Lottery/{year}/{month}/{day}")]
+	[Route("")]
+	[Route("{year}/{month}/{day}")]
 	public async Task<IActionResult> Index(int? year, int? month, int? day)
 	{
 		try
 		{
-			var dateTime = DateTime.Now;
 			IEnumerable<LotteryVm>? lotteryResponse;
 			if (year != null && month != null && day != null)
 			{
-				dateTime = new DateTime((int)year, (int)month, (int)day);
 				lotteryResponse = await HttpUtils<IEnumerable<LotteryVm>>.SendRequestAndProcessResponse(HttpMethod.Get,
 					$"{Constants.API_LOTTERY}/get-lottery-result?year={year}&month={month}&day={day}");
 			}
@@ -40,6 +37,7 @@ public class LotteryController : Controller
 			}
 
 			if (lotteryResponse == null) lotteryResponse = [];
+			var lotteryResult = lotteryResponse.ToList();
 
 			var rewardResponse =
 				await HttpUtils<HttpResponse<RewardVm>>.SendRequestAndProcessResponse(HttpMethod.Get,
@@ -49,9 +47,9 @@ public class LotteryController : Controller
 
 			return View(new LotteriesVm()
 			{
-				LotteryVmGroups = lotteryResponse.GroupBy(l => l.RewardId).OrderByDescending(g => g.Key),
+				LotteryVmGroups = lotteryResult.GroupBy(l => l.RewardId).OrderByDescending(g => g.Key),
 				RewardVms = _mapper.Map<List<RewardVm>>(rewardPool),
-				CurrentDate = dateTime
+				CurrentDate = lotteryResult.IsNullOrEmpty() ? new DateTime((int)year!, (int)month!, (int)day!) : lotteryResult.First().DrawDate
 			});
 		}
 		catch (Exception ex)

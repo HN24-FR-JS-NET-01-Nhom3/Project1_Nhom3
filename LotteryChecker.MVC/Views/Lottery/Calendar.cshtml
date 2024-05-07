@@ -1,23 +1,5 @@
 <div class="card table-responsive card-body">
-    <table class="table table-bordered table-responsive-sm" id="calendar">
-        <thead>
-        <tr>
-            <th>Sun</th>
-            <th>Mon</th>
-            <th>Tue</th>
-            <th>Wed</th>
-            <th>Thu</th>
-            <th>Fri</th>
-            <th>Sat</th>
-        </tr>
-        </thead>
-
-        <tbody id="calendar-body">
-
-        </tbody>
-    </table>
-
-    <form class="form-inline d-flex justify-content-between">
+    <form class="form-inline d-flex justify-content-between mb-4">
         <select class="form-control form-select col-sm-4" name="month" id="month" onchange="jump()">
             <option value=0>Jan</option>
             <option value=1>Feb</option>
@@ -40,4 +22,19 @@
             }
         </select>
     </form>
+    <table class="table table-bordered table-responsive-sm" id="calendar">
+        <thead>
+        <tr>
+            <th>Sun</th>
+            <th>Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thu</th>
+            <th>Fri</th>
+            <th>Sat</th>
+        </tr>
+        </thead>
+        <tbody id="calendar-body">
+        </tbody>
+    </table>
 </div>
