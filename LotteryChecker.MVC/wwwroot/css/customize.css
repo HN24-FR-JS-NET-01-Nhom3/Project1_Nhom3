@@ -112,3 +112,27 @@
     font-weight: bold;;
     background-color: #FF2020 !important;
 }
+
+.form-group > span {
+    font-size: 1rem;
+}
+
+.text-for-checking-ticket {
+    width: 30%;
+    margin-right: 1rem;
+}
+
+.input-for-checking-ticket {
+    border-radius: 5px;
+    display: inline-block;
+    width: 45%;
+}
+
+.btn-for-checking-ticket {
+    background-color: #FF2020;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    &:hover {
+        background-color: #9b1515;
+    }
+}

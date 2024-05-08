@@ -4,63 +4,63 @@ namespace LotteryChecker.Core.Infrastructures;
 
 public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
 {
-    private readonly DbSet<TEntity> _dbSet;
+    protected readonly DbSet<TEntity> DbSet;
     protected readonly DbContext Context;
 
     protected BaseRepository(DbContext context)
     {
         Context = context;
-        _dbSet = context.Set<TEntity>();
+        DbSet = context.Set<TEntity>();
     }
     public void Create(TEntity entity)
     {
-        _dbSet.Add(entity);
+        DbSet.Add(entity);
         //Context.Entry<TEntity>(entity).State = EntityState.Added;
     }
 
     public void CreateRange(IEnumerable<TEntity> entities)
     {
-        _dbSet.AddRange(entities);
+        DbSet.AddRange(entities);
     }
 
     public void Delete(TEntity entity)
     {
-        _dbSet.Remove(entity);
+        DbSet.Remove(entity);
         // Context.Entry<TEntity>(entity).State = EntityState.Deleted;
     }
 
     public void Delete(params object[] ids)
     {
-        var entity = _dbSet.Find(ids);
+        var entity = DbSet.Find(ids);
         if (entity == null)
             throw new ArgumentException($"{string.Join(";", ids)} not exist in the {typeof(TEntity).Name} table");
-        _dbSet.Remove(entity);
+        DbSet.Remove(entity);
     }
 
     public void Update(TEntity entity)
     {
-        _dbSet.Update(entity);
+        DbSet.Update(entity);
         // Context.Entry<TEntity>(entity).State = EntityState.Modified;
     }
 
     public void UpdateRange(IEnumerable<TEntity> entities)
     {
-        _dbSet.UpdateRange(entities);
+        DbSet.UpdateRange(entities);
     }
 
     public IEnumerable<TEntity> GetAll()
     {
-        return _dbSet.OrderByDescending(x => x).ToList();
+        return DbSet.OrderByDescending(x => x).ToList();
     }
 
     public TEntity? GetById(object primaryKey)
     {
-        return _dbSet.Find(primaryKey);
+        return DbSet.Find(primaryKey);
     }
 
     public IEnumerable<TEntity> Find(Func<TEntity, bool> predicate)
     {
-        return _dbSet.Where(predicate);
+        return DbSet.Where(predicate);
     }
 
     public IEnumerable<TEntity> GetPaging(IEnumerable<TEntity> orderBy,

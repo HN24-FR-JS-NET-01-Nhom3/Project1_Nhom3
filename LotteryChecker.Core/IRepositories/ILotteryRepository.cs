@@ -8,5 +8,5 @@ public interface ILotteryRepository : IBaseRepository<Lottery>
 {
     public IEnumerable<Lottery> GenerateLotteryResult(DateTime dateTime);
     public IEnumerable<Lottery> GetLotteryResult(DateTime dateTime);
-
+    public void UnpublishExpiredLotteries();
 }
