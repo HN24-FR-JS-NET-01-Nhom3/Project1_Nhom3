@@ -40,13 +40,6 @@ public class HttpUtils<TEntity> where TEntity : class
             var responseData = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<TEntity>(responseData);
         }
-        else if (response.StatusCode == HttpStatusCode.BadRequest)
-        {
-            // Lấy thông tin về lỗi Bad Request từ ReasonPhrase
-            var reason = await response.Content.ReadAsStringAsync();
-            Console.WriteLine("Bad Request occurred: " + reason);
-            return null;
-        }
         else
         {
             // Xử lý các mã lỗi HTTP khác
@@ -55,9 +48,7 @@ public class HttpUtils<TEntity> where TEntity : class
         }
     }
 
-
-
-    public static async Task<TEntity?> SendRequestAndProcessResponse(HttpMethod method, string url, string? body = null, string? accessToken = null)
+    public static async Task<TEntity?> SendRequestAndProcessResponse(HttpMethod method, string url, object? body = null, string? accessToken = null)
     {
         try
         {

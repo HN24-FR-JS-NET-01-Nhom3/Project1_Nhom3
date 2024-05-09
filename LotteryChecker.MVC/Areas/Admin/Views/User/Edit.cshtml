@@ -11,7 +11,12 @@
         <div class="row">
             <div class="col-md-6">
                 <form asp-action="Edit" method="post">
-                    @Html.HiddenFor(m => m.Id)
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="mb-3">
+                        <label for="Id" class="form-label">Id</label>
+                        <input disabled asp-for="Id" type="text" class="form-control" id="id" name="Id">
+                        <span asp-validation-for="Id" class="text-danger"></span>
+                    </div>
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="mb-3">
                         <label for="firstName" class="form-label">First Name</label>
@@ -34,7 +39,7 @@
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <label for="phoneNumber" class="form-label">Phone Number</label>
+                        <label for="PhoneNumber" class="form-label">Phone Number</label>
                         <input asp-for="PhoneNumber" type="tel" class="form-control" id="phoneNumber" name="PhoneNumber">
                         <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                     </div>

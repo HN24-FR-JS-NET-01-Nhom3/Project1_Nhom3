@@ -30,7 +30,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
                 else
                     return View();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 return View();
@@ -56,52 +56,58 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
             }
         }
 
-            [HttpGet]
-            [Route("edit-user/{id}")]
-            public async Task<IActionResult> Edit(Guid id)
+        [HttpGet]
+        [Route("edit-user/{id}")]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            try
             {
-                try
+                var respone = await HttpUtils<UserVm>.SendRequestAndProcessResponse(HttpMethod.Get,
+                    $"{Constants.API_USER}/get-user/{id}");
+                if (respone != null)
+                    return View(respone);
+                else
+                    return View();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return View();
+            }
+        }
+
+        [HttpPost]
+        [Route("edit-user/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(UserVm? userVm, Guid id)
+        {
+            try
+            {
+                if (ModelState.IsValid)
                 {
-                    var respone = await HttpUtils<UserVm>.SendRequestAndProcessResponse(HttpMethod.Get,
-                        $"{Constants.API_USER}/get-user/{id}");
+                    var respone = await HttpUtils<UserVm>.SendRequestAndProcessResponse(HttpMethod.Put,
+                         $"{Constants.API_USER}/update-user/{id}", userVm);
                     if (respone != null)
-                        return View(respone);
+                    {
+                        return RedirectToAction("ListUser");
+                    }
                     else
                         return View();
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    return View();
-                }
-                }
-
-            [HttpPost]
-            [Route("edit-user/{id}")]
-            [ValidateAntiForgeryToken]
-            public async Task<IActionResult> Edit(UserVm userVm, Guid id)
-            {
-                try
-                {
-                    if (ModelState.IsValid)
-                    {
-                        var respone = await HttpUtils<UserVm>.SendRequestAndProcessResponse(HttpMethod.Put,
-                             $"{Constants.API_USER}/update-user/{id}", JsonConvert.SerializeObject(userVm));
-                        if (respone != null)
-                        {
-                            return RedirectToAction("ListUser");
-                        }
-                        else
-                            return View();
-                    }
-                    return View();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    return View();
-                }
-            
+                return View();
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return View();
+            }
+
+        }
+
+        [Route("create-user")]
+        public IActionResult Create()
+        {
+            return View();
+        }
     }
 }
