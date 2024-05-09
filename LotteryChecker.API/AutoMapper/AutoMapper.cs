@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LotteryChecker.API.Models.Entities;
+using LotteryChecker.Common.Entities;
 using LotteryChecker.Core.Entities;
 
 namespace LotteryChecker.API.AutoMapper;

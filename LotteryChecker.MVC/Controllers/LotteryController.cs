@@ -1,6 +1,6 @@
 using AutoMapper;
+using LotteryChecker.Common.Entities;
 using LotteryChecker.MVC.Models;
-using LotteryChecker.MVC.Models.Entities;
 using LotteryChecker.MVC.Models.ViewModels;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;

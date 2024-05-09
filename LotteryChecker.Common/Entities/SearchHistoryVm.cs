@@ -1,7 +1,6 @@
-﻿using LotteryChecker.Core.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace LotteryChecker.API.Models.Entities
+namespace LotteryChecker.Common.Entities
 {
     public class SearchHistoryVm
     {

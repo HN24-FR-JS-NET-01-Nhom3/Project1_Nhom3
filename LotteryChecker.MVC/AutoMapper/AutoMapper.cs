@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using LotteryChecker.Common.Entities;
 using LotteryChecker.Core.Entities;
-using LotteryChecker.MVC.Models.Entities;
 
 namespace LotteryChecker.MVC.AutoMapper;
 
@@ -14,5 +14,6 @@ public class AutoMapper : Profile
 			.ReverseMap();
 		CreateMap<PurchaseTicket, PurchaseTicketVm>().ReverseMap();
 		CreateMap<Reward, RewardVm>().ReverseMap();
+		CreateMap<AppUser, UserVm>().ReverseMap();
 	}
 }
