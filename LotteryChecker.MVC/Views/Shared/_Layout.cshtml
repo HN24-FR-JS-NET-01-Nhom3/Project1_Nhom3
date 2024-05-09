@@ -1,6 +1,8 @@
 ﻿@using LotteryChecker.MVC.Models.Entities
+@using Newtonsoft.Json
 @{
-    var user = TempData["User"] as UserVm;
+    var userJson = TempData["User"] as string;
+    var user = JsonConvert.DeserializeObject<UserVm>(userJson);
 }
 
 <!DOCTYPE html>
@@ -59,7 +61,7 @@
                 else
                 {
                     <li class="nav-item">
-                        <h5>Xin chào, @user.LastName</h5>
+                        <a class="nav-link hello-text" href="#">Xin chào, <strong>@user.LastName</strong></a>
                     </li>
                     <li class="nav-item custom-btn-login">
                         <a class="nav-link" asp-controller="Authen" asp-action="Login">Đăng xuất</a>

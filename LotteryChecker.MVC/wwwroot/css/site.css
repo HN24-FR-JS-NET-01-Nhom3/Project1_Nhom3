@@ -12423,3 +12423,12 @@ header.masthead .post-heading .meta a {
     z-index: -1;
     background-size: cover;
 }
+
+.hello-text {
+    cursor: unset;
+    color: #000 !important;
+    padding-right: 1rem !important;
+    &:hover {
+        color: #000 !important;
+    }
+}

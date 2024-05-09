@@ -35,9 +35,9 @@ public class AuthenController : BaseController
 					$"{Constants.API_AUTHEN}/login", JsonConvert.SerializeObject(loginVm));
 				if (loginResponse != null)
 				{
-					HttpContext.Session.SetString("AccessToken", loginResponse.AccessToken);
-					HttpContext.Session.SetString("RefreshToken", loginResponse.RefreshToken);
-					HttpContext.Session.SetString("User", JsonConvert.SerializeObject(loginResponse.User));
+					Response.Cookies.Append("AccessToken", loginResponse.AccessToken);
+					Response.Cookies.Append("RefreshToken", loginResponse.RefreshToken);
+					Response.Cookies.Append("User", JsonConvert.SerializeObject(loginResponse.User));
 					
 					return RedirectToAction("Index", "Lottery");
 				}

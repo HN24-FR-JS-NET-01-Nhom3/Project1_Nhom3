@@ -1,7 +1,5 @@
-using System.Security.Claims;
 using AutoMapper;
 using LotteryChecker.Core.Entities;
-using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -21,8 +19,8 @@ public class BaseController : Controller
 
 	public override void OnActionExecuting(ActionExecutingContext context)
 	{
-		// var user = HttpContext.Session.GetString("User");
-		// TempData["User"] = user;
+		var user = Request.Cookies["User"];
+		TempData["User"] = user;
 		base.OnActionExecuting(context);
 	}
 }

@@ -21,17 +21,20 @@ public class AuthenticationController : ControllerBase
 {
 	private readonly UserManager<AppUser> _userManager;
 	private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+	private readonly SignInManager<AppUser> _signInManager;
 	private readonly LotteryContext _context;
 	private readonly IConfiguration _configuration;
 	private readonly IMapper _mapper;
 
 	public AuthenticationController(UserManager<AppUser> userManager,
+		SignInManager<AppUser> signInManager,
 		RoleManager<IdentityRole<Guid>> roleManager,
 		LotteryContext context,
 		IConfiguration configuration,
 		IMapper mapper)
 	{
 		_userManager = userManager;
+		_signInManager = signInManager;
 		_roleManager = roleManager;
 		_context = context;
 		_configuration = configuration;
@@ -81,6 +84,13 @@ public class AuthenticationController : ControllerBase
 		}
 
 		return Unauthorized();
+	}
+	
+	[HttpPost("logout")]
+	public async Task<IActionResult> Logout()
+	{
+		await _signInManager.SignOutAsync();
+		return NoContent();
 	}
 
 	private async Task<AuthResultVm> GenerateJwtToken(AppUser user, IList<string> roles)

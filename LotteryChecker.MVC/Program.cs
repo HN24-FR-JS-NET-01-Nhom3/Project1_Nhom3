@@ -22,12 +22,6 @@ builder.Services.AddDefaultIdentity<AppUser>(
 
 builder.Services.AddControllersWithViews();
 
-// builder.Services.AddSession(options =>
-// {
-// 	options.IdleTimeout = TimeSpan.FromMinutes(30);
-// 	options.Cookie.IsEssential = true;
-// });
-
 builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
@@ -50,8 +44,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-
-// app.UseSession();
 
 app.MapControllerRoute(
 	name: "default",
