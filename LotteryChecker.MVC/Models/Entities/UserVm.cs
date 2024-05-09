@@ -1,4 +1,4 @@
-﻿namespace LotteryChecker.API.Models.Entities
+﻿namespace LotteryChecker.MVC.Models.Entities
 {
     public class UserVm
     {

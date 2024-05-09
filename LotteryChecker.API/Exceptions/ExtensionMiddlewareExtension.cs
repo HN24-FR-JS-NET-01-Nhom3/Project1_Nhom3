@@ -13,7 +13,7 @@ public static class ExtensionMiddlewareExtension
 		{
 			builderError.Run(async context =>
 			{
-				context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+				context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 				context.Response.ContentType = "application/json";
 
 				var contextFeature = context.Features.Get<IExceptionHandlerFeature>();

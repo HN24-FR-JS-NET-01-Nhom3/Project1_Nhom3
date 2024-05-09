@@ -24,68 +24,8 @@
                 <div class="d-flex justify-content-between mb-4">
                     <h4>Kết quả xổ số ngày @Model.CurrentDate.Value.ToString("dd/MM/yyyy")</h4>
                 </div>
-                <table class="table main-table">
-                    <thead></thead>
-                    <tbody>
-                    @{
-                        if (!Model.LotteryVmGroups.IsNullOrEmpty())
-                        {
-                            foreach (var group in Model.LotteryVmGroups.Take(4))
-                            {
-                                <tr>
-                                    <td colspan="2">
-                                        @group.First().RewardName
-                                    </td>
-                                    <td class="d-flex justify-content-evenly fw-bold">
-                                        @foreach (var lottery in group)
-                                        {
-                                            <span>@lottery.LotteryNumber</span>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-
-                            var reward4 = @Model.LotteryVmGroups.Skip(4).First();
-                            <tr>
-                                <td colspan="2">
-                                    @reward4.First().RewardName
-                                </td>
-                                <td class="d-flex justify-content-evenly fw-bold">
-                                    @foreach (var lottery in reward4.Take(4))
-                                    {
-                                        <span>@lottery.LotteryNumber</span>
-                                    }
-                                </td>
-                                <td class="d-flex justify-content-evenly fw-bold">
-                                    @foreach (var lottery in reward4.Skip(4))
-                                    {
-                                        <span>@lottery.LotteryNumber</span>
-                                    }
-                                </td>
-                            </tr>
-
-                            foreach (var group in Model.LotteryVmGroups.Skip(5).Take(3))
-                            {
-                                <tr>
-                                    <td colspan="2">
-                                        @group.First().RewardName
-                                    </td>
-                                    <td class="d-flex justify-content-evenly fw-bold">
-                                        @foreach (var lottery in group)
-                                        {
-                                            <span>@lottery.LotteryNumber</span>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <p>Không tìm thấy kết quả</p>
-                        }
-                    }
-                    </tbody>
-                </table>
+                @await Html.PartialAsync("LotteryResultTable", Model.LotteryVmGroups)
+                
                 @* Tooltips *@
                 <div class="mt-3">
                     <button type="button" class="collapsible">

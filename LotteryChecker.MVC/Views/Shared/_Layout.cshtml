@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using LotteryChecker.MVC.Models.Entities
+@{
+    var user = TempData["User"] as UserVm;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -26,10 +31,10 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Home" asp-action="Index">Kết Quả Xổ Số</a>
+                    <a class="nav-link" asp-controller="Lottery" asp-action="Index">Kết Quả Xổ Số</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Home" asp-action="Index">Dò Vé Số</a>
+                    <a class="nav-link" asp-controller="Lottery" asp-action="CheckTicket">Dò Vé Số</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Home" asp-action="Index">Mua Vé Số</a>
@@ -42,12 +47,24 @@
                 </li>
             </ul>
             <ul class="navbar-nav" style="width: auto;">
-                <li class="nav-item custom-btn-register">
-                    <a class="nav-link" asp-controller="Home" asp-action="Index">Đăng ký</a>
-                </li>
-                <li class="nav-item custom-btn-login">
-                    <a class="nav-link" asp-controller="Home" asp-action="Index">Đăng nhập</a>
-                </li>
+                @if (user == null)
+                {
+                    <li class="nav-item custom-btn-register">
+                        <a class="nav-link" asp-controller="Authen" asp-action="Login">Đăng ký</a>
+                    </li>
+                    <li class="nav-item custom-btn-login">
+                        <a class="nav-link" asp-controller="Authen" asp-action="Login">Đăng nhập</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <h5>Xin chào, @user.LastName</h5>
+                    </li>
+                    <li class="nav-item custom-btn-login">
+                        <a class="nav-link" asp-controller="Authen" asp-action="Login">Đăng xuất</a>
+                    </li>
+                }
             </ul>
         </div>
     </div>

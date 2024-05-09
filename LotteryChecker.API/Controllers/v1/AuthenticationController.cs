@@ -2,8 +2,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Asp.Versioning;
+using AutoMapper;
 using LotteryChecker.API.Models;
 using LotteryChecker.API.Models.Authentication;
+using LotteryChecker.API.Models.Entities;
 using LotteryChecker.Core.Data;
 using LotteryChecker.Core.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -21,16 +23,19 @@ public class AuthenticationController : ControllerBase
 	private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 	private readonly LotteryContext _context;
 	private readonly IConfiguration _configuration;
+	private readonly IMapper _mapper;
 
 	public AuthenticationController(UserManager<AppUser> userManager,
 		RoleManager<IdentityRole<Guid>> roleManager,
 		LotteryContext context,
-		IConfiguration configuration)
+		IConfiguration configuration,
+		IMapper mapper)
 	{
 		_userManager = userManager;
 		_roleManager = roleManager;
 		_context = context;
 		_configuration = configuration;
+		_mapper = mapper;
 	}
 
 	[HttpPost("register")]
@@ -119,9 +124,10 @@ public class AuthenticationController : ControllerBase
 		await _context.SaveChangesAsync();
 		var response = new AuthResultVm
 		{
-			Token = jwtToken,
+			AccessToken = jwtToken,
 			RefreshToken = refreshToken.Token,
-			ExpiresAt = token.ValidTo
+			ExpiresAt = token.ValidTo,
+			User = _mapper.Map<UserVm>(user)
 		};
 		return response;
 	}

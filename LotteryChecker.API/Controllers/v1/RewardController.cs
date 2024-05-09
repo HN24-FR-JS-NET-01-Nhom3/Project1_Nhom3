@@ -75,7 +75,7 @@ public class RewardController : ControllerBase
             var status = _unitOfWork.SaveChanges();
             if (status > 0)
             {
-                return Ok();
+                return Ok(reward);
             }
             return BadRequest();
         }
@@ -102,7 +102,7 @@ public class RewardController : ControllerBase
             var status = _unitOfWork.SaveChanges();
             if (status > 0)
             {
-                return Ok();
+                return Ok(reward);
             }
             return BadRequest();
         }

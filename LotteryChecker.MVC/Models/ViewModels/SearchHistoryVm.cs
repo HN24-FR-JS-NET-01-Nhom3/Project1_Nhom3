@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LotteryChecker.API.Models.Entities
+namespace LotteryChecker.MVC.Models.ViewModels
 {
     public class SearchHistoryVm
     {

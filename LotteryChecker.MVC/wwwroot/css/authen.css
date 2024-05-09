@@ -1,0 +1,95 @@
+body {
+    overflow-x: hidden;
+}
+
+.custom-nav {
+    position: relative;
+}
+
+.website-name {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.break-line {
+    width: 50%;
+    height: 5px;
+    background-color: #FF2020;
+}
+
+.login-form {
+    /*border-left: 3px solid #BDBDBD;*/
+    /*border-right: 3px solid #BDBDBD;*/
+    border-radius: 10px;
+    background-color: #fff;
+    margin-left: 7rem;
+    margin-right: 7rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
+    box-sizing: border-box;
+}
+
+form {
+    font-size: 1rem;
+}
+
+.login-form label {
+    font-size: 1.25rem;
+}
+
+.login-form input {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+    margin-top: 0.25rem;
+    border-radius: 10px !important;
+
+    &:hover {
+        border-color: #4d4d4d;
+    }
+}
+
+.my-btn-login {
+    color: #fff;
+    background-color: #FF2020;
+
+    &:hover {
+        color: #a6a6a6;
+        background-color: #9b1515;
+    }
+    &:focus {
+        color: #a6a6a6;
+        background-color: #9b1515;
+    }
+    &:focus-visible {
+        color: #a6a6a6;
+        background-color: #9b1515;
+    }
+}
+
+.forgot-password-btn {
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.my-btn-register {
+    color: #fff;
+    background-color: #40f862;
+
+    &:hover {
+        color: #a6a6a6;
+        background-color: #159b44;
+    }
+    &:focus {
+        color: #a6a6a6;
+        background-color: #159b44;
+    }
+    &:focus-visible {
+        color: #a6a6a6;
+        background-color: #159b44;
+    }
+}

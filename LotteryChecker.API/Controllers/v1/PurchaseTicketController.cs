@@ -94,7 +94,7 @@ public class PurchaseTicketController : ControllerBase
 
             if (status > 0)
             {
-                return Ok();
+                return Ok(purchaseTicket);
             }
 
             return BadRequest();
@@ -122,7 +122,7 @@ public class PurchaseTicketController : ControllerBase
             var status = _unitOfWork.SaveChanges();
             if (status > 0)
             {
-                return Ok();
+                return Ok(purchaseTicket);
             }
             return BadRequest();
         }

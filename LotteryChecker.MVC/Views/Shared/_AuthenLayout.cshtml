@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] - Xổ số kiến thiết</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/authen.css" asp-append-version="true"/>
+    <link rel="icon" type="image/x-icon" href="@Url.Content("~/favicon.ico")"/>
+    <!-- Font Awesome icons (free version)-->
+    <script src="~/fontawesome/all.js" crossorigin="anonymous"></script>
+    
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+
+<div class="w-100 h-100 background" style="background-image: url('../images/background.png')">
+    
+</div>
+
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light" id="mainNav" style="background-image: linear-gradient(#fff, #E9E9E9)">
+    <div class="container-fluid mx-5 px-5 py-2 custom-nav">
+        <img src="~/images/logo.png" alt="Logo"/>
+        <div class="website-name d-flex align-items-center justify-content-center text-center">
+            <h1><span class="text-danger">XOSO</span><span class="text-black">KIENTHIET</span></h1>
+        </div>
+    </div>
+</nav>
+
+<div class="mx-5 px-5 unset-width">
+    <main role="main" class="py-3">
+        @RenderBody()
+    </main>
+</div>
+
+@await Html.PartialAsync("_AuthenFooter")
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

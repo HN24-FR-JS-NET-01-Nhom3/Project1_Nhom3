@@ -89,7 +89,7 @@ public class SearchHistoryController : ControllerBase
             var status = _unitOfWork.SaveChanges();
             if (status > 0)
             {
-                return Ok();
+                return Ok(searchHistory);
             }
 
             return BadRequest();
@@ -118,7 +118,7 @@ public class SearchHistoryController : ControllerBase
 
             if (status > 0)
             {
-                return Ok();
+                return Ok(searchHistory);
             }
 
             return BadRequest();

@@ -12417,3 +12417,9 @@ header.masthead .post-heading .meta a {
         background-image: url("../images/banner.png") !important;
     }
 }
+
+.background {
+    position: fixed;
+    z-index: -1;
+    background-size: cover;
+}

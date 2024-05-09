@@ -1,6 +1,6 @@
-using LotteryChecker.API.Models.Entities;
+using LotteryChecker.MVC.Models.Entities;
 
-namespace LotteryChecker.API.Models.Authentication;
+namespace LotteryChecker.MVC.Models.ViewModels;
 
 public class AuthResultVm
 {

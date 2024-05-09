@@ -6,7 +6,8 @@ namespace LotteryChecker.MVC.Utils;
 
 public class HttpUtils<TEntity> where TEntity : class
 {
-    private static async Task<HttpResponseMessage> SendRequest(HttpMethod method, string url, string? body = null, string? accessToken = null)
+
+    private static async Task<HttpResponseMessage> Send(HttpMethod method, string url, string? body = null, string? accessToken = null)
     {
         using (var client = new HttpClient())
         {
@@ -27,19 +28,19 @@ public class HttpUtils<TEntity> where TEntity : class
         }
     }
 
-    private static async Task<TEntity?> ProcessResponse(HttpResponseMessage response)
+    private static async Task<TEntity?> Get(HttpResponseMessage response)
     {
         response.EnsureSuccessStatusCode();
         var responseData = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<TEntity>(responseData);
     }
 
-    public static async Task<TEntity?> SendRequestAndProcessResponse(HttpMethod method, string url, string? body = null, string? accessToken = null)
+    public static async Task<TEntity?> SendRequest(HttpMethod method, string url, string? body = null, string? accessToken = null)
     {
         try
         {
-            var response = await SendRequest(method, url, body, accessToken);
-            return await ProcessResponse(response);
+            var response = await Send(method, url, body, accessToken);
+            return await Get(response);
         }
         catch (Exception ex)
         {
