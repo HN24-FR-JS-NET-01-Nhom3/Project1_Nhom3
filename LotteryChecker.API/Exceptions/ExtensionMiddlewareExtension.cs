@@ -1,5 +1,5 @@
 using System.Net;
-using LotteryChecker.API.Models;
+using LotteryChecker.Common.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.Features;
 

@@ -1,5 +1,6 @@
-﻿@using LotteryChecker.MVC.Models.Entities
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Newtonsoft.Json
+@using LotteryChecker.Common.Models.ViewModels
 @{
     var userJson = TempData["User"] as string;
     var user = JsonConvert.DeserializeObject<UserVm>(userJson);

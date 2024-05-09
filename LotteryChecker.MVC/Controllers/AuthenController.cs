@@ -1,7 +1,7 @@
 using AutoMapper;
+using LotteryChecker.Common.Models.Authentications;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.MVC.Models;
-using LotteryChecker.MVC.Models.ViewModels;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

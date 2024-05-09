@@ -1,13 +1,15 @@
 using AutoMapper;
+using LotteryChecker.Common.Models.Authentications;
+using LotteryChecker.Common.Models.Entities;
+using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.MVC.Models;
-using LotteryChecker.MVC.Models.Entities;
-using LotteryChecker.MVC.Models.ViewModels;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using SearchHistoryVm = LotteryChecker.Common.Entities.SearchHistoryVm;
 
 namespace LotteryChecker.MVC.Controllers;
 
@@ -51,7 +53,7 @@ public class LotteryController : BaseController
 				LotteryVmGroups = lotteryResult.GroupBy(l => l.RewardId).OrderByDescending(g => g.Key),
 				RewardVms = _mapper.Map<List<RewardVm>>(rewardPool),
 				CurrentDate = lotteryResult.IsNullOrEmpty()
-					? year != null && month != null && day != null ? new DateTime((int)year!, (int)month!, (int)day!) : DateTime.Now
+					? year != null && month != null && day != null ? new DateTime((int)year, (int)month, (int)day) : DateTime.Now
 					: lotteryResult.First().DrawDate
 			});
 		}
