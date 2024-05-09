@@ -42,12 +42,13 @@ public class UserController : ControllerBase
         }       
     }
 
-    [HttpGet("get-user/{email}")]
-    public async Task<IActionResult> GetUser(string email)
+    [HttpGet("get-user/{id}")]
+    public async Task<IActionResult> GetUser(Guid id)
     {
         try
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            string idStr = id.ToString();
+            var user = await _userManager.FindByIdAsync(idStr);
             if (user == null)
                 return NotFound();
             else
@@ -100,23 +101,16 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPut("update-user/{email}")]
-    public async Task<IActionResult> UpdateUser(string email, [FromBody] CreateUserVm userVm)
+    [HttpPut("update-user/{id}")]
+    public async Task<IActionResult> UpdateUser(Guid id, [FromBody] CreateUserVm userVm)
     {
         try
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            string idStr = id.ToString();
+            var user = await _userManager.FindByIdAsync(idStr);
             if (user == null)
             {
-                return NotFound($"User {userVm.Email} not found.");
-            }
-            if (!string.IsNullOrEmpty(userVm.Email) && userVm.Email != email)
-            {
-                var existingUser = await _userManager.FindByEmailAsync(userVm.Email);
-                if (existingUser != null)
-                {
-                    return BadRequest($"Email {userVm.Email} is already in use.");
-                }
+                return NotFound($"User not found.");
             }
             PropertyInfo[] properties = typeof(CreateUserVm).GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var property in properties)
@@ -146,12 +140,13 @@ public class UserController : ControllerBase
         }
     }
         
-    [HttpPatch("update-block-user/{email}/{isActive}")]
-    public async Task<IActionResult> UpdateBlockUser(string email, bool isActive)
+    [HttpPatch("update-block-user/{id}/{isActive}")]
+    public async Task<IActionResult> UpdateBlockUser(Guid id, bool isActive)
     {
         try
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            string idStr = id.ToString();
+            var user = await _userManager.FindByIdAsync(idStr);
             if (user == null)
                 return NotFound();
             user.IsActive = isActive;
