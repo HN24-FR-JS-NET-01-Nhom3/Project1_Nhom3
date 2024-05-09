@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using SearchHistoryVm = LotteryChecker.Common.Entities.SearchHistoryVm;
 
 namespace LotteryChecker.MVC.Controllers;
 
@@ -84,7 +83,7 @@ public class LotteryController : BaseController
 				};
 
 				var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
-					$"{Constants.API_LOTTERY}/get-ticket-result", JsonConvert.SerializeObject(searchTicketVm));
+					$"{Constants.API_LOTTERY}/get-ticket-result", searchTicketVm);
 				if (searchResponse == null)
 				{
 					ViewData["Reward"] = new RewardVm() { RewardValue = -1 };
@@ -126,7 +125,7 @@ public class LotteryController : BaseController
 				ViewData["LotteryResult"] = (lotteryResponse ?? []).GroupBy(l => l.RewardId).OrderByDescending(g => g.Key);
 
 				var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
-					$"{Constants.API_LOTTERY}/get-ticket-result", JsonConvert.SerializeObject(searchTicketVm));
+					$"{Constants.API_LOTTERY}/get-ticket-result", searchTicketVm);
 				if (searchResponse == null)
 				{
 					ViewData["Reward"] = new RewardVm() { RewardValue = -1 };
@@ -140,12 +139,12 @@ public class LotteryController : BaseController
 				{
 					var addSearchHistoryResponse = await HttpUtils<SearchHistory>.SendRequest(
 						HttpMethod.Post,
-						$"{Constants.API_SEARCH_HISTORY}/create-search-history", JsonConvert.SerializeObject(new SearchHistoryVm()
+						$"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
 						{
 							LotteryNumber = searchTicketVm.TicketNumber,
 							SearchDate = DateTime.Now,
 							UserId = user.Id
-						}));
+						});
 				}
 				
 				return RedirectToAction("CheckTicket", new { 

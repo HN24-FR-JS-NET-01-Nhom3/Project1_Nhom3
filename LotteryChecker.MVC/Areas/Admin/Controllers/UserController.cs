@@ -85,7 +85,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
                     if (ModelState.IsValid)
                     {
                         var respone = await HttpUtils<UserVm>.SendRequest(HttpMethod.Put,
-                             $"{Constants.API_USER}/update-user/{id}", JsonConvert.SerializeObject(userVm));
+                             $"{Constants.API_USER}/update-user/{id}", userVm);
                         if (respone != null)
                         {
                             return RedirectToAction("ListUser");

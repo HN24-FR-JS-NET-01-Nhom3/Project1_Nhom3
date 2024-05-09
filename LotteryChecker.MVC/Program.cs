@@ -22,7 +22,7 @@ builder.Services.AddDefaultIdentity<AppUser>(
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(typeof(LotteryChecker.Common.AutoMapper.MyAutoMapper).Assembly);
 
 var app = builder.Build();
 

@@ -1,10 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-
-<<<<<<<< HEAD:LotteryChecker.Common/Models/Entities/LotteryVm.cs
 namespace LotteryChecker.Common.Models.Entities;
-========
-namespace LotteryCheker.Common.Entities;
->>>>>>>> Viet:LotteryCheker.Common/Entities/LotteryVm.cs
 
 public class LotteryVm
 {

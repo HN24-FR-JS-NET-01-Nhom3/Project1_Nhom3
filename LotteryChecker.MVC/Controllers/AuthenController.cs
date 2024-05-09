@@ -32,7 +32,7 @@ public class AuthenController : BaseController
 			if (ModelState.IsValid)
 			{
 				var loginResponse = await HttpUtils<AuthResultVm>.SendRequest(HttpMethod.Post,
-					$"{Constants.API_AUTHEN}/login", JsonConvert.SerializeObject(loginVm));
+					$"{Constants.API_AUTHEN}/login", loginVm);
 				if (loginResponse != null)
 				{
 					Response.Cookies.Append("AccessToken", loginResponse.AccessToken);
