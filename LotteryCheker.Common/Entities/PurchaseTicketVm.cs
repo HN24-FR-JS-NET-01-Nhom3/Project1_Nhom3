@@ -1,6 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
+<<<<<<<< HEAD:LotteryCheker.Common/Entities/PurchaseTicketVm.cs
 namespace LotteryCheker.Common.Entities;
+========
+namespace LotteryChecker.Common.Entities;
+>>>>>>>> Viet:LotteryChecker.Common/Entities/PurchaseTicketVm.cs
 
 public class PurchaseTicketVm
 {
