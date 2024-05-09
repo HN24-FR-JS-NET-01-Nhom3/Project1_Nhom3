@@ -10,8 +10,8 @@ public class PurchaseTicket
     public DateTime PurchaseDate { get; set; }
         
     [Required(ErrorMessage = "Lottery number is required")]
-    [RegularExpression(@"^\d{t}$", ErrorMessage = "Lottery number must be a 5-digit number")]
-    public int LotteryNumber { get; set; }
+    [RegularExpression(@"^\d{1,6}$", ErrorMessage = "Lottery number must be a 6-digit number")]
+    public string LotteryNumber { get; set; }
         
     [Required(ErrorMessage = "User is required")]
     public Guid UserId { get; set; }

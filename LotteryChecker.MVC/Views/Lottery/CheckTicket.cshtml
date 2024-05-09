@@ -1,0 +1,84 @@
+@using LotteryChecker.MVC.Models.Entities
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Globalization
+@model SearchTicketVm
+
+@{
+    ViewData["Title"] = "Check Lottery";
+    var reward = TempData["Reward"] as RewardVm;
+    var lotteryResult = TempData["LotteryResult"] as IEnumerable<IGrouping<int, LotteryVm>>;
+    Layout = "_Layout";
+}
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/customize.css" asp-append-version="true"/>
+}
+
+<div class="px-2">
+    <div class="row">
+        <div class="col-lg-3 text-center d-flex flex-column justify-content-center left-banner" style="background-color:#FFD7D7;">
+            <h3>Liên hệ quảng cáo</h3>
+            <h5>0123 456 789</h5>
+        </div>
+        <div class="col-lg-5 mx-auto">
+            <div class="row gx-2 justify-content-center">
+                <div class="d-flex justify-content-between mb-4">
+                    <h4>Dò vé số tự động</h4>
+                </div>
+                <form asp-action="CheckTicket" method="post">
+                    <div class="card-body">
+                        <div class="form-group mb-2">
+                            <label class="text-for-checking-ticket" asp-for="TicketNumber">Nhập số vé <span class="text-danger">*</span></label>
+                            <input asp-for="TicketNumber" type="text" class="form-control input-for-checking-ticket" placeholder="Số vé"/>
+                            <span asp-validation-for="TicketNumber" class="text-danger d-block"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="text-for-checking-ticket" asp-for="DrawDate">Ngày quay thưởng <span class="text-danger">*</span></label>
+                            <input asp-for="DrawDate" type="date" class="form-control input-for-checking-ticket" placeholder="Ngày quay thưởng"/>
+                            <span asp-validation-for="DrawDate" class="text-danger d-block"></span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <input type="submit" class="btn btn-for-checking-ticket" value="Dò vé"/>
+                    </div>
+                </form>
+                @{
+                    if (reward != null)
+                    {
+                        if (reward.RewardName != null)
+                        {
+                            <p class="mt-4 mb-1"><strong>XIN CHÚC MỪNG</strong>, vé số của bạn đã trúng giải <span class="fw-bold text-danger">@reward.RewardName</span>, trị giá <span class="fw-bold text-danger">@reward.RewardValue.ToString("N0", new CultureInfo("vi-VN")) VND</span>!</p>
+                        }
+                        else
+                        {
+                            <p class="mt-4 mb-1"><strong class="text-danger">Rất tiếc</strong>, vé số của bạn không trúng thưởng, chúc bạn may mắn lần sau!</p>
+                        }
+                        <p class=""><i>(Xem chi tiết dò vé số ở phía dưới)</i></p>
+                        
+                        
+                        @await Html.PartialAsync("LotteryResultTable", lotteryResult)
+                    }
+                }
+                
+            </div>
+        </div>
+        <div class="col-lg-3 d-flex flex-column align-items-center right-banner">
+            <div class="w-100">
+                <div class="d-flex justify-content-between mb-4">
+                    <h4>Lịch sử dò vé</h4>
+                </div>
+            </div>
+            <div class="mt-4 w-100">
+                <div class="d-flex justify-content-between mb-4">
+                    <h4>Tin tức</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+
+}

@@ -11,49 +11,49 @@ public static class LotteryInitializer
             new Lottery
             {
                 LotteryId = 1,
-                DueDate = new DateTime(2024, 5, 10),
-                PublishDate = null, 
-                LotteryNumber = 123456,
+                DrawDate = new DateTime(2024, 5, 15),
+                PublishDate = new DateTime(2024, 5, 7), 
+                LotteryNumber = "123456",
                 RewardId = 1 
             },
             new Lottery
             {
                 LotteryId = 2,
-                DueDate = new DateTime(2024, 5, 11),
-                PublishDate = null, 
-                LotteryNumber = 234567,
+                DrawDate = new DateTime(2024, 5, 15),
+                PublishDate = new DateTime(2024, 5, 7), 
+                LotteryNumber = "234567",
                 RewardId = 2 
             },
             new Lottery
             {
                 LotteryId = 3,
-                DueDate = new DateTime(2024, 5, 12),
-                PublishDate = null, 
-                LotteryNumber = 345678,
+                DrawDate = new DateTime(2024, 5, 15),
+                PublishDate = new DateTime(2024, 5, 7), 
+                LotteryNumber = "345678",
                 RewardId = 3 
             },
             new Lottery
             {
                 LotteryId = 4,
-                DueDate = new DateTime(2024, 5, 13),
-                PublishDate = null,
-                LotteryNumber = 456789,
+                DrawDate = new DateTime(2024, 5, 15),
+                PublishDate = new DateTime(2024, 5, 7),
+                LotteryNumber = "456789",
                 RewardId = 4 
             },
             new Lottery
             {
                 LotteryId = 5,
-                DueDate = new DateTime(2024, 5, 14),
-                PublishDate = null, 
-                LotteryNumber = 567890,
+                DrawDate = new DateTime(2024, 5, 15),
+                PublishDate = new DateTime(2024, 5, 7), 
+                LotteryNumber = "567890",
                 RewardId = 5 
             },
             new Lottery
             {
                 LotteryId = 6,
-                DueDate = new DateTime(2024, 5, 15),
-                PublishDate = null,
-                LotteryNumber = 678901,
+                DrawDate = new DateTime(2024, 5, 15),
+                PublishDate = new DateTime(2024, 5, 7),
+                LotteryNumber = "678901",
                 RewardId = 6
             }
         );
@@ -74,21 +74,21 @@ public static class LotteryInitializer
             {
                 SearchHistoryId = 1,
                 SearchDate = new DateTime(2024, 5, 10),
-                LotteryNumber = 123456,
+                LotteryNumber = "123456",
                 UserId = new Guid("36B35306-154C-4518-8FC1-D7E756522111")
             },
             new SearchHistory
             {
                 SearchHistoryId = 2,
                 SearchDate = new DateTime(2024, 5, 11),
-                LotteryNumber = 234567,
+                LotteryNumber = "234567",
                 UserId = new Guid("57FA9A8E-3105-49A0-B0F2-6D88FDFCFF8D")
             },
             new SearchHistory
             {
                 SearchHistoryId = 3,
                 SearchDate = new DateTime(2024, 5, 12),
-                LotteryNumber = 345678,
+                LotteryNumber = "345678",
                 UserId = new Guid("57FA9A8E-3105-49A0-B0F2-6D88FDFCFF8D")
             }
         );
@@ -97,28 +97,28 @@ public static class LotteryInitializer
                 {
                     PurchaseTicketId = 1,
                     PurchaseDate = new DateTime(2024, 5, 10),
-                    LotteryNumber = 123456,
+                    LotteryNumber = "123456",
                     UserId = new Guid("36B35306-154C-4518-8FC1-D7E756522111")
                 },
                 new PurchaseTicket
                 {
                     PurchaseTicketId = 2,
                     PurchaseDate = new DateTime(2024, 5, 11),
-                    LotteryNumber = 234567,
+                    LotteryNumber = "234567",
                     UserId = new Guid("57FA9A8E-3105-49A0-B0F2-6D88FDFCFF8D")
                 },
                 new PurchaseTicket
                 {
                     PurchaseTicketId = 3,
                     PurchaseDate = new DateTime(2024, 5, 12),
-                    LotteryNumber = 345678,
+                    LotteryNumber = "345678",
                     UserId = new Guid("57FA9A8E-3105-49A0-B0F2-6D88FDFCFF8D")
                 },
                 new PurchaseTicket
                 {
                     PurchaseTicketId =  4,
                     PurchaseDate = new DateTime(2024, 5, 13),
-                    LotteryNumber = 456789,
+                    LotteryNumber = "456789",
                     UserId = new Guid("36B35306-154C-4518-8FC1-D7E756522111")
                 }
         );

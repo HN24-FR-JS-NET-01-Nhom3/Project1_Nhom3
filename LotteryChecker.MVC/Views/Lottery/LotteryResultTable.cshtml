@@ -1,0 +1,65 @@
+@using Microsoft.IdentityModel.Tokens
+@model IEnumerable<IGrouping<int, LotteryChecker.MVC.Models.Entities.LotteryVm>>
+
+<table class="table main-table">
+    <thead></thead>
+    <tbody>
+    @{
+        if (!Model.IsNullOrEmpty())
+        {
+            foreach (var group in Model.Take(4))
+            {
+                <tr>
+                    <td colspan="2">
+                        @group.First().RewardName
+                    </td>
+                    <td class="d-flex justify-content-evenly fw-bold">
+                        @foreach (var lottery in group)
+                        {
+                            <span>@lottery.LotteryNumber</span>
+                        }
+                    </td>
+                </tr>
+            }
+
+            var reward4 = @Model.Skip(4).First();
+            <tr>
+                <td colspan="2">
+                    @reward4.First().RewardName
+                </td>
+                <td class="d-flex justify-content-evenly fw-bold">
+                    @foreach (var lottery in reward4.Take(4))
+                    {
+                        <span>@lottery.LotteryNumber</span>
+                    }
+                </td>
+                <td class="d-flex justify-content-evenly fw-bold">
+                    @foreach (var lottery in reward4.Skip(4))
+                    {
+                        <span>@lottery.LotteryNumber</span>
+                    }
+                </td>
+            </tr>
+
+            foreach (var group in Model.Skip(5).Take(3))
+            {
+                <tr>
+                    <td colspan="2">
+                        @group.First().RewardName
+                    </td>
+                    <td class="d-flex justify-content-evenly fw-bold">
+                        @foreach (var lottery in group)
+                        {
+                            <span>@lottery.LotteryNumber</span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <p>Không tìm thấy kết quả</p>
+        }
+    }
+    </tbody>
+</table>
