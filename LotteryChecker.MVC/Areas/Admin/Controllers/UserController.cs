@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
-using Azure;
-using LotteryChecker.Common.Entities;
+using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace LotteryChecker.MVC.Areas.Admin.Controllers
 {
@@ -23,7 +21,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
         {
             try
             {
-                var response = await HttpUtils<List<UserVm>>.SendRequestAndProcessResponse(HttpMethod.Get,
+                var response = await HttpUtils<List<UserVm>>.SendRequest(HttpMethod.Get,
                 $"{Constants.API_USER}/get-all-users");
                 if (response != null)
                     return View(response);
@@ -42,7 +40,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
         {
             try
             {
-                var respone = await HttpUtils<UserVm>.SendRequestAndProcessResponse(HttpMethod.Get,
+                var respone = await HttpUtils<UserVm>.SendRequest(HttpMethod.Get,
                     $"{Constants.API_USER}/get-user/{id}");
                 if (respone != null)
                     return View(respone);
@@ -62,7 +60,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
         {
             try
             {
-                var respone = await HttpUtils<UserVm>.SendRequestAndProcessResponse(HttpMethod.Get,
+                var respone = await HttpUtils<UserVm>.SendRequest(HttpMethod.Get,
                     $"{Constants.API_USER}/get-user/{id}");
                 if (respone != null)
                     return View(respone);
@@ -85,7 +83,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var respone = await HttpUtils<UserVm>.SendRequestAndProcessResponse(HttpMethod.Put,
+                    var respone = await HttpUtils<UserVm>.SendRequest(HttpMethod.Put,
                          $"{Constants.API_USER}/update-user/{id}", userVm);
                     if (respone != null)
                     {
@@ -104,10 +102,10 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
 
         }
 
-        [Route("create-user")]
-        public IActionResult Create()
-        {
-            return View();
-        }
+        // [Route("create-user")]
+        // public IActionResult Create()
+        // {
+        //     return View();
+        // }
     }
 }
