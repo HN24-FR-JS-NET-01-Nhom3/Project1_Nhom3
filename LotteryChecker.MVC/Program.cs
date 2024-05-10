@@ -24,6 +24,12 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddAutoMapper(typeof(LotteryChecker.Common.AutoMapper.MyAutoMapper).Assembly);
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+	//Location for your Custom Login Page
+	options.LoginPath = "/authen/login";
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -52,6 +58,13 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name : "areas",
     pattern : "{area:exists}/{controller}/{action}");
+
+app.MapControllerRoute(
+	name: "admin",
+	pattern: "/admin/{controller=Home}/{action=Index}/{id?}",
+	defaults: new { area = "Admin" }
+).RequireAuthorization();
+
 app.MapRazorPages();
 
 app.Run();
