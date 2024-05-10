@@ -9,12 +9,14 @@ using Microsoft.IdentityModel.Tokens;
 using LotteryChecker.Common.Models.ViewModels;
 using System.Net;
 using LotteryChecker.Common.Models.Authentications;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LotteryChecker.API.Controllers.v1;
 
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{v:apiVersion}/user")]
+[Authorize(Roles = "Admin")]
 public class UserController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -167,13 +169,12 @@ public class UserController : ControllerBase
         }
     }
         
-    [HttpPatch("update-block-user/{id}/{isActive}")]
-    public async Task<IActionResult> UpdateBlockUser(Guid id, bool isActive)
+    [HttpPost("update-status-user/{id}/{isActive}")]
+    public async Task<IActionResult> UpdateStatusUser(string id, bool isActive)
     {
         try
         {
-            string idStr = id.ToString();
-            var user = await _userManager.FindByIdAsync(idStr);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
                 return NotFound();
             user.IsActive = isActive;
