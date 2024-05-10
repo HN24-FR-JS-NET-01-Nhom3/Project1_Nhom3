@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LotteryChecker.Common.Entities.UserVm>
+@model IEnumerable<LotteryChecker.Common.Models.ViewModels.UserVm>
 
 @{
     ViewData["Title"] = "ListUser";
@@ -24,10 +24,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                Last Login
-            </th>
             <th>
                 Phone
             </th>
@@ -54,9 +50,6 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastLogin)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.PhoneNumber)

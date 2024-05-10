@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace LotteryChecker.API.Models;
+namespace LotteryChecker.Common.Models;
 
 public class ErrorVm
 {

@@ -1,5 +1,5 @@
 using System.Net;
-using LotteryChecker.API.Models;
+using LotteryChecker.Common.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.Features;
 
@@ -13,7 +13,7 @@ public static class ExtensionMiddlewareExtension
 		{
 			builderError.Run(async context =>
 			{
-				context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+				context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
 				context.Response.ContentType = "application/json";
 
 				var contextFeature = context.Features.Get<IExceptionHandlerFeature>();

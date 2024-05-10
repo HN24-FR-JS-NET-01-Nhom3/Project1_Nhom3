@@ -1,8 +1,6 @@
+using LotteryChecker.Common.Models.Entities;
 
-
-using LotteryChecker.Common.Entities;
-
-namespace LotteryChecker.MVC.Models.ViewModels;
+namespace LotteryChecker.Common.Models.ViewModels;
 
 public class LotteriesVm
 {

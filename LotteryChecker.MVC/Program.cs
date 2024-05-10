@@ -19,10 +19,10 @@ builder.Services.AddDefaultIdentity<AppUser>(
 			options.SignIn.RequireConfirmedEmail = false;
 		}).AddRoles<IdentityRole<Guid>>()
 	.AddEntityFrameworkStores<LotteryContext>().AddDefaultTokenProviders();
+
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddControllersWithViews();
+builder.Services.AddAutoMapper(typeof(LotteryChecker.Common.AutoMapper.MyAutoMapper).Assembly);
 
 var app = builder.Build();
 

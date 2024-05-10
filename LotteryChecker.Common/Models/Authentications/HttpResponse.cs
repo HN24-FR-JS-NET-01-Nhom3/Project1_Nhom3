@@ -1,4 +1,4 @@
-namespace LotteryChecker.MVC.Models;
+namespace LotteryChecker.Common.Models.Authentications;
 
 public class HttpResponse<TEntity> where TEntity : class
 {

@@ -1,4 +1,4 @@
-﻿namespace LotteryChecker.Common.Entities
+namespace LotteryChecker.Common.Models.ViewModels
 {
     public class UserVm
     {
@@ -7,7 +7,6 @@
         public string LastName { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
-        public DateTime? LastLogin { get; set; }
         public string? PhoneNumber { get; set; }
         public bool IsActive { get; set; }
     }

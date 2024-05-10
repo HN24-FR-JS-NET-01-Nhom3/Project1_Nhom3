@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using LotteryChecker.API.Models.Entities;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +7,7 @@ using System.Reflection;
 using Asp.Versioning;
 using Microsoft.IdentityModel.Tokens;
 using LotteryChecker.Common.Entities;
+using LotteryChecker.Common.Models.ViewModels;
 
 namespace LotteryChecker.API.Controllers.v1;
 

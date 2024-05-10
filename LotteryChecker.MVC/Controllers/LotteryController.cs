@@ -1,8 +1,11 @@
 using AutoMapper;
-using LotteryChecker.Common.Entities;
+using LotteryChecker.Common.Models.Authentications;
+using LotteryChecker.Common.Models.Entities;
+using LotteryChecker.Common.Models.ViewModels;
+using LotteryChecker.Core.Entities;
 using LotteryChecker.MVC.Models;
-using LotteryChecker.MVC.Models.ViewModels;
 using LotteryChecker.MVC.Utils;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -10,13 +13,10 @@ using Newtonsoft.Json;
 namespace LotteryChecker.MVC.Controllers;
 
 [Route("lottery")]
-public class LotteryController : Controller
+public class LotteryController : BaseController
 {
-	private readonly IMapper _mapper;
-
-	public LotteryController(IMapper mapper)
+	public LotteryController(IMapper mapper, UserManager<AppUser> userManager) : base(mapper, userManager)
 	{
-		_mapper = mapper;
 	}
 
 	[Route("")]
@@ -28,13 +28,13 @@ public class LotteryController : Controller
 			IEnumerable<LotteryVm>? lotteryResponse;
 			if (year != null && month != null && day != null)
 			{
-				lotteryResponse = await HttpUtils<IEnumerable<LotteryVm>>.SendRequestAndProcessResponse(HttpMethod.Get,
+				lotteryResponse = await HttpUtils<IEnumerable<LotteryVm>>.SendRequest(HttpMethod.Get,
 					$"{Constants.API_LOTTERY}/get-lottery-result?year={year}&month={month}&day={day}");
 			}
 			else
 			{
 				lotteryResponse =
-					await HttpUtils<IEnumerable<LotteryVm>>.SendRequestAndProcessResponse(HttpMethod.Get,
+					await HttpUtils<IEnumerable<LotteryVm>>.SendRequest(HttpMethod.Get,
 						$"{Constants.API_LOTTERY}/get-lottery-result");
 			}
 
@@ -42,7 +42,7 @@ public class LotteryController : Controller
 			var lotteryResult = lotteryResponse.ToList();
 
 			var rewardResponse =
-				await HttpUtils<HttpResponse<RewardVm>>.SendRequestAndProcessResponse(HttpMethod.Get,
+				await HttpUtils<HttpResponse<RewardVm>>.SendRequest(HttpMethod.Get,
 					$"{Constants.API_REWARD}/get-all-rewards");
 
 			var rewardPool = rewardResponse?.Result.Reverse();
@@ -52,7 +52,7 @@ public class LotteryController : Controller
 				LotteryVmGroups = lotteryResult.GroupBy(l => l.RewardId).OrderByDescending(g => g.Key),
 				RewardVms = _mapper.Map<List<RewardVm>>(rewardPool),
 				CurrentDate = lotteryResult.IsNullOrEmpty()
-					? year != null && month != null && day != null ? new DateTime((int)year!, (int)month!, (int)day!) : DateTime.Now
+					? year != null && month != null && day != null ? new DateTime((int)year, (int)month, (int)day) : DateTime.Now
 					: lotteryResult.First().DrawDate
 			});
 		}
@@ -72,9 +72,9 @@ public class LotteryController : Controller
 		{
 			if (ticketNumber != null && year != null && month != null && day != null)
 			{
-				var lotteryResponse = await HttpUtils<IEnumerable<LotteryVm>>.SendRequestAndProcessResponse(HttpMethod.Get,
+				var lotteryResponse = await HttpUtils<IEnumerable<LotteryVm>>.SendRequest(HttpMethod.Get,
 					$"{Constants.API_LOTTERY}/get-lottery-result?year={year}&month={month}&day={day}");					
-				TempData["LotteryResult"] = (lotteryResponse ?? []).GroupBy(l => l.RewardId).OrderByDescending(g => g.Key);
+				ViewData["LotteryResult"] = (lotteryResponse ?? []).GroupBy(l => l.RewardId).OrderByDescending(g => g.Key);
 				
 				var searchTicketVm = new SearchTicketVm()
 				{
@@ -82,18 +82,15 @@ public class LotteryController : Controller
 					DrawDate = new DateTime((int)year, (int)month, (int)day)
 				};
 
-				var searchResponse = await HttpUtils<RewardVm>.SendRequestAndProcessResponse(HttpMethod.Post,
-					$"{Constants.API_LOTTERY}/get-ticket-result", JsonConvert.SerializeObject(searchTicketVm));
+				var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
+					$"{Constants.API_LOTTERY}/get-ticket-result", searchTicketVm);
 				if (searchResponse == null)
 				{
-					TempData["Reward"] = new RewardVm()
-					{
-						RewardValue = -1
-					};
+					ViewData["Reward"] = new RewardVm() { RewardValue = -1 };
 				}
 				else
 				{
-					TempData["Reward"] = searchResponse;
+					ViewData["Reward"] = searchResponse;
 				}
 
 				return View(searchTicketVm);
@@ -110,6 +107,7 @@ public class LotteryController : Controller
 
 	[HttpPost]
 	[Route("check-ticket")]
+	[Route("check-ticket/{year}/{month}/{day}/{ticketNumber}")]
 	[ValidateAntiForgeryToken]
 	public async Task<IActionResult> CheckTicket(SearchTicketVm? searchTicketVm)
 	{
@@ -122,25 +120,39 @@ public class LotteryController : Controller
 
 			try
 			{
-				var lotteryResponse = await HttpUtils<IEnumerable<LotteryVm>>.SendRequestAndProcessResponse(HttpMethod.Get,
+				var lotteryResponse = await HttpUtils<IEnumerable<LotteryVm>>.SendRequest(HttpMethod.Get,
 					$"{Constants.API_LOTTERY}/get-lottery-result?year={searchTicketVm.DrawDate.Year}&month={searchTicketVm.DrawDate.Month}&day={searchTicketVm.DrawDate.Day}");					
-				TempData["LotteryResult"] = (lotteryResponse ?? []).GroupBy(l => l.RewardId).OrderByDescending(g => g.Key);
+				ViewData["LotteryResult"] = (lotteryResponse ?? []).GroupBy(l => l.RewardId).OrderByDescending(g => g.Key);
 
-				var searchResponse = await HttpUtils<RewardVm>.SendRequestAndProcessResponse(HttpMethod.Post,
-					$"{Constants.API_LOTTERY}/get-ticket-result", JsonConvert.SerializeObject(searchTicketVm));
+				var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
+					$"{Constants.API_LOTTERY}/get-ticket-result", searchTicketVm);
 				if (searchResponse == null)
 				{
-					TempData["Reward"] = new RewardVm()
-					{
-						RewardValue = -1
-					};
+					ViewData["Reward"] = new RewardVm() { RewardValue = -1 };
 				}
 				else
 				{
-					TempData["Reward"] = searchResponse;
+					ViewData["Reward"] = searchResponse;
+				}
+
+				if (TempData["User"] is AppUser user)
+				{
+					var addSearchHistoryResponse = await HttpUtils<SearchHistory>.SendRequest(
+						HttpMethod.Post,
+						$"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
+						{
+							LotteryNumber = searchTicketVm.TicketNumber,
+							SearchDate = DateTime.Now,
+							UserId = user.Id
+						});
 				}
 				
-				return View(searchTicketVm);
+				return RedirectToAction("CheckTicket", new { 
+					year = searchTicketVm.DrawDate.Year,
+					month = searchTicketVm.DrawDate.Month,
+					day = searchTicketVm.DrawDate.Day,
+					ticketNumber = searchTicketVm.TicketNumber
+				});
 			}
 			catch (Exception ex)
 			{

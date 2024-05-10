@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-
-namespace LotteryChecker.Common.Entities;
+namespace LotteryChecker.Common.Models.Entities;
 
 public class LotteryVm
 {

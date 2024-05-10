@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace LotteryChecker.API.Models.Authentication;
+namespace LotteryChecker.Common.Models.Authentications;
 
 public class LoginVm
 {

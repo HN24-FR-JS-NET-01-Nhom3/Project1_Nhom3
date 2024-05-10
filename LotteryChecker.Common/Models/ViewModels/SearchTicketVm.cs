@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace LotteryChecker.Common.Entities;
+namespace LotteryChecker.Common.Models.ViewModels;
 
 public class SearchTicketVm
 {
