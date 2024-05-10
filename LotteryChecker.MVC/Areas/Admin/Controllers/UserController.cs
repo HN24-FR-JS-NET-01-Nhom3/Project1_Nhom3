@@ -96,16 +96,40 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                return View();
+                return View(ex);
             }
 
         }
 
-        // [Route("create-user")]
-        // public IActionResult Create()
-        // {
-        //     return View();
-        // }
+        [Route("create-user")]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Route("create-user")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateUserVm? userVm)
+        {
+            try
+            {
+                if(ModelState.IsValid)
+                {
+                    var respone = await HttpUtils<UserVm>.SendRequest(HttpMethod.Post,
+                        $"{Constants.API_USER}/create-user", userVm);
+                    if (respone != null)
+                        return RedirectToAction("ListUser");
+                    else
+                        return View();
+                }
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View();
+            }
+        }
     }
 }

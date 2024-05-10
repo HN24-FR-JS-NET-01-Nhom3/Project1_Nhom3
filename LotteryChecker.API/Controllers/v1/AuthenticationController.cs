@@ -78,6 +78,7 @@ public class AuthenticationController : ControllerBase
 			var roles = await _userManager.GetRolesAsync(user);
 			var tokenValue = await GenerateJwtToken(user, roles);
 			user.LastLogin = DateTime.Now;
+			user.IsActive = true;
             await _userManager.UpdateAsync(user);
             return Ok(tokenValue);
 		}

@@ -1,6 +1,8 @@
+using System.Drawing;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
@@ -25,9 +27,6 @@ public class HttpUtils<TEntity> where TEntity : class
                 request.Content = new StringContent(json, Encoding.UTF8, "application/json");
             }
 
-            // Log data type
-            Console.WriteLine($"Data Type: {data?.GetType().FullName}");
-
             return await client.SendAsync(request);
         }
     }
@@ -35,22 +34,30 @@ public class HttpUtils<TEntity> where TEntity : class
 
     private static async Task<TEntity?> Get(HttpResponseMessage response)
     {
-        if (response.IsSuccessStatusCode)
+        try
         {
-            var responseData = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<TEntity>(responseData);
-        }
-        if (response.StatusCode == HttpStatusCode.BadRequest)
-        {
-            // Lấy thông tin về lỗi Bad Request từ ReasonPhrase
-            var reason = await response.Content.ReadAsStringAsync();
-            Console.WriteLine("Bad Request occurred: " + reason);
-            return null;
-        }
+            if (response.IsSuccessStatusCode)
+            {
+                var responseData = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<TEntity>(responseData);
+            }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                // Lấy thông tin về lỗi Bad Request từ ReasonPhrase
+                var reason = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Bad Request occurred: " + reason);
+                //return null;
+                throw new BadHttpRequestException(reason);
+            }
 
-        // Xử lý các mã lỗi HTTP khác
-        Console.WriteLine("HTTP error occurred: " + response.StatusCode);
-        return null;
+            // Xử lý các mã lỗi HTTP khác
+            Console.WriteLine("HTTP error occurred: " + response.StatusCode);
+            throw new BadHttpRequestException("Something happened. Please try again later.");
+        }
+        catch (Exception ex)
+        {
+            throw new BadHttpRequestException(ex.Message);
+        }
     }
 
 
@@ -64,8 +71,7 @@ public class HttpUtils<TEntity> where TEntity : class
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
-            return null;
+            throw ex;
         }
     }
 }
