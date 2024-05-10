@@ -1,19 +1,19 @@
 ﻿    @model LotteryChecker.Common.Models.ViewModels.UserVm
 
     @{
-        ViewData["Title"] = "Edit";
+        ViewData["Title"] = "Chỉnh sửa người dùng";
         Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
     }
 
     <div class="container mt-5">
-        <h2>Edit User</h2>
+        <h2>@ViewData["Title"]</h2>
         <hr>
         <div class="row">
             <div class="col-md-6">
                 <form asp-action="Edit" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="mb-3">
-                        <label for="Id" class="form-label">Id</label>
+                        <label for="id" class="form-label">Id</label>
                         <input disabled asp-for="Id" type="text" class="form-control" id="id" name="Id">
                         <span asp-validation-for="Id" class="text-danger"></span>
                     </div>
@@ -39,7 +39,7 @@
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <label for="PhoneNumber" class="form-label">Phone Number</label>
+                        <label for="phoneNumber" class="form-label">Phone Number</label>
                         <input asp-for="PhoneNumber" type="tel" class="form-control" id="phoneNumber" name="PhoneNumber">
                         <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                     </div>
@@ -50,7 +50,7 @@
                     </div>
                     <div class="mb-3">
                         <button type="submit" class="btn btn-primary">Save</button>
-                        <a asp-action="ListUser" class="btn btn-secondary">Back to List</a>
+                        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
                     </div>
                 </form>
             </div>

@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 using Asp.Versioning;
 using Microsoft.IdentityModel.Tokens;
-using LotteryChecker.Common.Entities;
 using LotteryChecker.Common.Models.ViewModels;
 using System.Net;
+using LotteryChecker.Common.Models.Authentications;
 
 namespace LotteryChecker.API.Controllers.v1;
 
@@ -26,16 +26,27 @@ public class UserController : ControllerBase
         _unitOfWork = unitOfWork;
         _userManager = userManager;
     }
-    [HttpGet("get-all-users")]
-    public IActionResult GetAllUsers()
+    
+    [HttpGet("get-all-users/page={page}&pageSize={pageSize}")]
+    public IActionResult GetAllUsers(int page = 1, int pageSize = 5)
     {
         try
         {
             var users = _unitOfWork.UserRepository.GetAll().ToList();
-            if (users.IsNullOrEmpty())
+            var userPagings = _unitOfWork.UserRepository.GetPaging(users, null, page, pageSize);
+            if (userPagings.IsNullOrEmpty())
                 return NotFound();
-            var usersVm = _mapper.Map<IEnumerable<UserVm>>(users);
-            return Ok(usersVm);
+            var userPagingsVm = _mapper.Map<IEnumerable<UserVm>>(userPagings);
+            return Ok(new UserPagingVm()
+            {
+                Result = userPagingsVm,
+                Meta = new Meta()
+                {
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalPages = (int)Math.Ceiling((decimal)users.Count / pageSize)
+                }
+            });
         }
         catch (Exception ex)
         {

@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace LotteryChecker.MVC.Areas.Admin.Controllers
+namespace LotteryChecker.MVC.Areas.Admin.Controllers;
+
+[Area("Admin")]
+public class HomeAdminController : Controller
 {
-    [Area("Admin")]
-    public class HomeAdminController : Controller
+    [Route("admin")]
+    public IActionResult Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
     }
 }

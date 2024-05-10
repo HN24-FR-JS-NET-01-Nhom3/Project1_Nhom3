@@ -84,14 +84,7 @@ public class LotteryController : BaseController
 
 				var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
 					$"{Constants.API_LOTTERY}/get-ticket-result", searchTicketVm);
-				if (searchResponse == null)
-				{
-					ViewData["Reward"] = new RewardVm() { RewardValue = -1 };
-				}
-				else
-				{
-					ViewData["Reward"] = searchResponse;
-				}
+				ViewData["Reward"] = searchResponse;
 
 				return View(searchTicketVm);
 			}
@@ -126,14 +119,7 @@ public class LotteryController : BaseController
 
 				var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
 					$"{Constants.API_LOTTERY}/get-ticket-result", searchTicketVm);
-				if (searchResponse == null)
-				{
-					ViewData["Reward"] = new RewardVm() { RewardValue = -1 };
-				}
-				else
-				{
-					ViewData["Reward"] = searchResponse;
-				}
+				ViewData["Reward"] = searchResponse;
 
 				if (TempData["User"] is AppUser user)
 				{
@@ -156,8 +142,11 @@ public class LotteryController : BaseController
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex);
-				throw;
+				var response = JsonConvert.DeserializeObject<ErrorVm>(ex.Message);
+				if (response.StatusCode == 400)
+				{
+					ViewData["ErrorMessage"] = response.Message;
+				}
 			}
 		}
 

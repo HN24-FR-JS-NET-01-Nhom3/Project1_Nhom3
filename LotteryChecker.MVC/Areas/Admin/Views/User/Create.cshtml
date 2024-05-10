@@ -1,56 +1,64 @@
-﻿@model LotteryChecker.Common.Models.ViewModels.CreateUserVm
+﻿@using Newtonsoft.Json
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model LotteryChecker.Common.Models.ViewModels.CreateUserVm
 
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
-}
-@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
-{
-    <div class="alert alert-danger" role="alert">
-        @ViewBag.ErrorMessage
-    </div>
+    ErrorVm? errorMessage = null;
+    if (ViewBag.ErrorMessage != null)
+    {
+        errorMessage = JsonConvert.DeserializeObject<ErrorVm>(ViewBag.ErrorMessage);
+    }
 }
 
 <div class="container">
     <h1>Create User</h1>
-    <hr />
+    <hr/>
     <div class="row">
         <div class="col-md-6">
             <form asp-action="Create">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group my-4">
-                    <label asp-for="FirstName" class="control-label">First Name:</label>
-                    <input asp-for="FirstName" class="form-control" />
+                    <label asp-for="FirstName" class="control-label">First Name <span class="text-danger">*</span></label>
+                    <input asp-for="FirstName" class="form-control"/>
                     <span asp-validation-for="FirstName" class="text-danger"></span>
                 </div>
                 <div class="form-group my-4">
-                    <label asp-for="LastName" class="control-label">Last Name:</label>
-                    <input asp-for="LastName" class="form-control" />
+                    <label asp-for="LastName" class="control-label">Last Name <span class="text-danger">*</span></label>
+                    <input asp-for="LastName" class="form-control"/>
                     <span asp-validation-for="LastName" class="text-danger"></span>
                 </div>
                 <div class="form-group my-4">
-                    <label asp-for="UserName" class="control-label">User Name:</label>
-                    <input asp-for="UserName" class="form-control" />
+                    <label asp-for="UserName" class="control-label">User Name <span class="text-danger">*</span></label>
+                    <input asp-for="UserName" class="form-control"/>
                     <span asp-validation-for="UserName" class="text-danger"></span>
                 </div>
                 <div class="form-group my-4">
-                    <label asp-for="Email" class="control-label">Email:</label>
-                    <input asp-for="Email" class="form-control" />
+                    <label asp-for="Email" class="control-label">Email <span class="text-danger">*</span></label>
+                    <input asp-for="Email" class="form-control"/>
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
                 <div class="form-group my-4">
-                    <label asp-for="Password" class="control-label">Password:</label>
-                    <input asp-for="Password" type="password" class="form-control" />
+                    <label asp-for="Password" class="control-label">Password <span class="text-danger">*</span></label>
+                    <input asp-for="Password" type="password" class="form-control"/>
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
                 <div class="form-group my-4">
-                    <label asp-for="Phone" class="control-label">Phone:</label>
-                    <input asp-for="Phone" class="form-control" />
+                    <label asp-for="Phone" class="control-label">Phone</label>
+                    <input asp-for="Phone" class="form-control"/>
                     <span asp-validation-for="Phone" class="text-danger"></span>
                 </div>
+
+                @if (errorMessage != null)
+                {
+                    <div class="text text-danger">
+                        @errorMessage.Message
+                    </div>
+                }
                 <div class="form-group my-4">
                     <button type="submit" class="btn btn-primary mx-2">Create</button>
-                    <a asp-action="ListUser" class="btn btn-secondary">Back to List</a>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
                 </div>
             </form>
         </div>
@@ -58,5 +66,5 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

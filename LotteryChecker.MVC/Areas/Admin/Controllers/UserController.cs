@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LotteryChecker.MVC.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Route("user")]
+    [Route("admin/user")]
     public class UserController : Controller
     {
         private readonly IMapper _mapper;
@@ -16,13 +16,15 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
         {
             _mapper = mapper;
         }
+        
         [Route("get-all-users")]
-        public async Task<IActionResult> ListUser()
+        [Route("get-all-users/page={page}&pageSize={pageSize}")]
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 5)
         {
             try
             {
-                var response = await HttpUtils<List<UserVm>>.SendRequest(HttpMethod.Get,
-                $"{Constants.API_USER}/get-all-users");
+                var response = await HttpUtils<UserPagingVm>.SendRequest(HttpMethod.Get,
+                $"{Constants.API_USER}/get-all-users/page={page}&pageSize={pageSize}");
                 if (response != null)
                     return View(response);
                 else
@@ -87,7 +89,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
                          $"{Constants.API_USER}/update-user/{id}", userVm);
                     if (respone != null)
                     {
-                        return RedirectToAction("ListUser");
+                        return RedirectToAction("Index");
                     }
                     else
                         return View();
@@ -119,7 +121,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
                     var respone = await HttpUtils<UserVm>.SendRequest(HttpMethod.Post,
                         $"{Constants.API_USER}/create-user", userVm);
                     if (respone != null)
-                        return RedirectToAction("ListUser");
+                        return RedirectToAction("Index");
                     else
                         return View();
                 }
