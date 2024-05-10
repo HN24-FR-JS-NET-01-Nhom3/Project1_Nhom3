@@ -28,7 +28,7 @@ public class PurchaseTicketController : ControllerBase
     {
         try
         {
-            var purchaseTickets = _unitOfWork.PurchaseTicketRepository.GetAll().ToList();
+            var purchaseTickets = _unitOfWork.PurchaseTicketRepository.GetAllPurchaseTickets().ToList();
 
             if (!purchaseTickets.IsNullOrEmpty())
             {
@@ -52,7 +52,7 @@ public class PurchaseTicketController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Internal server error");
+            return StatusCode(500, ex.Message);
         }
          
     }

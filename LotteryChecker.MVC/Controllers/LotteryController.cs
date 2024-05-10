@@ -40,7 +40,7 @@ public class LotteryController : Controller
 
 			if (lotteryResponse == null) lotteryResponse = [];
 			var lotteryResult = lotteryResponse.ToList();
-
+	
 			var rewardResponse =
 				await HttpUtils<HttpResponse<RewardVm>>.SendRequestAndProcessResponse(HttpMethod.Get,
 					$"{Constants.API_REWARD}/get-all-rewards");

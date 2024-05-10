@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "PurchaseTicket";
+    Layout = "_Layout";
+}
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/customize.css" asp-append-version="true"/>
+}
+
+<div class="px-2">
+    <div class="row">
+        <div class="col-lg-3 text-center d-flex flex-column justify-content-center left-banner" style="background-color:#FFD7D7;">
+            <h3>Liên hệ quảng cáo</h3>
+            <h5>0123 456 789</h5>
+        </div>
+        <div class="col-lg-5 mx-auto">
+            <div class="row gx-2 justify-content-center">
+                <div class="d-flex justify-content-between mb-4">
+                    <h4>Dò vé số tự động</h4>
+                </div>
+                <form asp-action="CheckTicket" method="post">
+                    <div class="card-body">
+                        <div class="form-group mb-2">
+                            <label class="text-for-checking-ticket">Nhập số vé <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control input-for-checking-ticket" placeholder="Số vé" />
+                            <span  class="text-danger d-block"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="text-for-checking-ticket">Ngày quay thưởng <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control input-for-checking-ticket" placeholder="Ngày quay thưởng" />
+                            <span class="text-danger d-block"></span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <input type="submit" class="btn btn-for-checking-ticket" value="Dò vé" />
+                    </div>
+                </form>
+
+            </div>
+            <div class="col-lg-3 d-flex flex-column align-items-center right-banner">
+                <div class="w-100">
+                    <div class="d-flex justify-content-between mb-4">
+                        <h4>Lịch sử dò vé</h4>
+                    </div>
+                </div>
+                <div class="mt-4 w-100">
+                    <div class="d-flex justify-content-between mb-4">
+                        <h4>Tin tức</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    @section Scripts
+    {
+
+    }

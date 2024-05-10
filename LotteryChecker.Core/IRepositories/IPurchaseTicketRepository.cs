@@ -5,4 +5,5 @@ namespace LotteryChecker.Core.IRepositories;
 
 public interface IPurchaseTicketRepository : IBaseRepository<PurchaseTicket>
 {
+    public IEnumerable<PurchaseTicket> GetAllPurchaseTickets();
 }
