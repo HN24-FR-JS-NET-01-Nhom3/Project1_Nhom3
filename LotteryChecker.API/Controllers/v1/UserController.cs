@@ -8,6 +8,7 @@ using Asp.Versioning;
 using Microsoft.IdentityModel.Tokens;
 using LotteryChecker.Common.Entities;
 using LotteryChecker.Common.Models.ViewModels;
+using System.Net;
 
 namespace LotteryChecker.API.Controllers.v1;
 
@@ -71,9 +72,14 @@ public class UserController : ControllerBase
         try
         {
             var userExists = await _userManager.FindByEmailAsync(userVm.Email);
-            if (userExists != null)
+            var userNameExists = await _userManager.FindByNameAsync(userVm.UserName);
+            if (userExists != null || userNameExists != null)
             {
-                return BadRequest($"User {userVm.Email} already exists.");
+                return BadRequest(new
+                {
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = $"User {userVm.Email} already exists.",
+                });
             }
 
             var newUser = new AppUser()
@@ -91,15 +97,23 @@ public class UserController : ControllerBase
             var result = await _userManager.CreateAsync(newUser, userVm.Password);
             if (!result.Succeeded)
             {
-                return BadRequest("User could not be create.");
+                return BadRequest(new
+                {
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "User could not be created.",
+                });
             }
 
             //return Created(nameof(CreateUser), $"User {userVm.Email} created.");
             return Ok(_mapper.Map<UserVm>(newUser));
         }
         catch(Exception ex)
-        {
-            return BadRequest(ex.Message);
+        { 
+            return BadRequest(new
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+                Message = ex.Message,
+            });
         }
     }
 
