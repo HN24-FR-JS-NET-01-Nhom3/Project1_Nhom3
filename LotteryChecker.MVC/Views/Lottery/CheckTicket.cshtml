@@ -53,13 +53,16 @@
                         <p class="mt-4 mb-1"><strong class="text-danger"> Rất tiếc </strong >, vé số của bạn không trúng thưởng, chúc bạn may mắn lần sau! </p>
                     }
 
-                    <p class="">
-                        <i>(Xem chi tiết dò vé số ở phía dưới)</i>
-                    </p>
-                    <div class="d-flex justify-content-between mb-4">
-                        <h4> Kết quả xổ số ngày @lotteryResult?.FirstOrDefault()?.FirstOrDefault()?.DrawDate.ToString("dd/MM/yyyy")</h4>
-                    </div>
-                    @await Html.PartialAsync("LotteryResultTable", lotteryResult)
+                    if (reward != null || ViewData["ErrorMessage"] != null)
+                    {
+                        <p class="">
+                            <i>(Xem chi tiết dò vé số ở phía dưới)</i>
+                        </p>
+                        <div class="d-flex justify-content-between mb-4">
+                            <h4> Kết quả xổ số ngày @lotteryResult?.FirstOrDefault()?.FirstOrDefault()?.DrawDate.ToString("dd/MM/yyyy")</h4>
+                        </div>
+                        @await Html.PartialAsync("LotteryResultTable", lotteryResult)
+                    }
                 }
 
             </div>
