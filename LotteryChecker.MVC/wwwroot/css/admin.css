@@ -1,0 +1,4 @@
+.buttons-change-page .disabled {
+    cursor: not-allowed !important;
+    background-color: #ccc;
+}

@@ -53,6 +53,7 @@ namespace LotteryChecker.Core.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -91,6 +92,10 @@ namespace LotteryChecker.Core.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -99,6 +104,10 @@ namespace LotteryChecker.Core.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("UserName")
+                        .IsUnique()
+                        .HasFilter("[UserName] IS NOT NULL");
+
                     b.ToTable("AspNetUsers", (string)null);
 
                     b.HasData(
@@ -106,7 +115,7 @@ namespace LotteryChecker.Core.Migrations
                         {
                             Id = new Guid("24dd0b58-c0e0-470c-8ed2-14467a3b868f"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a0cd291c-bc67-4a23-a15a-36a25b6ea69c",
+                            ConcurrencyStamp = "49519764-bd81-439f-ba0b-60e1b0e773b9",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Hoang Chi",
@@ -115,9 +124,9 @@ namespace LotteryChecker.Core.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJOd2Zf+BZMZrUivP8cjmOlkc1FVhrQ7s1Er97Bo5DTnBHc4G9aVqKtdKmS9WZxIuw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDmdr43JJanNhyEWcvw2snUGOBTKfsCv1G1jE75FbsvEjtKeVkRqbeHWy4QzybVPIg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2ce3adfd-9005-4bfe-93dc-841d3a2be324",
+                            SecurityStamp = "f8dce32a-5551-4a49-9794-fc2f66261ee6",
                             TwoFactorEnabled = false,
                             UserName = "admin@gmail.com"
                         },
@@ -125,7 +134,7 @@ namespace LotteryChecker.Core.Migrations
                         {
                             Id = new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "228f62aa-f6ff-4be3-828b-1021a4c8d361",
+                            ConcurrencyStamp = "6b72ecf2-549e-4110-a4ab-62a720d9b904",
                             Email = "hieuhv@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Ho Van",
@@ -134,9 +143,9 @@ namespace LotteryChecker.Core.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "HIEUHV@GMAIL.COM",
                             NormalizedUserName = "HIEUHV@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIuGPp1rJPPEyl7NrZ1uL5cuYz0JL/9OrYGq3QwssJFM+eCunOJPb9AOLtloulKSkg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEO12J6gX030BOEN7VknYqvPCfQJHNr3/b7QBX8CdA6UxmCwL9BNOTzGSbkJOzlOtsQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "40f45e9c-62eb-4b8c-9c35-f82ab38c26fa",
+                            SecurityStamp = "fe312aea-4937-4f83-aaa6-760cea5b1570",
                             TwoFactorEnabled = false,
                             UserName = "hieuhv@gmail.com"
                         },
@@ -144,7 +153,7 @@ namespace LotteryChecker.Core.Migrations
                         {
                             Id = new Guid("36b35306-154c-4518-8fc1-d7e756522111"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4d03f743-e76b-400b-bfcc-71177296eb1a",
+                            ConcurrencyStamp = "5c5f8e82-c3b1-4076-a9ca-beb6a315cc39",
                             Email = "vietlq@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Le Quang",
@@ -153,9 +162,9 @@ namespace LotteryChecker.Core.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "VIETLQ@GMAIL.COM",
                             NormalizedUserName = "VIETLQ@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDAQSs7+EzXTaFBQ7rkdlxizA2NvA5yQWmeudozViD0QUNCWwRrdV4xb2hhecw8s3A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELDFNx3oyiAHXEtaRC7XFUPh3SEa02BSvsORcZC4AxbSAUqcYMsbfPgasNArnlMeYg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0725ada1-99c1-421b-9f64-3f11d630cd90",
+                            SecurityStamp = "71cd294d-e8af-437a-8895-7903d87a6e3f",
                             TwoFactorEnabled = false,
                             UserName = "vietlq@gmail.com"
                         });

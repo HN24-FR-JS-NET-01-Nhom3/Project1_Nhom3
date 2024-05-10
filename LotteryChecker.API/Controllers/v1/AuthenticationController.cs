@@ -2,8 +2,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Asp.Versioning;
-using LotteryChecker.API.Models;
-using LotteryChecker.API.Models.Authentication;
+using AutoMapper;
+using LotteryChecker.Common.Models.Authentications;
+using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.Core.Data;
 using LotteryChecker.Core.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -19,18 +20,24 @@ public class AuthenticationController : ControllerBase
 {
 	private readonly UserManager<AppUser> _userManager;
 	private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+	private readonly SignInManager<AppUser> _signInManager;
 	private readonly LotteryContext _context;
 	private readonly IConfiguration _configuration;
+	private readonly IMapper _mapper;
 
 	public AuthenticationController(UserManager<AppUser> userManager,
+		SignInManager<AppUser> signInManager,
 		RoleManager<IdentityRole<Guid>> roleManager,
 		LotteryContext context,
-		IConfiguration configuration)
+		IConfiguration configuration,
+		IMapper mapper)
 	{
 		_userManager = userManager;
+		_signInManager = signInManager;
 		_roleManager = roleManager;
 		_context = context;
 		_configuration = configuration;
+		_mapper = mapper;
 	}
 
 	[HttpPost("register")]
@@ -71,11 +78,19 @@ public class AuthenticationController : ControllerBase
 			var roles = await _userManager.GetRolesAsync(user);
 			var tokenValue = await GenerateJwtToken(user, roles);
 			user.LastLogin = DateTime.Now;
+			user.IsActive = true;
             await _userManager.UpdateAsync(user);
             return Ok(tokenValue);
 		}
 
 		return Unauthorized();
+	}
+	
+	[HttpPost("logout")]
+	public async Task<IActionResult> Logout()
+	{
+		await _signInManager.SignOutAsync();
+		return NoContent();
 	}
 
 	private async Task<AuthResultVm> GenerateJwtToken(AppUser user, IList<string> roles)
@@ -119,9 +134,10 @@ public class AuthenticationController : ControllerBase
 		await _context.SaveChangesAsync();
 		var response = new AuthResultVm
 		{
-			Token = jwtToken,
+			AccessToken = jwtToken,
 			RefreshToken = refreshToken.Token,
-			ExpiresAt = token.ValidTo
+			ExpiresAt = token.ValidTo,
+			User = _mapper.Map<UserVm>(user)
 		};
 		return response;
 	}

@@ -1,6 +1,6 @@
 ﻿using Asp.Versioning;
 using AutoMapper;
-using LotteryChecker.API.Models.Entities;
+using LotteryChecker.Common.Models.Entities;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Mvc;
@@ -75,7 +75,7 @@ public class RewardController : ControllerBase
             var status = _unitOfWork.SaveChanges();
             if (status > 0)
             {
-                return Ok();
+                return Ok(reward);
             }
             return BadRequest();
         }
@@ -102,7 +102,7 @@ public class RewardController : ControllerBase
             var status = _unitOfWork.SaveChanges();
             if (status > 0)
             {
-                return Ok();
+                return Ok(reward);
             }
             return BadRequest();
         }

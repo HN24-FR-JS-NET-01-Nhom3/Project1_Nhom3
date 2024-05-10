@@ -1,12 +1,12 @@
-@using LotteryChecker.MVC.Models.Entities
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using System.Globalization
-@model SearchTicketVm
+@using LotteryChecker.Common.Models.Entities
+@model LotteryChecker.Common.Models.ViewModels.SearchTicketVm
 
 @{
     ViewData["Title"] = "Check Lottery";
-    var reward = TempData["Reward"] as RewardVm;
-    var lotteryResult = TempData["LotteryResult"] as IEnumerable<IGrouping<int, LotteryVm>>;
+    var reward = ViewData["Reward"] as RewardVm;
+    var lotteryResult = ViewData["LotteryResult"] as IEnumerable<IGrouping<int, LotteryVm>>;
     Layout = "_Layout";
 }
 
@@ -46,21 +46,25 @@
                 @{
                     if (reward != null)
                     {
-                        if (reward.RewardName != null)
-                        {
-                            <p class="mt-4 mb-1"><strong>XIN CHÚC MỪNG</strong>, vé số của bạn đã trúng giải <span class="fw-bold text-danger">@reward.RewardName</span>, trị giá <span class="fw-bold text-danger">@reward.RewardValue.ToString("N0", new CultureInfo("vi-VN")) VND</span>!</p>
-                        }
-                        else
-                        {
-                            <p class="mt-4 mb-1"><strong class="text-danger">Rất tiếc</strong>, vé số của bạn không trúng thưởng, chúc bạn may mắn lần sau!</p>
-                        }
-                        <p class=""><i>(Xem chi tiết dò vé số ở phía dưới)</i></p>
-                        
-                        
+                        <p class="mt-4 mb-1"><strong>XIN CHÚC MỪNG</strong>, vé số của bạn đã trúng giải <span class="fw-bold text-danger">@reward.RewardName</span>, trị giá <span class="fw-bold text-danger">@reward.RewardValue.ToString("N0", new CultureInfo("vi-VN")) VND</span>!</p>
+                    }
+                    else if (ViewData["ErrorMessage"] != null)
+                    {
+                        <p class="mt-4 mb-1"><strong class="text-danger"> Rất tiếc </strong >, vé số của bạn không trúng thưởng, chúc bạn may mắn lần sau! </p>
+                    }
+
+                    if (reward != null || ViewData["ErrorMessage"] != null)
+                    {
+                        <p class="">
+                            <i>(Xem chi tiết dò vé số ở phía dưới)</i>
+                        </p>
+                        <div class="d-flex justify-content-between mb-4">
+                            <h4> Kết quả xổ số ngày @lotteryResult?.FirstOrDefault()?.FirstOrDefault()?.DrawDate.ToString("dd/MM/yyyy")</h4>
+                        </div>
                         @await Html.PartialAsync("LotteryResultTable", lotteryResult)
                     }
                 }
-                
+
             </div>
         </div>
         <div class="col-lg-3 d-flex flex-column align-items-center right-banner">
@@ -80,5 +84,4 @@
 
 @section Scripts
 {
-
 }

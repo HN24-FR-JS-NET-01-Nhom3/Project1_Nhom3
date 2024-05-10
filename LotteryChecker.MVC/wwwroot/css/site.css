@@ -12417,3 +12417,18 @@ header.masthead .post-heading .meta a {
         background-image: url("../images/banner.png") !important;
     }
 }
+
+.background {
+    position: fixed;
+    z-index: -1;
+    background-size: cover;
+}
+
+.hello-text {
+    cursor: unset;
+    color: #000 !important;
+    padding-right: 1rem !important;
+    &:hover {
+        color: #000 !important;
+    }
+}

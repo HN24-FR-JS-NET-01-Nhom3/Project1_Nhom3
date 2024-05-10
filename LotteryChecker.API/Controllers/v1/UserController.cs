@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using LotteryChecker.API.Models.Entities;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Identity;
@@ -7,12 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 using Asp.Versioning;
 using Microsoft.IdentityModel.Tokens;
+using LotteryChecker.Common.Models.ViewModels;
+using System.Net;
+using LotteryChecker.Common.Models.Authentications;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LotteryChecker.API.Controllers.v1;
 
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{v:apiVersion}/user")]
+[Authorize(Roles = "Admin")]
 public class UserController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -24,16 +28,27 @@ public class UserController : ControllerBase
         _unitOfWork = unitOfWork;
         _userManager = userManager;
     }
-    [HttpGet("get-all-users")]
-    public IActionResult GetAllUsers()
+    
+    [HttpGet("get-all-users/page={page}&pageSize={pageSize}")]
+    public IActionResult GetAllUsers(int page = 1, int pageSize = 5)
     {
         try
         {
             var users = _unitOfWork.UserRepository.GetAll().ToList();
-            if (users.IsNullOrEmpty())
+            var userPagings = _unitOfWork.UserRepository.GetPaging(users, null, page, pageSize);
+            if (userPagings.IsNullOrEmpty())
                 return NotFound();
-            var usersVm = _mapper.Map<IEnumerable<UserVm>>(users);
-            return Ok(usersVm);
+            var userPagingsVm = _mapper.Map<IEnumerable<UserVm>>(userPagings);
+            return Ok(new UserPagingVm()
+            {
+                Result = userPagingsVm,
+                Meta = new Meta()
+                {
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalPages = (int)Math.Ceiling((decimal)users.Count / pageSize)
+                }
+            });
         }
         catch (Exception ex)
         {
@@ -42,12 +57,13 @@ public class UserController : ControllerBase
         }       
     }
 
-    [HttpGet("get-user/{email}")]
-    public async Task<IActionResult> GetUser(string email)
+    [HttpGet("get-user/{id}")]
+    public async Task<IActionResult> GetUser(Guid id)
     {
         try
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            string idStr = id.ToString();
+            var user = await _userManager.FindByIdAsync(idStr);
             if (user == null)
                 return NotFound();
             else
@@ -69,9 +85,14 @@ public class UserController : ControllerBase
         try
         {
             var userExists = await _userManager.FindByEmailAsync(userVm.Email);
-            if (userExists != null)
+            var userNameExists = await _userManager.FindByNameAsync(userVm.UserName);
+            if (userExists != null || userNameExists != null)
             {
-                return BadRequest($"User {userVm.Email} already exists.");
+                return BadRequest(new
+                {
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = $"User {userVm.Email} already exists.",
+                });
             }
 
             var newUser = new AppUser()
@@ -89,36 +110,38 @@ public class UserController : ControllerBase
             var result = await _userManager.CreateAsync(newUser, userVm.Password);
             if (!result.Succeeded)
             {
-                return BadRequest("User could not be create.");
+                return BadRequest(new
+                {
+                    StatusCode = (int)HttpStatusCode.BadRequest,
+                    Message = "User could not be created.",
+                });
             }
 
-            return Created(nameof(CreateUser), $"User {userVm.Email} created.");
+            //return Created(nameof(CreateUser), $"User {userVm.Email} created.");
+            return Ok(_mapper.Map<UserVm>(newUser));
         }
         catch(Exception ex)
-        {
-            return BadRequest(ex.Message);
+        { 
+            return BadRequest(new
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+                Message = ex.Message,
+            });
         }
     }
 
-    [HttpPut("update-user/{email}")]
-    public async Task<IActionResult> UpdateUser(string email, [FromBody] CreateUserVm userVm)
+    [HttpPut("update-user/{id}")]
+    public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UserVm userVm)
     {
         try
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            string idStr = id.ToString();
+            var user = await _userManager.FindByIdAsync(idStr);
             if (user == null)
             {
-                return NotFound($"User {userVm.Email} not found.");
+                return NotFound($"User not found.");
             }
-            if (!string.IsNullOrEmpty(userVm.Email) && userVm.Email != email)
-            {
-                var existingUser = await _userManager.FindByEmailAsync(userVm.Email);
-                if (existingUser != null)
-                {
-                    return BadRequest($"Email {userVm.Email} is already in use.");
-                }
-            }
-            PropertyInfo[] properties = typeof(CreateUserVm).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            PropertyInfo[] properties = typeof(UserVm).GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var property in properties)
             {
                 // Lấy giá trị của thuộc tính trong userVm
@@ -137,7 +160,7 @@ public class UserController : ControllerBase
                 }
             }
             await _userManager.UpdateAsync(user);
-            return Ok($"User {userVm.Email} updated.");
+            return Ok(_mapper.Map<UserVm>(user));
         }
         catch (Exception ex)
         {
@@ -146,12 +169,12 @@ public class UserController : ControllerBase
         }
     }
         
-    [HttpPatch("update-block-user/{email}/{isActive}")]
-    public async Task<IActionResult> UpdateBlockUser(string email, bool isActive)
+    [HttpPost("update-status-user/{id}/{isActive}")]
+    public async Task<IActionResult> UpdateStatusUser(string id, bool isActive)
     {
         try
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
                 return NotFound();
             user.IsActive = isActive;
@@ -160,7 +183,7 @@ public class UserController : ControllerBase
             {
                 return BadRequest("User could not be update.");
             }
-            return Ok($"User {user.Email} updated.");
+            return Ok(_mapper.Map<UserVm>(user));
         }
         catch (Exception ex)
         {

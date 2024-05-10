@@ -1,6 +1,5 @@
 using LotteryChecker.Core.Data;
 using LotteryChecker.Core.Entities;
-using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,10 +19,10 @@ builder.Services.AddDefaultIdentity<AppUser>(
 			options.SignIn.RequireConfirmedEmail = false;
 		}).AddRoles<IdentityRole<Guid>>()
 	.AddEntityFrameworkStores<LotteryContext>().AddDefaultTokenProviders();
+
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddControllersWithViews();
+builder.Services.AddAutoMapper(typeof(LotteryChecker.Common.AutoMapper.MyAutoMapper).Assembly);
 
 var app = builder.Build();
 
@@ -49,6 +48,10 @@ app.UseAuthorization();
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name : "areas",
+    pattern : "{area:exists}/{controller}/{action}");
 app.MapRazorPages();
 
 app.Run();
