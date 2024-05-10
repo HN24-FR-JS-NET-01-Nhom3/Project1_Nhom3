@@ -3,7 +3,11 @@
 @using LotteryChecker.Common.Models.ViewModels
 @{
     var userJson = TempData["User"] as string;
-    var user = JsonConvert.DeserializeObject<UserVm>(userJson);
+    UserVm? user = null;
+    if (userJson != null)
+    {
+        user = JsonConvert.DeserializeObject<UserVm>(userJson);
+    }
 }
 
 <!DOCTYPE html>
