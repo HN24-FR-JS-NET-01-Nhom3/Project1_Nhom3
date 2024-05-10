@@ -94,7 +94,8 @@ public class UserController : ControllerBase
                 return BadRequest("User could not be create.");
             }
 
-            return Created(nameof(CreateUser), $"User {userVm.Email} created.");
+            //return Created(nameof(CreateUser), $"User {userVm.Email} created.");
+            return Ok(_mapper.Map<UserVm>(newUser));
         }
         catch(Exception ex)
         {
@@ -132,7 +133,7 @@ public class UserController : ControllerBase
                 }
             }
             await _userManager.UpdateAsync(user);
-            return Ok($"User {userVm.Email} updated.");
+            return Ok(_mapper.Map<UserVm>(user));
         }
         catch (Exception ex)
         {
@@ -156,7 +157,7 @@ public class UserController : ControllerBase
             {
                 return BadRequest("User could not be update.");
             }
-            return Ok($"User {user.Email} updated.");
+            return Ok(_mapper.Map<UserVm>(user));
         }
         catch (Exception ex)
         {
