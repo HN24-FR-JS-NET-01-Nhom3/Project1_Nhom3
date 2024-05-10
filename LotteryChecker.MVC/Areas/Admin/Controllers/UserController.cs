@@ -2,7 +2,6 @@
 using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -10,7 +9,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Route("admin/user")]
-[Authorize(Roles = "Admin")]
+[CustomAuthorize("Admin, Contributor")]
 public class UserController : Controller
 {
     private readonly IMapper _mapper;
@@ -28,7 +27,7 @@ public class UserController : Controller
         try
         {
             var response = await HttpUtils<UserPagingVm>.SendRequest(HttpMethod.Get,
-                $"{Constants.API_USER}/get-all-users/page={page}&pageSize={pageSize}");
+                $"{Constants.API_USER}/get-all-users/page={page}&pageSize={pageSize}", null, Request.Cookies["AccessToken"]);
             if (response != null)
                 return View(response);
             else
@@ -47,7 +46,7 @@ public class UserController : Controller
         try
         {
             var respone = await HttpUtils<UserVm>.SendRequest(HttpMethod.Get,
-                $"{Constants.API_USER}/get-user/{id}");
+                $"{Constants.API_USER}/get-user/{id}", null, Request.Cookies["AccessToken"]);
             if (respone != null)
                 return View(respone);
             else
@@ -67,7 +66,7 @@ public class UserController : Controller
         try
         {
             var respone = await HttpUtils<UserVm>.SendRequest(HttpMethod.Get,
-                $"{Constants.API_USER}/get-user/{id}");
+                $"{Constants.API_USER}/get-user/{id}", null, Request.Cookies["AccessToken"]);
             if (respone != null)
                 return View(respone);
             else
@@ -90,7 +89,7 @@ public class UserController : Controller
             if (ModelState.IsValid)
             {
                 var respone = await HttpUtils<UserVm>.SendRequest(HttpMethod.Put,
-                    $"{Constants.API_USER}/update-user/{id}", userVm);
+                    $"{Constants.API_USER}/update-user/{id}", userVm, Request.Cookies["AccessToken"]);
                 if (respone != null)
                 {
                     return RedirectToAction("Index");
@@ -123,7 +122,7 @@ public class UserController : Controller
             if(ModelState.IsValid)
             {
                 var respone = await HttpUtils<UserVm>.SendRequest(HttpMethod.Post,
-                    $"{Constants.API_USER}/create-user", userVm);
+                    $"{Constants.API_USER}/create-user", userVm, Request.Cookies["AccessToken"]);
                 if (respone != null)
                     return RedirectToAction("Index");
                 else
@@ -145,7 +144,7 @@ public class UserController : Controller
         try
         {
             var respone = await HttpUtils<UserVm>.SendRequest(HttpMethod.Post,
-                $"{Constants.API_USER}/update-status-user/{id}/{!isActive}");
+                $"{Constants.API_USER}/update-status-user/{id}/{!isActive}", null, Request.Cookies["AccessToken"]);
             if (respone != null)
             {
                 TempData["SuccessMessage"] = "Changed status successfully";

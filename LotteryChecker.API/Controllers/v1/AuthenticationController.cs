@@ -141,4 +141,21 @@ public class AuthenticationController : ControllerBase
 		};
 		return response;
 	}
+
+	[HttpGet("get-role")]
+	public async Task<IActionResult> GetRole()
+	{
+		var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+		if (userId != null)
+		{
+			var user = await _userManager.FindByIdAsync(userId);
+			if (user != null)
+			{
+				var roles = await _userManager.GetRolesAsync(user);
+				return Ok(roles);
+			}
+		}
+
+		return NotFound();
+	}
 }

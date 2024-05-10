@@ -1,9 +1,7 @@
 using AutoMapper;
 using LotteryChecker.Common.Models.Authentications;
-using LotteryChecker.Core.Entities;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -12,7 +10,7 @@ namespace LotteryChecker.MVC.Controllers;
 [Route("authen")]
 public class AuthenController : BaseController
 {
-	public AuthenController(IMapper mapper, UserManager<AppUser> userManager) : base(mapper, userManager)
+	public AuthenController(IMapper mapper) : base(mapper)
 	{
 	}
 
@@ -38,7 +36,6 @@ public class AuthenController : BaseController
 					Response.Cookies.Append("AccessToken", loginResponse.AccessToken);
 					Response.Cookies.Append("RefreshToken", loginResponse.RefreshToken);
 					Response.Cookies.Append("User", JsonConvert.SerializeObject(loginResponse.User));
-					
 					return RedirectToAction("Index", "Lottery");
 				}
 			}
