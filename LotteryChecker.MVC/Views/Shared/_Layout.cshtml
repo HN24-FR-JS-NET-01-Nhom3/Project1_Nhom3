@@ -1,4 +1,16 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Newtonsoft.Json
+@using LotteryChecker.Common.Models.ViewModels
+@{
+    var userJson = TempData["User"] as string;
+    UserVm? user = null;
+    if (userJson != null)
+    {
+        user = JsonConvert.DeserializeObject<UserVm>(userJson);
+    }
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -32,7 +44,7 @@
                     <a class="nav-link" asp-controller="Lottery" asp-action="CheckTicket">Dò Vé Số</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Home" asp-action="Index">Mua Vé Số</a>
+                    <a class="nav-link" asp-controller="PurchaseTicket" asp-action="Index">Mua Vé Số</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Home" asp-action="Index">Thống Kê</a>
@@ -42,12 +54,24 @@
                 </li>
             </ul>
             <ul class="navbar-nav" style="width: auto;">
-                <li class="nav-item custom-btn-register">
-                    <a class="nav-link" asp-controller="Home" asp-action="Index">Đăng ký</a>
-                </li>
-                <li class="nav-item custom-btn-login">
-                    <a class="nav-link" asp-controller="Home" asp-action="Index">Đăng nhập</a>
-                </li>
+                @if (user == null)
+                {
+                    <li class="nav-item custom-btn-register">
+                        <a class="nav-link" asp-controller="Authen" asp-action="Login">Đăng ký</a>
+                    </li>
+                    <li class="nav-item custom-btn-login">
+                        <a class="nav-link" asp-controller="Authen" asp-action="Login">Đăng nhập</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link hello-text" href="#">Xin chào, <strong>@user.LastName</strong></a>
+                    </li>
+                    <li class="nav-item custom-btn-login">
+                        <a class="nav-link" asp-controller="Authen" asp-action="Login">Đăng xuất</a>
+                    </li>
+                }
             </ul>
         </div>
     </div>

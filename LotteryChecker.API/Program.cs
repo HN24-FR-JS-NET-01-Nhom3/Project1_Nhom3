@@ -61,7 +61,7 @@ var connectionString = builder.Configuration.GetConnectionString("connectionStri
 builder.Services.AddDbContext<LotteryContext>(options => { options.UseSqlServer(connectionString); });
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(typeof(LotteryChecker.Common.AutoMapper.MyAutoMapper).Assembly);
 
 builder.Services.AddApiVersioning(x =>
 	{

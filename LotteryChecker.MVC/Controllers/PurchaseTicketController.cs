@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
+using LotteryChecker.Common.Models.Entities;
 using LotteryChecker.MVC.Models;
-using LotteryChecker.MVC.Models.Entities;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace LotteryChecker.MVC.Controllers
 {
-    [Route("PurchaseTicket")]
+    [Route("purchase-ticket")]
     public class PurchaseTicketController : Controller
     {
         private readonly IMapper _mapper;
@@ -23,7 +22,7 @@ namespace LotteryChecker.MVC.Controllers
         {
             try
             {
-                var purchaseTicketResponse = await HttpUtils<IEnumerable<PurchaseTicketVm>>.SendRequestAndProcessResponse(HttpMethod.Get, $"{Constants.API_PURCHASE_TICKET}/get-all-purchase-tickets");
+                var purchaseTicketResponse = await HttpUtils<IEnumerable<PurchaseTicketVm>>.SendRequest(HttpMethod.Get, $"{Constants.API_PURCHASE_TICKET}/get-all-purchase-tickets");
 
                 if (purchaseTicketResponse == null) purchaseTicketResponse = [];
                 var purchaseTicketResult = purchaseTicketResponse.ToList();

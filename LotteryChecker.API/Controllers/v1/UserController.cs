@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using LotteryChecker.API.Models.Entities;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Identity;
@@ -7,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 using Asp.Versioning;
 using Microsoft.IdentityModel.Tokens;
+using LotteryChecker.Common.Entities;
+using LotteryChecker.Common.Models.ViewModels;
 
 namespace LotteryChecker.API.Controllers.v1;
 
@@ -42,12 +43,13 @@ public class UserController : ControllerBase
         }       
     }
 
-    [HttpGet("get-user/{email}")]
-    public async Task<IActionResult> GetUser(string email)
+    [HttpGet("get-user/{id}")]
+    public async Task<IActionResult> GetUser(Guid id)
     {
         try
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            string idStr = id.ToString();
+            var user = await _userManager.FindByIdAsync(idStr);
             if (user == null)
                 return NotFound();
             else
@@ -100,25 +102,18 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPut("update-user/{email}")]
-    public async Task<IActionResult> UpdateUser(string email, [FromBody] CreateUserVm userVm)
+    [HttpPut("update-user/{id}")]
+    public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UserVm userVm)
     {
         try
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            string idStr = id.ToString();
+            var user = await _userManager.FindByIdAsync(idStr);
             if (user == null)
             {
-                return NotFound($"User {userVm.Email} not found.");
+                return NotFound($"User not found.");
             }
-            if (!string.IsNullOrEmpty(userVm.Email) && userVm.Email != email)
-            {
-                var existingUser = await _userManager.FindByEmailAsync(userVm.Email);
-                if (existingUser != null)
-                {
-                    return BadRequest($"Email {userVm.Email} is already in use.");
-                }
-            }
-            PropertyInfo[] properties = typeof(CreateUserVm).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            PropertyInfo[] properties = typeof(UserVm).GetProperties(BindingFlags.Public | BindingFlags.Instance);
             foreach (var property in properties)
             {
                 // Lấy giá trị của thuộc tính trong userVm
@@ -146,12 +141,13 @@ public class UserController : ControllerBase
         }
     }
         
-    [HttpPatch("update-block-user/{email}/{isActive}")]
-    public async Task<IActionResult> UpdateBlockUser(string email, bool isActive)
+    [HttpPatch("update-block-user/{id}/{isActive}")]
+    public async Task<IActionResult> UpdateBlockUser(Guid id, bool isActive)
     {
         try
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            string idStr = id.ToString();
+            var user = await _userManager.FindByIdAsync(idStr);
             if (user == null)
                 return NotFound();
             user.IsActive = isActive;

@@ -1,7 +1,7 @@
 ﻿using Asp.Versioning;
 using AutoMapper;
-using LotteryChecker.API.Models;
-using LotteryChecker.API.Models.Entities;
+using LotteryChecker.Common.Models.Authentications;
+using LotteryChecker.Common.Models.Entities;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Mvc;
@@ -94,7 +94,7 @@ public class PurchaseTicketController : ControllerBase
 
             if (status > 0)
             {
-                return Ok();
+                return Ok(purchaseTicket);
             }
 
             return BadRequest();
@@ -122,7 +122,7 @@ public class PurchaseTicketController : ControllerBase
             var status = _unitOfWork.SaveChanges();
             if (status > 0)
             {
-                return Ok();
+                return Ok(purchaseTicket);
             }
             return BadRequest();
         }
