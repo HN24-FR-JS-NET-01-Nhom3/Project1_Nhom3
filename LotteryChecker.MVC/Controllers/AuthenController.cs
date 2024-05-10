@@ -25,7 +25,7 @@ public class AuthenController : BaseController
 
 	[HttpPost]
 	[Route("login")]
-	public async Task<IActionResult> Login(LoginVm loginVm)
+	public async Task<IActionResult> Login(LoginVm loginVm, string returnUrl)
 	{
 		try
 		{
@@ -38,8 +38,15 @@ public class AuthenController : BaseController
 					Response.Cookies.Append("AccessToken", loginResponse.AccessToken);
 					Response.Cookies.Append("RefreshToken", loginResponse.RefreshToken);
 					Response.Cookies.Append("User", JsonConvert.SerializeObject(loginResponse.User));
-					
-					return RedirectToAction("Index", "Lottery");
+
+					if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+					{
+						// Chuyển hướng đến returnUrl nếu nó là một đường dẫn hợp lệ trong ứng dụng
+						return Redirect(returnUrl);
+					}
+                
+					// Nếu không có returnUrl hoặc returnUrl không hợp lệ, chuyển hướng đến trang Index của LotteryController
+					return RedirectToAction("Index", "Lottery", new { area = "" });
 				}
 			}
 
