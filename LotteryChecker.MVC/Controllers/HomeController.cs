@@ -18,7 +18,7 @@ public class HomeController : Controller
 		return RedirectToAction("Index", "Lottery");
 	}
 
-	public IActionResult Privacy()
+	public IActionResult Error()
 	{
 		return View();
 	}

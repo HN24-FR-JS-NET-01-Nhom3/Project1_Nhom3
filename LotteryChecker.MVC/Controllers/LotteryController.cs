@@ -5,7 +5,6 @@ using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -15,7 +14,7 @@ namespace LotteryChecker.MVC.Controllers;
 [Route("lottery")]
 public class LotteryController : BaseController
 {
-	public LotteryController(IMapper mapper, UserManager<AppUser> userManager) : base(mapper, userManager)
+	public LotteryController(IMapper mapper) : base(mapper)
 	{
 	}
 

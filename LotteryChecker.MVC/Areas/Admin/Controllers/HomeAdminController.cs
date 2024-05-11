@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LotteryChecker.MVC.Areas.Admin.Controllers;
 
 [Area("Admin")]
-//[Authorize(Roles = "Admin")]
+[CustomAuthorize("Admin, Contributor")]
 public class HomeAdminController : Controller
 {
     [Route("admin")]
