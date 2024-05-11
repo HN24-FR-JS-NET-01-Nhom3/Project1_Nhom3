@@ -49,6 +49,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapControllerRoute(
@@ -61,7 +62,7 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
 	name: "admin",
-	pattern: "/admin/{controller=Home}/{action=Index}/{id?}",
+	pattern: "/admin/{controller=HomeAdmin}/{action=Index}/{id?}",
 	defaults: new { area = "Admin" }
 ).RequireAuthorization();
 
