@@ -1,4 +1,7 @@
-﻿@{
+﻿@using LotteryChecker.Common.Models.Entities
+@model List<PurchaseTicketVm>
+
+@{
     ViewData["Title"] = "PurchaseTicket";
     Layout = "_Layout";
 }
@@ -10,10 +13,12 @@
 
 <div class="px-2">
     <div class="row">
+
         <div class="col-lg-3 text-center d-flex flex-column justify-content-center left-banner" style="background-color:#FFD7D7;">
             <h3>Liên hệ quảng cáo</h3>
             <h5>0123 456 789</h5>
         </div>
+
         <div class="col-lg-5 mx-auto">
             <div class="row gx-2 justify-content-center">
                 <div class="d-flex justify-content-between mb-4">
@@ -38,21 +43,91 @@
                 </form>
 
             </div>
-            <div class="col-lg-3 d-flex flex-column align-items-center right-banner">
-                <div class="w-100">
-                    <div class="d-flex justify-content-between mb-4">
-                        <h4>Lịch sử dò vé</h4>
-                    </div>
+        </div>
+
+     @*        @using (Html.BeginForm("Create", "PurchaseTicket", FormMethod.Post))
+            {
+                <!-- Form fields for PurchaseTicketVm properties -->
+                <div>
+                    @Html.LabelFor(model => model.)
+                    @Html.TextBoxFor(model => model.Property1)
                 </div>
-                <div class="mt-4 w-100">
-                    <div class="d-flex justify-content-between mb-4">
-                        <h4>Tin tức</h4>
-                    </div>
+
+                <!-- Add more form fields as needed -->
+
+                <div>
+                    <input type="submit" value="Create" />
+                </div>
+            } *@
+
+
+    
+@*     <div>
+        <input type="submit" value="Create" />
+    </div>
+} *@
+
+        <div class="col-lg-3 d-flex flex-column align-items-center right-banner">
+            <div class="w-100">
+                <div class="d-flex justify-content-between mb-4">
+                    <h1>Lịch sử mua vé</h1>
+                </div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Ngày mua vé</th>
+                            <th>Số vé</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ticket in Model)
+                        {
+                            <tr>
+                                <td>@ticket.PurchaseDate</td>
+                                <td>@ticket.LotteryNumber</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-4 w-100">
+                <div class="d-flex justify-content-between mb-4">
+                    <h4>Tin tức</h4>
                 </div>
             </div>
         </div>
+
+        @*     <h1>Purchase Tickets</h1>
+
+            @if (Model.Any())
+            {
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Customer Name</th>
+                            <!-- Add more table headers as needed -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ticket in Model)
+                        {
+                            <tr>
+                                <td>@ticket.PurchaseDate</td>
+                                <td>@ticket.LotteryNumber</td>
+                      
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>No purchase tickets found.</p>
+            } *@
+      @*   </div> *@
     </div>
-    </div>
+ </div>
 
     @section Scripts
     {
