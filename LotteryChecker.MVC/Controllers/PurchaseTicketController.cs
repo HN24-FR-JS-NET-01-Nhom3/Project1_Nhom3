@@ -62,12 +62,12 @@ namespace LotteryChecker.MVC.Controllers
         }
 
         [HttpPost("create")]
-
         public async Task<IActionResult> Create(PurchaseTicket purchaseTicket)
         {
             try
             {
                 var purchaseTicketJson = JsonConvert.SerializeObject(purchaseTicket);
+
                 var content = new StringContent(purchaseTicketJson, Encoding.UTF8, "application/json");
 
                 var apiResponse = await _httpClient.PostAsync("https://localhost:7178/api/v1/purchase-ticket/create-purchase-ticket", content);
