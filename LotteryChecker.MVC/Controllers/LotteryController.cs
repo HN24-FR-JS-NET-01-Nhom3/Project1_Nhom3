@@ -5,7 +5,6 @@ using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -15,7 +14,7 @@ namespace LotteryChecker.MVC.Controllers;
 [Route("lottery")]
 public class LotteryController : BaseController
 {
-	public LotteryController(IMapper mapper, UserManager<AppUser> userManager) : base(mapper, userManager)
+	public LotteryController(IMapper mapper) : base(mapper)
 	{
 	}
 
@@ -40,7 +39,7 @@ public class LotteryController : BaseController
 
 			if (lotteryResponse == null) lotteryResponse = [];
 			var lotteryResult = lotteryResponse.ToList();
-	
+
 			var rewardResponse =
 				await HttpUtils<HttpResponse<RewardVm>>.SendRequest(HttpMethod.Get,
 					$"{Constants.API_REWARD}/get-all-rewards");
@@ -84,14 +83,7 @@ public class LotteryController : BaseController
 
 				var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
 					$"{Constants.API_LOTTERY}/get-ticket-result", searchTicketVm);
-				if (searchResponse == null)
-				{
-					ViewData["Reward"] = new RewardVm() { RewardValue = -1 };
-				}
-				else
-				{
-					ViewData["Reward"] = searchResponse;
-				}
+				ViewData["Reward"] = searchResponse;
 
 				return View(searchTicketVm);
 			}
@@ -126,14 +118,7 @@ public class LotteryController : BaseController
 
 				var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
 					$"{Constants.API_LOTTERY}/get-ticket-result", searchTicketVm);
-				if (searchResponse == null)
-				{
-					ViewData["Reward"] = new RewardVm() { RewardValue = -1 };
-				}
-				else
-				{
-					ViewData["Reward"] = searchResponse;
-				}
+				ViewData["Reward"] = searchResponse;
 
 				if (TempData["User"] is AppUser user)
 				{
@@ -156,8 +141,11 @@ public class LotteryController : BaseController
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex);
-				throw;
+				var response = JsonConvert.DeserializeObject<ErrorVm>(ex.Message);
+				if (response.StatusCode == 400)
+				{
+					ViewData["ErrorMessage"] = response.Message;
+				}
 			}
 		}
 

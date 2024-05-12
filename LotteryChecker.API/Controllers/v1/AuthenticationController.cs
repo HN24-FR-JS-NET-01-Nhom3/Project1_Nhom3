@@ -78,6 +78,7 @@ public class AuthenticationController : ControllerBase
 			var roles = await _userManager.GetRolesAsync(user);
 			var tokenValue = await GenerateJwtToken(user, roles);
 			user.LastLogin = DateTime.Now;
+			user.IsActive = true;
             await _userManager.UpdateAsync(user);
             return Ok(tokenValue);
 		}
@@ -139,5 +140,22 @@ public class AuthenticationController : ControllerBase
 			User = _mapper.Map<UserVm>(user)
 		};
 		return response;
+	}
+
+	[HttpGet("get-role")]
+	public async Task<IActionResult> GetRole()
+	{
+		var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+		if (userId != null)
+		{
+			var user = await _userManager.FindByIdAsync(userId);
+			if (user != null)
+			{
+				var roles = await _userManager.GetRolesAsync(user);
+				return Ok(roles);
+			}
+		}
+
+		return NotFound();
 	}
 }

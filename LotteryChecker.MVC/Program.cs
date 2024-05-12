@@ -1,6 +1,5 @@
 using LotteryChecker.Core.Data;
-using LotteryChecker.Core.Entities;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,17 +11,24 @@ builder.Services.AddDbContext<LotteryContext>(options =>
 	options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<AppUser>(
-		options =>
-		{
-			options.SignIn.RequireConfirmedAccount = false;
-			options.SignIn.RequireConfirmedEmail = false;
-		}).AddRoles<IdentityRole<Guid>>()
-	.AddEntityFrameworkStores<LotteryContext>().AddDefaultTokenProviders();
+builder.Services.AddHttpClient();
 
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddAutoMapper(typeof(LotteryChecker.Common.AutoMapper.MyAutoMapper).Assembly);
+
+builder.Services.AddAuthentication(options =>
+	{
+		options.DefaultScheme = "Cookies";
+		options.DefaultChallengeScheme = "Cookies";
+	})
+	.AddCookie("Cookies", options =>
+	{
+		options.AccessDeniedPath = "/home/error";
+		options.LoginPath = "/authen/login";
+	});
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -45,13 +51,14 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseAuthentication();
+
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name : "areas",
-    pattern : "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
+    pattern : "{area:exists}/{controller}/{action}");
 
 app.Run();

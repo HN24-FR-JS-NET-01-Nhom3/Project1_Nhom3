@@ -14,6 +14,7 @@ namespace LotteryChecker.Common.AutoMapper
                 .ForMember(dest => dest.RewardValue, opt => opt.MapFrom(src => src.Reward.RewardValue))
                 .ReverseMap();
             CreateMap<PurchaseTicket, PurchaseTicketVm>().ReverseMap();
+            CreateMap<SearchHistory, SearchHistoryVm>().ReverseMap();
             CreateMap<Reward, RewardVm>().ReverseMap();
             CreateMap<AppUser, UserVm>().ReverseMap();
         }
