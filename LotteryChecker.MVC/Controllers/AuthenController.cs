@@ -31,16 +31,25 @@ public class AuthenController : BaseController
 			{
 				var loginResponse = await HttpUtils<AuthResultVm>.SendRequest(HttpMethod.Post,
 					$"{Constants.API_AUTHEN}/login", loginVm);
-				if (loginResponse != null)
+				if (loginResponse?.Data != null)
 				{
-					Response.Cookies.Append("AccessToken", loginResponse.AccessToken);
-					Response.Cookies.Append("RefreshToken", loginResponse.RefreshToken);
-					Response.Cookies.Append("User", JsonConvert.SerializeObject(loginResponse.User));
+					Response.Cookies.Append("AccessToken", loginResponse?.Data?.Result?.First().AccessToken);
+					Response.Cookies.Append("RefreshToken", loginResponse?.Data?.Result?.First().RefreshToken);
+					Response.Cookies.Append("User",
+						JsonConvert.SerializeObject(loginResponse.Data?.Result?.First().User));
 					return RedirectToAction("Index", "Lottery");
 				}
-				return View();
-			}
 
+				if (loginResponse?.Errors != null)
+				{
+					foreach (var loginResponseError in loginResponse?.Errors)
+					{
+						ModelState.AddModelError(string.Empty, loginResponseError);
+					}
+
+					return View();
+				}
+			}
 			return View();
 		}
 		catch (Exception ex)

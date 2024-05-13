@@ -1,4 +1,4 @@
-namespace LotteryChecker.Common.Models.Authentications;
+namespace LotteryChecker.Common.Models.Http;
 
 public class Meta
 {

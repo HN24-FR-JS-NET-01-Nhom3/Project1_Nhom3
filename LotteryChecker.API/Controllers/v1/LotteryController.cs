@@ -1,13 +1,12 @@
 using Asp.Versioning;
 using AutoMapper;
 using LotteryChecker.API.Helpers;
-using LotteryChecker.Common.Models.Authentications;
 using LotteryChecker.Common.Models.Entities;
+using LotteryChecker.Common.Models.Http;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using SearchTicketVm = LotteryChecker.Common.Models.ViewModels.SearchTicketVm;
 
 namespace LotteryChecker.API.Controllers.v1;
 
@@ -39,25 +38,34 @@ public class LotteryController : ControllerBase
 				var lotteryPaging = _unitOfWork.LotteryRepository
 					.GetPaging(lotteries, null, page, pageSize).ToList();
 
-				var response = new HttpResponse<LotteryVm>()
+				var response = new Response<LotteryVm>()
 				{
-					Result = lotteryPaging.Select(lottery => _mapper.Map<LotteryVm>(lottery)),
-					Meta = new Meta()
+					Data = new Data<LotteryVm>()
 					{
-						Page = page,
-						PageSize = pageSize > lotteryPaging.Count ? lotteryPaging.Count : pageSize,
-						TotalPages = (int)Math.Ceiling((decimal)lotteries.Count / pageSize)
+						Result = lotteryPaging.Select(lottery => _mapper.Map<LotteryVm>(lottery)),
+						Meta = new Meta()
+						{
+							Page = page,
+							PageSize = pageSize > lotteryPaging.Count ? lotteryPaging.Count : pageSize,
+							TotalPages = (int)Math.Ceiling((decimal)lotteries.Count / pageSize)
+						}
 					}
 				};
 
 				return Ok(response);
 			}
 
-			return NotFound();
+			return NotFound(new Response<LotteryVm>()
+			{
+				Errors = new[] { "No lotteries found" }
+			});
 		}
 		catch (Exception ex)
 		{
-			return BadRequest(ex.Message);
+			return BadRequest(new Response<LotteryVm>()
+			{
+				Errors = new[] { ex.Message }
+			});
 		}
 	}
 
@@ -67,14 +75,26 @@ public class LotteryController : ControllerBase
 		try
 		{
 			var lottery = _unitOfWork.LotteryRepository.GetById(id);
-			var lotteryVm = _mapper.Map<LotteryVm>(lottery);
 			if (lottery == null)
-				return NotFound();
-			return Ok(lotteryVm);
+				return NotFound(new Response<LotteryVm>()
+				{
+					Errors = new[] { "No lotteries found" }
+				});
+			var lotteryVm = _mapper.Map<LotteryVm>(lottery);
+			return Ok(new Response<LotteryVm>()
+			{
+				Data = new Data<LotteryVm>()
+				{
+					Result = [lotteryVm]
+				}
+			});
 		}
 		catch (Exception ex)
 		{
-			return BadRequest(ex.Message);
+			return BadRequest(new Response<LotteryVm>()
+			{
+				Errors = new[] { ex.Message }
+			});
 		}
 	}
 
@@ -87,12 +107,24 @@ public class LotteryController : ControllerBase
 			_unitOfWork.LotteryRepository.Create(lottery);
 			int result = _unitOfWork.SaveChanges();
 			if (result > 0)
-				return Ok(lottery);
-			return BadRequest();
+				return Ok(new Response<Lottery>()
+				{
+					Data = new Data<Lottery>()
+					{
+						Result = [lottery]
+					}
+				});
+			return BadRequest(new Response<Lottery>()
+			{
+				Errors = new[] { "Error happened when saving lottery to database" }
+			});
 		}
 		catch (Exception ex)
 		{
-			return BadRequest(ex.Message);
+			return BadRequest(new Response<Lottery>()
+			{
+				Errors = new[] { ex.Message }
+			});
 		}
 	}
 
@@ -105,12 +137,24 @@ public class LotteryController : ControllerBase
 			_unitOfWork.LotteryRepository.Update(lottery);
 			int result = _unitOfWork.SaveChanges();
 			if (result > 0)
-				return Ok();
-			return BadRequest();
+				return Ok(new Response<Lottery>()
+				{
+					Data = new Data<Lottery>()
+					{
+						Result = [lottery]
+					}
+				});
+			return BadRequest(new Response<Lottery>()
+			{
+				Errors = new[] { "Error happened when saving lottery to database" }
+			});
 		}
 		catch (Exception ex)
 		{
-			return BadRequest(ex.Message);
+			return BadRequest(new Response<Lottery>()
+			{
+				Errors = new[] { ex.Message }
+			});
 		}
 	}
 
@@ -128,12 +172,21 @@ public class LotteryController : ControllerBase
 			_unitOfWork.LotteryRepository.Delete(id);
 			int result = _unitOfWork.SaveChanges();
 			if (result > 0)
-				return Ok();
-			return BadRequest();
+				return Ok(new Response<Lottery>()
+				{
+					Message = "Lottery deleted successfully!"
+				});
+			return BadRequest(new Response<Lottery>()
+			{
+				Errors = new[] { "Error happened when deleting lottery to database" }
+			});
 		}
 		catch (Exception ex)
 		{
-			return BadRequest(ex.Message);
+			return BadRequest(new Response<Lottery>()
+			{
+				Errors = new[] { ex.Message }
+			});
 		}
 	}
 
@@ -146,14 +199,26 @@ public class LotteryController : ControllerBase
 			var result = _unitOfWork.SaveChanges();
 			if (result > 0)
 			{
-				return Ok(lotteries);
+				return Ok(new Response<Lottery>()
+				{
+					Data = new Data<Lottery>()
+					{
+						Result = lotteries
+					}
+				});
 			}
 
-			return BadRequest("Cannot generate results!");
+			return BadRequest(new Response<Lottery>()
+			{
+				Errors = new[] { "Cannot generate results!" }
+			});
 		}
-		catch (Exception e)
+		catch (Exception ex)
 		{
-			return BadRequest(e.Message);
+			return BadRequest(new Response<Lottery>()
+			{
+				Errors = new[] { ex.Message }
+			});
 		}
 	}
 
@@ -186,37 +251,75 @@ public class LotteryController : ControllerBase
 			}
 		}
 
-		return Ok(_mapper.Map<List<LotteryVm>>(lotteryResult));
+		return Ok(new Response<LotteryVm>()
+		{
+			Data = new Data<LotteryVm>()
+			{
+				Result = _mapper.Map<List<LotteryVm>>(lotteryResult)
+			}
+		});
 	}
 
 	[HttpPost("get-ticket-result")]
-	public IActionResult GetTicketResult([FromBody] SearchTicketVm searchTicketVm)
+	public IActionResult GetTicketResult([FromBody] SearchHistoryVm searchHistoryVm)
 	{
-		var lotteries = _unitOfWork.LotteryRepository.GetLotteryResult(searchTicketVm.DrawDate).ToList();
+		var lotteries = _unitOfWork.LotteryRepository.GetLotteryResult(searchHistoryVm.DrawDate).ToList();
 		lotteries = lotteries.OrderBy(l => l.RewardId).ToList();
 		foreach (var lottery in lotteries)
 		{
-			if (searchTicketVm.TicketNumber.EndsWith(lottery.LotteryNumber))
+			if (searchHistoryVm.TicketNumber.EndsWith(lottery.LotteryNumber))
 			{
 				var reward = _unitOfWork.RewardRepository.GetById(lottery.RewardId);
-				return Ok(_mapper.Map<RewardVm>(reward));
+				return Ok(new Response<RewardVm>()
+				{
+					Data = new Data<RewardVm>()
+					{
+						Result = [_mapper.Map<RewardVm>(reward)]
+					}
+				});
 			}
 		}
 
-		var specialPriceLottery = lotteries.First(l => l.RewardId == 1);
-		if (searchTicketVm.TicketNumber.EndsWith(specialPriceLottery.LotteryNumber.Substring(1)))
+		try
 		{
-			var reward = _unitOfWork.RewardRepository.GetById(9);
-			return Ok(_mapper.Map<RewardVm>(reward));
-		}
+			var specialPriceLottery = lotteries.First(l => l.RewardId == 1);
+			if (searchHistoryVm.TicketNumber.EndsWith(specialPriceLottery.LotteryNumber.Substring(1)))
+			{
+				var reward = _unitOfWork.RewardRepository.GetById(9);
+				return Ok(new Response<RewardVm>()
+				{
+					Data = new Data<RewardVm>()
+					{
+						Result = [_mapper.Map<RewardVm>(reward)]
+					}
+				});
+			}
 
-		var countDuplicate = specialPriceLottery.LotteryNumber.Where((t, i) => searchTicketVm.TicketNumber[i] == t).Count();
-		if (countDuplicate == 5)
+			var countDuplicate = specialPriceLottery.LotteryNumber.Where((t, i) => searchHistoryVm.TicketNumber[i] == t)
+				.Count();
+			if (countDuplicate == 5)
+			{
+				var reward = _unitOfWork.RewardRepository.GetById(10);
+				return Ok(new Response<RewardVm>()
+				{
+					Data = new Data<RewardVm>()
+					{
+						Result = [_mapper.Map<RewardVm>(reward)]
+					}
+				});
+			}
+
+			return NotFound(new Response<Lottery>()
+			{
+				Errors = new[] { "Not found!" }
+			});
+		}
+		catch (Exception ex)
 		{
-			var reward = _unitOfWork.RewardRepository.GetById(10);
-			return Ok(_mapper.Map<RewardVm>(reward));
+			return BadRequest(new Response<Lottery>()
+			{
+				Errors = new[] { ex.Message }
+			});
 		}
-
-		return NotFound();
 	}
 }

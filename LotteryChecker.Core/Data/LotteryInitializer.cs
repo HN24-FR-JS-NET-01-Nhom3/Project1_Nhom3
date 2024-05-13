@@ -75,6 +75,7 @@ public static class LotteryInitializer
                 SearchHistoryId = 1,
                 SearchDate = new DateTime(2024, 5, 10),
                 LotteryNumber = "123456",
+                DrawDate = new DateTime(2024, 5, 15),
                 UserId = new Guid("36B35306-154C-4518-8FC1-D7E756522111")
             },
             new SearchHistory
@@ -82,6 +83,7 @@ public static class LotteryInitializer
                 SearchHistoryId = 2,
                 SearchDate = new DateTime(2024, 5, 11),
                 LotteryNumber = "234567",
+                DrawDate = new DateTime(2024, 5, 15),
                 UserId = new Guid("57FA9A8E-3105-49A0-B0F2-6D88FDFCFF8D")
             },
             new SearchHistory
@@ -89,6 +91,7 @@ public static class LotteryInitializer
                 SearchHistoryId = 3,
                 SearchDate = new DateTime(2024, 5, 12),
                 LotteryNumber = "345678",
+                DrawDate = new DateTime(2024, 5, 15),
                 UserId = new Guid("57FA9A8E-3105-49A0-B0F2-6D88FDFCFF8D")
             }
         );
@@ -98,6 +101,7 @@ public static class LotteryInitializer
                     PurchaseTicketId = 1,
                     PurchaseDate = new DateTime(2024, 5, 10),
                     LotteryNumber = "123456",
+                    DrawDate = DateTime.Now,
                     UserId = new Guid("36B35306-154C-4518-8FC1-D7E756522111")
                 },
                 new PurchaseTicket
@@ -105,6 +109,7 @@ public static class LotteryInitializer
                     PurchaseTicketId = 2,
                     PurchaseDate = new DateTime(2024, 5, 11),
                     LotteryNumber = "234567",
+                    DrawDate = DateTime.Now,
                     UserId = new Guid("57FA9A8E-3105-49A0-B0F2-6D88FDFCFF8D")
                 },
                 new PurchaseTicket
@@ -112,6 +117,7 @@ public static class LotteryInitializer
                     PurchaseTicketId = 3,
                     PurchaseDate = new DateTime(2024, 5, 12),
                     LotteryNumber = "345678",
+                    DrawDate = DateTime.Now,
                     UserId = new Guid("57FA9A8E-3105-49A0-B0F2-6D88FDFCFF8D")
                 },
                 new PurchaseTicket

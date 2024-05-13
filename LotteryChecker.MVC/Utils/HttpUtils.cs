@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using LotteryChecker.Common.Models.Http;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
@@ -30,27 +31,12 @@ public class HttpUtils<TEntity> where TEntity : class
     }
 
 
-    private static async Task<TEntity?> Get(HttpResponseMessage response)
+    private static async Task<Response<TEntity>> Get(HttpResponseMessage response)
     {
         try
         {
-            if (response.IsSuccessStatusCode)
-            {
-                var responseData = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<TEntity>(responseData);
-            }
-            if (response.StatusCode == HttpStatusCode.BadRequest)
-            {
-                // Lấy thông tin về lỗi Bad Request từ ReasonPhrase
-                var reason = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("Bad Request occurred: " + reason);
-                //return null;
-                throw new BadHttpRequestException(reason);
-            }
-
-            // Xử lý các mã lỗi HTTP khác
-            Console.WriteLine("HTTP error occurred: " + response.StatusCode);
-            return null;
+            var responseData = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<Response<TEntity>>(responseData);
         }
         catch (Exception ex)
         {
@@ -60,7 +46,7 @@ public class HttpUtils<TEntity> where TEntity : class
 
 
 
-    public static async Task<TEntity?> SendRequest(HttpMethod method, string url, object? body = null, string? accessToken = null)
+    public static async Task<Response<TEntity>> SendRequest(HttpMethod method, string url, object? body = null, string? accessToken = null)
     {
         try
         {
