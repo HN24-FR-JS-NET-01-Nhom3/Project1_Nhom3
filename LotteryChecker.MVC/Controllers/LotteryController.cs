@@ -2,7 +2,6 @@
 using LotteryChecker.Common.Models.Authentications;
 using LotteryChecker.Common.Models.Entities;
 using LotteryChecker.Common.Models.ViewModels;
-using LotteryChecker.Core.Entities;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -126,7 +125,7 @@ public class LotteryController : BaseController
                     var user = JsonConvert.DeserializeObject<UserVm>(userData); 
                     if (user != null)
                     {
-                        var addSearchHistoryResponse = await HttpUtils<SearchHistory>.SendRequest(
+                        var addSearchHistoryResponse = await HttpUtils<SearchHistoryController>.SendRequest(
                             HttpMethod.Post,
                             $"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
                             {

@@ -29,7 +29,7 @@ public class SearchHistoryController : ControllerBase
             var searchHistories = _unitOfWork.SearchHistoryRepository.GetByUserId(userId).OrderByDescending(x => x.SearchDate).ToList().Take(5);
             if (searchHistories != null)
             {
-                var searchHistoryVm = _mapper.Map<List<SearchHistoryVm>>(searchHistories);
+                var searchHistoryVm = _mapper.Map<IEnumerable<SearchHistoryVm>>(searchHistories);
                 return Ok(searchHistoryVm);
             }
             return NotFound();
@@ -46,7 +46,6 @@ public class SearchHistoryController : ControllerBase
         try
         {
             var searchHistories = _unitOfWork.SearchHistoryRepository.GetAll().ToList();
-
             if (!searchHistories.IsNullOrEmpty())
             {
                 var searchHistoryPaging = _unitOfWork.SearchHistoryRepository.GetPaging(searchHistories, null, page, pageSize).ToList();

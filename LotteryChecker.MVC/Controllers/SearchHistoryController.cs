@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 
 namespace LotteryChecker.MVC.Controllers
 {
-    public class SearchHistory : Controller
+    public class SearchHistoryController : BaseController
     {
-        public SearchHistory(IMapper _mapper)
+        public SearchHistoryController(IMapper _mapper) : base(_mapper)
         {
         }
 
@@ -24,7 +24,8 @@ namespace LotteryChecker.MVC.Controllers
                     if (user != null)
                     {
                         var searchHistoryResponse = await HttpUtils<IEnumerable<SearchTicketVm>>.SendRequest(HttpMethod.Get,
-                        $"{Constants.API_SEARCH_HISTORY}/get-search-histories-by-user-id");
+                        $"{Constants.API_SEARCH_HISTORY}/get-search-histories-by-user-id?userId={user.Id}");
+                        await Console.Out.WriteLineAsync(searchHistoryResponse.ToString());
                         return View(searchHistoryResponse);
                     }
                     return View();
