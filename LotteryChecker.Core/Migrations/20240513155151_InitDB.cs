@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LotteryChecker.Core.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDb : Migration
+    public partial class InitDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,8 +32,10 @@ namespace LotteryChecker.Core.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    LastLogin = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -55,47 +57,17 @@ namespace LotteryChecker.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PurchaseTickets",
-                columns: table => new
-                {
-                    PurchaseTicketId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LotteryNumber = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PurchaseTickets", x => x.PurchaseTicketId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Rewards",
                 columns: table => new
                 {
                     RewardId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RewardValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    RewardName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    RewardValue = table.Column<int>(type: "int", nullable: false),
+                    RewardName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Rewards", x => x.RewardId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SearchHistories",
-                columns: table => new
-                {
-                    SearchId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    LotteryNumber = table.Column<int>(type: "int", nullable: false),
-                    SearchDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SearchHistories", x => x.SearchId);
                 });
 
             migrationBuilder.CreateTable(
@@ -205,14 +177,84 @@ namespace LotteryChecker.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PurchaseTickets",
+                columns: table => new
+                {
+                    PurchaseTicketId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LotteryNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DrawDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PurchaseTickets", x => x.PurchaseTicketId);
+                    table.ForeignKey(
+                        name: "FK_PurchaseTickets_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Jwtld = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsRevoked = table.Column<bool>(type: "bit", nullable: false),
+                    AddDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpireDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SearchHistories",
+                columns: table => new
+                {
+                    SearchHistoryId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LotteryNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DrawDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SearchDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SearchHistories", x => x.SearchHistoryId);
+                    table.ForeignKey(
+                        name: "FK_SearchHistories_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Lotteries",
                 columns: table => new
                 {
                     LotteryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DrawDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PublishDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LotteryNumber = table.Column<int>(type: "int", nullable: false),
+                    LotteryNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsPublished = table.Column<bool>(type: "bit", nullable: false),
+                    Company = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     RewardId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -237,23 +279,12 @@ namespace LotteryChecker.Core.Migrations
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "IsActive", "LastLogin", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("24dd0b58-c0e0-470c-8ed2-14467a3b868f"), 0, "34f42146-9119-4f22-b501-79b6f0c70bea", "admin@gmail.com", true, "Hoang Chi", "Hieu", false, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAEObZWxNG1r8UZeN5UtnuVV0m8cnqzpmS03D7q4v5PmDhLqgrYNzxO/RkInKPNgpEcQ==", null, false, "9030bb00-9429-44f8-bdad-0b411089e113", false, "admin@gmail.com" },
-                    { new Guid("36b35306-154c-4518-8fc1-d7e756522111"), 0, "afe10563-9256-4561-a53a-d2ceed9f02b5", "vietlq@gmail.com", true, "Le Quang", "Viet", false, null, "VIETLQ@GMAIL.COM", "VIETLQ@GMAIL.COM", "AQAAAAIAAYagAAAAEOGurqtrCr8+LcxC1T4Wl09zH5XyWOD1q3YA474U2uZ18YFWtFJI6gLpTHxwBoW0Lg==", null, false, "ed9d7a80-5a4b-43df-9e2a-5128d0bdeffd", false, "vietlq@gmail.com" },
-                    { new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d"), 0, "d6e8ebde-1bc0-4164-a6bc-2976010b6e4c", "hieuhv@gmail.com", true, "Ho Van", "Hieu", false, null, "HIEUHV@GMAIL.COM", "HIEUHV@GMAIL.COM", "AQAAAAIAAYagAAAAEE80fOihAt/JJtnr9wxAiuOQJhMRayPOlWbSmYRMXXnkbI7xZxi0yUIH6kEJ79/YnA==", null, false, "2849a7c2-c0f7-4a36-af0b-5bbd906ece59", false, "hieuhv@gmail.com" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "PurchaseTickets",
-                columns: new[] { "PurchaseTicketId", "LotteryNumber", "PurchaseDate", "UserId" },
-                values: new object[,]
-                {
-                    { 1, 123456, new DateTime(2024, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("36b35306-154c-4518-8fc1-d7e756522111") },
-                    { 2, 234567, new DateTime(2024, 5, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d") },
-                    { 3, 345678, new DateTime(2024, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d") },
-                    { 4, 456789, new DateTime(2024, 5, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("36b35306-154c-4518-8fc1-d7e756522111") }
+                    { new Guid("24dd0b58-c0e0-470c-8ed2-14467a3b868f"), 0, "2fd6795b-d448-46bc-9f33-28f160c29fdd", "admin@gmail.com", true, "Hoang Chi", false, null, "Hieu", false, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAENyyHO4FLRsQVBFDbQhTQjKSU5gYkyyh96eIGoKUgOCPcJWt8ZZsIMfZ7ZfwlmyQPA==", null, false, "9a07b491-4e09-447c-a8ea-273b45e80ab4", false, "admin@gmail.com" },
+                    { new Guid("36b35306-154c-4518-8fc1-d7e756522111"), 0, "db448e53-d8a5-40f9-8730-cb55fcb7ee45", "vietlq@gmail.com", true, "Le Quang", false, null, "Viet", false, null, "VIETLQ@GMAIL.COM", "VIETLQ@GMAIL.COM", "AQAAAAIAAYagAAAAEFoA1fYXsRZyvCq476MOOEVHPgBT5Vlfpo3mpEJdlQPKsa6BqUAuSPomIluRdkRzuA==", null, false, "183a06d6-78c1-4354-8152-671a8e8d2ca5", false, "vietlq@gmail.com" },
+                    { new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d"), 0, "7250f19f-c677-49c9-9cdf-bab5e9999e9e", "hieuhv@gmail.com", true, "Ho Van", false, null, "Hieu", false, null, "HIEUHV@GMAIL.COM", "HIEUHV@GMAIL.COM", "AQAAAAIAAYagAAAAEIWIi9q9piEON1J+ePOfMFBcKVU7MWzXxbcKxnC74K9gMAxJnt43blKIuJtojX04Ww==", null, false, "7f19eacd-bcb7-444f-93c6-739ee4289948", false, "hieuhv@gmail.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -261,24 +292,14 @@ namespace LotteryChecker.Core.Migrations
                 columns: new[] { "RewardId", "RewardName", "RewardValue" },
                 values: new object[,]
                 {
-                    { 1, "Prize 8", 1000000m },
-                    { 2, "Prize 7", 2000000m },
-                    { 3, "Prize 6", 3000000m },
-                    { 4, "Prize 5", 4000000m },
-                    { 5, "Prize 4", 5000000m },
-                    { 6, "Prize 3", 6000000m },
-                    { 7, "Prize 2", 7000000m },
-                    { 8, "Prize 1", 8000000m }
-                });
-
-            migrationBuilder.InsertData(
-                table: "SearchHistories",
-                columns: new[] { "SearchId", "LotteryNumber", "SearchDate", "UserId" },
-                values: new object[,]
-                {
-                    { 1, 123456, new DateTime(2024, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("36b35306-154c-4518-8fc1-d7e756522111") },
-                    { 2, 234567, new DateTime(2024, 5, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d") },
-                    { 3, 345678, new DateTime(2024, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d") }
+                    { 1, "Prize 8", 1000000 },
+                    { 2, "Prize 7", 2000000 },
+                    { 3, "Prize 6", 3000000 },
+                    { 4, "Prize 5", 4000000 },
+                    { 5, "Prize 4", 5000000 },
+                    { 6, "Prize 3", 6000000 },
+                    { 7, "Prize 2", 7000000 },
+                    { 8, "Prize 1", 8000000 }
                 });
 
             migrationBuilder.InsertData(
@@ -293,15 +314,36 @@ namespace LotteryChecker.Core.Migrations
 
             migrationBuilder.InsertData(
                 table: "Lotteries",
-                columns: new[] { "LotteryId", "DueDate", "LotteryNumber", "PublishDate", "RewardId" },
+                columns: new[] { "LotteryId", "Company", "DrawDate", "IsPublished", "LotteryNumber", "PublishDate", "RewardId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 123456, null, 1 },
-                    { 2, new DateTime(2024, 5, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), 234567, null, 2 },
-                    { 3, new DateTime(2024, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), 345678, null, 3 },
-                    { 4, new DateTime(2024, 5, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), 456789, null, 4 },
-                    { 5, new DateTime(2024, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 567890, null, 5 },
-                    { 6, new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 678901, null, 6 }
+                    { 1, null, new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "123456", new DateTime(2024, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), 1 },
+                    { 2, null, new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "234567", new DateTime(2024, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), 2 },
+                    { 3, null, new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "345678", new DateTime(2024, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), 3 },
+                    { 4, null, new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "456789", new DateTime(2024, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), 4 },
+                    { 5, null, new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "567890", new DateTime(2024, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), 5 },
+                    { 6, null, new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "678901", new DateTime(2024, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), 6 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PurchaseTickets",
+                columns: new[] { "PurchaseTicketId", "DrawDate", "LotteryNumber", "PurchaseDate", "UserId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2024, 5, 13, 22, 51, 50, 929, DateTimeKind.Local).AddTicks(5838), "123456", new DateTime(2024, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("36b35306-154c-4518-8fc1-d7e756522111") },
+                    { 2, new DateTime(2024, 5, 13, 22, 51, 50, 929, DateTimeKind.Local).AddTicks(5858), "234567", new DateTime(2024, 5, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d") },
+                    { 3, new DateTime(2024, 5, 13, 22, 51, 50, 929, DateTimeKind.Local).AddTicks(5860), "345678", new DateTime(2024, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d") },
+                    { 4, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "456789", new DateTime(2024, 5, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("36b35306-154c-4518-8fc1-d7e756522111") }
+                });
+
+            migrationBuilder.InsertData(
+                table: "SearchHistories",
+                columns: new[] { "SearchHistoryId", "DrawDate", "LotteryNumber", "SearchDate", "UserId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "123456", new DateTime(2024, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("36b35306-154c-4518-8fc1-d7e756522111") },
+                    { 2, new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "234567", new DateTime(2024, 5, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d") },
+                    { 3, new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "345678", new DateTime(2024, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d") }
                 });
 
             migrationBuilder.CreateIndex(
@@ -337,6 +379,20 @@ namespace LotteryChecker.Core.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_Email",
+                table: "AspNetUsers",
+                column: "Email",
+                unique: true,
+                filter: "[Email] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_UserName",
+                table: "AspNetUsers",
+                column: "UserName",
+                unique: true,
+                filter: "[UserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
@@ -347,6 +403,21 @@ namespace LotteryChecker.Core.Migrations
                 name: "IX_Lotteries_RewardId",
                 table: "Lotteries",
                 column: "RewardId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PurchaseTickets_UserId",
+                table: "PurchaseTickets",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SearchHistories_UserId",
+                table: "SearchHistories",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -374,16 +445,19 @@ namespace LotteryChecker.Core.Migrations
                 name: "PurchaseTickets");
 
             migrationBuilder.DropTable(
+                name: "RefreshTokens");
+
+            migrationBuilder.DropTable(
                 name: "SearchHistories");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Rewards");
 
             migrationBuilder.DropTable(
-                name: "Rewards");
+                name: "AspNetUsers");
         }
     }
 }
