@@ -1,7 +1,8 @@
-﻿@model LotteryChecker.Common.Models.Entities.PurchaseTicketVm
+﻿@using LotteryChecker.Common.Models.Entities
+@model List<PurchaseTicketVm>
 
 @{
-    ViewData["Title"] = "Purchase Ticket";
+    ViewData["Title"] = "PurchaseTicket";
     Layout = "_Layout";
 }
 
@@ -12,46 +13,144 @@
 
 <div class="px-2">
     <div class="row">
+
         <div class="col-lg-3 text-center d-flex flex-column justify-content-center left-banner" style="background-color:#FFD7D7;">
             <h3>Liên hệ quảng cáo</h3>
             <h5>0123 456 789</h5>
         </div>
+
         <div class="col-lg-5 mx-auto">
             <div class="row gx-2 justify-content-center">
                 <div class="d-flex justify-content-between mb-4">
                     <h4>Mua vé số</h4>
                 </div>
-                <form asp-action="PurchaseTicket" method="post">
+
+                <form asp-action="Create" method="post">
                     <div class="card-body">
-                        <div class="form-group mb-2">
-                            <label asp-for="LotteryNumber" class="text-for-checking-ticket">Nhập số vé <span class="text-danger">*</span></label>
-                            <input asp-for="LotteryNumber" type="text" class="form-control input-for-checking-ticket" placeholder="Số vé"/>
-                            <span asp-validation-for="LotteryNumber" class="text-danger d-block"></span>
+
+                        <div class="d-flex">
+                            <div class="form-group mb-2 mr-50">
+                                <label class="text-for-checking-ticket" for="manual-ticket">Thủ công</label>
+                                <input type="radio" id="manual-ticket" class="input-for-checking-ticket" name="TicketType" value="Thủ công" onchange="handleTicketTypeChange()" />
                         </div>
+
                         <div class="form-group mb-3">
-                            <label asp-for="DrawDate" class="text-for-checking-ticket">Ngày quay thưởng <span class="text-danger">*</span></label>
-                            <input asp-for="DrawDate" type="date" class="form-control input-for-checking-ticket" placeholder="Ngày quay thưởng"/>
-                            <span asp-validation-for="DrawDate" class="text-danger d-block"></span>
+                                <label class="text-for-checking-ticket" for="automatic-ticket">Ngẫu nhiên</label>
+                                <input type="radio" id="automatic-ticket" class="input-for-checking-ticket" name="TicketType" value="Ngẫu nhiên" onchange="handleTicketTypeChange()" />
+                                <i class="fas fa-sync-alt" onclick="generateRandomNumber()" style="cursor: pointer;"></i>
+                            </div>
+                        </div>
+
+                       
+
+                        <div class="form-group mb-3">
+                            <label class="text-for-checking-ticket" for="lottery-number">Số vé</label>
+                            <input type="text" id="lottery-number" class="input-for-checking-ticket" name="LotteryNumber" />
                         </div>
                     </div>
+
                     <div class="card-footer">
-                        <input type="submit" class="btn btn-for-checking-ticket" value="Mua vé"/>
+                        <input type="submit" class="btn btn-for-checking-ticket" value="Mua vé" />
                     </div>
                 </form>
 
+                <div class="mt-3">
+                    <button type="button" class="collapsible">
+                        <h5 class="d-inline">Thể lệ giải thưởng</h5>
+                    </button>
+                    <div class="content">
+                        <ul>
+                            <li>
+                                Trúng giải 8 hay còn gọi là trúng số đầu: chỉ có một giải tám, gồm 2 chữ số ( hàng chục và đơn vị), nếu vé của bạn trùng 2 số cuối giải tám kết quả mở thưởng bạn trúng 100 ngàn đồng. Ví dụ: số của bạn là 009179 và kết quả giải 8 là 79
+                            </li>
+                            <li>
+                                Trúng giải 7: chỉ có 1 số giải bảy gồm 3 chữ số (hàng trăm, hàng chục và đơn vị), nếu số của bạn trùng 3 số cuối giải 7 thì bạn được 200 ngàn đồng. Ví dụ: số của bạn: 009179 kết quả giải 7: 179.
+                            </li>
+                            <li>
+                                Trúng giải 6: có 3 số giải sáu gồm 4 chữ số (hàng nghìn, hàng trăm, hàng hàng chục và hàng đơn vị), nếu bạn trùng 4 số cuối giải 6 thì bạn nhận được 400 ngàn. Ví dụ: số của bạn là 009179 trùng với 1 trong 3 giải 6 có số 9179 thì bạn trúng.
+                            </li>
+                            <li>
+                                Trúng giải 5: chỉ có 1 số giải năm gồm 4 chữ số (hàng nghìn, hàng trăm, hàng hàng chục và hàng đơn vị), nếu vé số của bạn trùng 4 số cuối của giải 5 thì bạn được 1 triệu. Ví dụ: bạn có số 009179 trùng với kết quả giải 5: 9179
+                            </li>
+                            <li>
+                                Trúng giải 4: giải này có tới 7 số gồm 5 chữ số (hàng chục nghìn, hàng nghìn, hàng trăm, hàng hàng chục và hàng đơn vị), nếu bạn trùng cả 5 số cuối với 7 giải tư kết quả xổ số thì bạn được 3 triệu. Ví dụ: số của bạn: 009179 trùng với 1 trong 7 số trong giải 4 có số 09179.
+                            </li>
+                            <li>
+                                Trúng giải 3: có 2 số gồm 5 chữ số (hàng chục nghìn, hàng nghìn, hàng trăm, hàng hàng chục và hàng đơn vị), nếu bạn có 5 số cuối trùng với 2 kết quả giải 3 thì bạn trúng 10 triệu. Ví dụ: số của bạn: 009179 trùng với 1 trong 2 số trong giải 3 có số 09179.
+                            </li>
+                            <li>
+                                Trúng giải nhì: có 1 số cũng gồm 5 chữ số (hàng chục nghìn, hàng nghìn, hàng trăm, hàng hàng chục và hàng đơn vị), nếu trùng 5 số cuối kết quả giải nhì bạn sẽ có 15 triệu. Ví dụ: số của bạn: 009179 kết quả giải nhì là 09179.
+                            </li>
+                            <li>
+                                Trúng số đặc biệt hay còn gọi là trúng độc đắc: chỉ có 1 số duy nhất có 6 chữ số (hàng trăm nghìn, hàng chục nghìn, hàng nghìn, hàng trăm, hàng hàng chục và hàng đơn vị), trúng cả 6 số đặc biệt thì bạn có 2 tỷ trong tay.
+                            </li>
+                            <li>
+                                Trúng giải phụ đặc biệt hay còn gọi là giải an ủi: tức là số của bạn trùng 5 số cuối cùng liên tiếp giải đặc biệt bạn sẽ nhận được 50 triệu. Ví dụ: số của bạn: 100000 kết quả giải đặc biệt là 000000.
+                            </li>
+                            <li>
+                                Trúng giải khuyến khích: khi bạn chỉ sai 1 số bất kỳ hàng nào so với giải đặc biệt (ngoại trừ những vé đã trúng giải an ủi). Ví dụ: số của bạn: 010000, 001000, 000100, 000010, 000001 kết quả giải đặc biệt là 000000.
+                            </li>
+                        </ul>
+            </div>
+
+        </div>
+
             </div>
         </div>
+
         <div class="col-lg-3 d-flex flex-column align-items-center right-banner">
             <div class="w-100">
                 <div class="d-flex justify-content-between mb-4">
-                    <h4>Lịch sử mua vé</h4>
+                    <h1>Lịch sử mua vé</h1>
                 </div>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ngày mua vé</th>
+                            <th>Số vé</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ticket in Model)
+                        {
+                            <tr>
+                                <td>@(Model.IndexOf(ticket)+1)</td>
+                                <td>@ticket.PurchaseDate.ToString("dd/MM/yyyy")</td>
+                                <td>@ticket.LotteryNumber</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div>Trang <span>1</span>/<span>5</span></div>
+                <input type="submit" class="btn btn-for-checking-ticket" value="TRang sau" />
             </div>
+            
         </div>
     </div>
 </div>
 
 @section Scripts
 {
+    <script>
+        function handleTicketTypeChange() {
+            var ticketType = document.querySelector('input[name="TicketType"]:checked').value;
+            var lotteryNumberInput = document.getElementById('lottery-number');
 
+            if (ticketType === 'Ngẫu nhiên') {
+                lotteryNumberInput.value = '201202';
+                lotteryNumberInput.disabled = true;
+            } else {
+                lotteryNumberInput.value = '';
+                lotteryNumberInput.disabled = false;
+            }
+        }
+
+        function generateRandomNumber() {
+            var lotteryNumberInput = document.getElementById('lottery-number');
+            var randomNumber = Math.floor(100000 + Math.random() * 900000);
+            lotteryNumberInput.value = randomNumber;
+        }
+    </script>
 }

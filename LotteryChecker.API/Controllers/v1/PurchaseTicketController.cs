@@ -30,7 +30,7 @@ public class PurchaseTicketController : ControllerBase
     {
         try
         {
-            var purchaseTickets = _unitOfWork.PurchaseTicketRepository.GetAll().ToList();
+            var purchaseTickets = _unitOfWork.PurchaseTicketRepository.GetAllPurchaseTickets().ToList();
 
             if (!purchaseTickets.IsNullOrEmpty())
             {
