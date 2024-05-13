@@ -1,3 +1,4 @@
+
 using LotteryChecker.Common.Models.ViewModels;
 
 namespace LotteryChecker.Common.Models.Authentications;

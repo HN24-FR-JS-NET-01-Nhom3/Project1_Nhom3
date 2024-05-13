@@ -39,13 +39,8 @@ public class AuthenController : BaseController
 						JsonConvert.SerializeObject(loginResponse.Data?.Result?.First().User));
 					return RedirectToAction("Index", "Lottery");
 				}
-
-				if (loginResponse?.Errors != null)
-				{
-					foreach (var loginResponseError in loginResponse?.Errors)
-					{
-						ModelState.AddModelError(string.Empty, loginResponseError);
-					}
+				return View();
+			}
 
 					return View();
 				}

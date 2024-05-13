@@ -1,8 +1,7 @@
-using AutoMapper;
+﻿using AutoMapper;
 using LotteryChecker.Common.Models.Entities;
 using LotteryChecker.Common.Models.Http;
 using LotteryChecker.Common.Models.ViewModels;
-using LotteryChecker.Core.Entities;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -82,16 +81,11 @@ public class LotteryController : BaseController
 				};
 
 				var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
-					$"{Constants.API_LOTTERY}/get-ticket-result", searchHistoryVm);
-				if (searchResponse.Errors.IsNullOrEmpty())
-				{
-					ViewData["Reward"] = searchResponse.Data?.Result?.FirstOrDefault();
-				}
-				else
-				{
-					ViewData["ErrorMessage"] = searchResponse.Errors;
-				}
-				return View(searchHistoryVm);
+					$"{Constants.API_LOTTERY}/get-ticket-result", searchTicketVm);
+				ViewData["Reward"] = searchResponse;
+
+
+				return View(searchTicketVm);
 			}
 
 			return View();
@@ -124,33 +118,30 @@ public class LotteryController : BaseController
 				ViewData["LotteryResult"] = lotteryResponse.Data?.Result?.GroupBy(l => l.RewardId).OrderByDescending(g => g.Key);
 
 				var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
-					$"{Constants.API_LOTTERY}/get-ticket-result", searchHistoryVm);
-				if (searchResponse.Errors.IsNullOrEmpty())
+					$"{Constants.API_LOTTERY}/get-ticket-result", searchTicketVm);
+				ViewData["Reward"] = searchResponse;
+				if(TempData["User"] != null)
 				{
-					ViewData["Reward"] = searchResponse.Data?.Result?.FirstOrDefault();
-				}
-				else
-				{
-					ViewData["ErrorMessage"] = searchResponse.Errors;
-				}
+                    var userData = TempData["User"].ToString(); 
+                    var user = JsonConvert.DeserializeObject<UserVm>(userData); 
+                    if (user != null)
+                    {
+                        var addSearchHistoryResponse = await HttpUtils<SearchHistoryController>.SendRequest(
+                            HttpMethod.Post,
+                            $"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
+                            {
+                                LotteryNumber = searchTicketVm.TicketNumber,
+                                SearchDate = DateTime.Now,
+                                UserId = user.Id
+                            });
+                    }
 
-				if (TempData["User"] is AppUser user)
-				{
-					var addSearchHistoryResponse = await HttpUtils<SearchHistory>.SendRequest(
-						HttpMethod.Post,
-						$"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
-						{
-							TicketNumber = searchHistoryVm.TicketNumber,
-							SearchDate = DateTime.Now,
-							UserId = user.Id
-						});
-				}
-				
-				return RedirectToAction("CheckTicket", new { 
-					year = searchHistoryVm.DrawDate.Year,
-					month = searchHistoryVm.DrawDate.Month,
-					day = searchHistoryVm.DrawDate.Day,
-					ticketNumber = searchHistoryVm.TicketNumber
+                }
+                return RedirectToAction("CheckTicket", new { 
+					year = searchTicketVm.DrawDate.Year,
+					month = searchTicketVm.DrawDate.Month,
+					day = searchTicketVm.DrawDate.Day,
+					ticketNumber = searchTicketVm.TicketNumber
 				});
 			}
 			catch (Exception ex)
@@ -158,7 +149,6 @@ public class LotteryController : BaseController
 				ViewData["ErrorMessage"] = ex.Message;
 			}
 		}
-
 		return View();
 	}
 }
