@@ -28,16 +28,20 @@
                 <form asp-action="Create" method="post">
                     <div class="card-body">
 
-                        <div class="form-group mb-2">
-                            <label class="text-for-checking-ticket" for="manual-ticket">Thủ công</label>
-                            <input type="radio" id="manual-ticket" class="input-for-checking-ticket" name="TicketType" value="Thủ công" onchange="handleTicketTypeChange()" />
+                        <div class="d-flex">
+                            <div class="form-group mb-2 mr-50">
+                                <label class="text-for-checking-ticket" for="manual-ticket">Thủ công</label>
+                                <input type="radio" id="manual-ticket" class="input-for-checking-ticket" name="TicketType" value="Thủ công" onchange="handleTicketTypeChange()" />
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="text-for-checking-ticket" for="automatic-ticket">Ngẫu nhiên</label>
+                                <input type="radio" id="automatic-ticket" class="input-for-checking-ticket" name="TicketType" value="Ngẫu nhiên" onchange="handleTicketTypeChange()" />
+                                <i class="fas fa-sync-alt" onclick="generateRandomNumber()" style="cursor: pointer;"></i>
+                            </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label class="text-for-checking-ticket" for="automatic-ticket">Ngẫu nhiên</label>
-                            <input type="radio" id="automatic-ticket" class="input-for-checking-ticket" name="TicketType" value="Ngẫu nhiên" onchange="handleTicketTypeChange()" />
-                            <i class="fas fa-sync-alt" onclick="generateRandomNumber()" style="cursor: pointer;"></i>
-                        </div>
+                       
 
                         <div class="form-group mb-3">
                             <label class="text-for-checking-ticket" for="lottery-number">Số vé</label>
