@@ -1,9 +1,10 @@
 ﻿using Asp.Versioning;
 using AutoMapper;
-using LotteryChecker.Common.Models.Authentications;
 using LotteryChecker.Common.Models.Entities;
+using LotteryChecker.Common.Models.Http;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -12,6 +13,7 @@ namespace LotteryChecker.API.Controllers.v1;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{v:apiVersion}/purchase-ticket")]
+[Authorize(Roles = "User, Admin")]
 public class PurchaseTicketController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -34,25 +36,34 @@ public class PurchaseTicketController : ControllerBase
             {
                 var purchaseTicketPaging = _unitOfWork.PurchaseTicketRepository.GetPaging(purchaseTickets, null, page, pageSize).ToList();
                 
-                var response = new HttpResponse<PurchaseTicketVm>()
+                var response = new Response<PurchaseTicketVm>()
                 {
-                    Result = purchaseTicketPaging.Select(purchaseTicket => _mapper.Map<PurchaseTicketVm>(purchaseTicket)),
-                    Meta = new Meta()
+                    Data = new Data<PurchaseTicketVm>()
                     {
-                        Page = page,
-                        PageSize = pageSize > purchaseTicketPaging.Count ? purchaseTicketPaging.Count : pageSize,
-                        TotalPages = (int)Math.Ceiling((decimal)purchaseTickets.Count / pageSize)
+                        Result = _mapper.Map<IEnumerable<PurchaseTicketVm>>(purchaseTicketPaging),
+                        Meta = new Meta()
+                        {
+                            Page = page,
+                            PageSize = pageSize > purchaseTicketPaging.Count ? purchaseTicketPaging.Count : pageSize,
+                            TotalPages = (int)Math.Ceiling((decimal)purchaseTickets.Count / pageSize)
+                        }
                     }
                 };
                 
                 return Ok(response);
             }
 
-            return NotFound();
+            return NotFound(new Response<PurchaseTicketVm>()
+            {
+                Errors = new[] { "No purchase tickets found" }
+            });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ex.Message);
+            return BadRequest(new Response<PurchaseTicketVm>()
+            {
+                Errors = new[] { ex.Message }
+            });
         }
          
     }
@@ -65,70 +76,94 @@ public class PurchaseTicketController : ControllerBase
             var purchaseTicket = _unitOfWork.PurchaseTicketRepository.GetById(id);
             if (purchaseTicket == null)
             {
-                return NotFound();
+                return NotFound(new Response<PurchaseTicketVm>()
+                {
+                    Errors = new[] { "No purchase tickets found" }
+                });
             }
 
             var purchaseTicketVm = _mapper.Map<PurchaseTicketVm>(purchaseTicket);
-            return Ok(purchaseTicketVm);
+            return Ok(new Response<PurchaseTicketVm>()
+            {
+                Data = new Data<PurchaseTicketVm>()
+                {
+                    Result = [purchaseTicketVm]
+                }
+            });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Internal server error");
+            return BadRequest(new Response<PurchaseTicketVm>()
+            {
+                Errors = new[] { ex.Message }
+            });
         }
     }
 
     [HttpPost("create-purchase-ticket")]
-    public IActionResult CreatePurchaseTicket(PurchaseTicketVm? purchaseTicketVm)
+    public IActionResult CreatePurchaseTicket([FromBody] PurchaseTicketVm purchaseTicketVm)
     {
-        if (purchaseTicketVm == null)
-        {
-            return NotFound();
-        }
-
-        var purchaseTicket = _mapper.Map<PurchaseTicket>(purchaseTicketVm);
-
         try
         {
+            var purchaseTicket = _mapper.Map<PurchaseTicket>(purchaseTicketVm);
             _unitOfWork.PurchaseTicketRepository.Create(purchaseTicket);
             var status = _unitOfWork.SaveChanges();
 
             if (status > 0)
             {
-                return Ok(purchaseTicket);
+                return Ok(new Response<PurchaseTicket>()
+                {
+                    Data = new Data<PurchaseTicket>()
+                    {
+                        Result = [purchaseTicket]
+                    }
+                });
             }
-
-            return BadRequest();
+            return BadRequest(new Response<PurchaseTicket>()
+            {
+                Errors = new[] { "Error happened when saving purchase ticket to database" }
+            });
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new Response<PurchaseTicket>()
+            {
+                Errors = new[] { ex.Message }
+            });
         }
     }
 
     [HttpPut("update-purchase-ticket/{id}")]
-    public IActionResult UpdatePurchaseTicket(int id, PurchaseTicketVm? purchaseTicketVm)
+    public IActionResult UpdatePurchaseTicket(int id, PurchaseTicketVm purchaseTicketVm)
     {
-        if (purchaseTicketVm == null)
-        {
-            return NotFound();
-        }
-
-        var purchaseTicket = _mapper.Map<PurchaseTicket>(purchaseTicketVm);
-        purchaseTicket.PurchaseTicketId = id;
-
         try
         {
+            var purchaseTicket = _mapper.Map<PurchaseTicket>(purchaseTicketVm);
+            purchaseTicket.PurchaseTicketId = id;
             _unitOfWork.PurchaseTicketRepository.Update(purchaseTicket);
             var status = _unitOfWork.SaveChanges();
+           
             if (status > 0)
             {
-                return Ok(purchaseTicket);
+                return Ok(new Response<PurchaseTicket>()
+                {
+                    Data = new Data<PurchaseTicket>()
+                    {
+                        Result = [purchaseTicket]
+                    }
+                });
             }
-            return BadRequest();
+            return BadRequest(new Response<PurchaseTicket>()
+            {
+                Errors = new[] { "Error happened when saving purchase ticket to database" }
+            });
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new Response<PurchaseTicket>()
+            {
+                Errors = new[] { ex.Message }
+            });
         }
     }
 
@@ -148,14 +183,22 @@ public class PurchaseTicketController : ControllerBase
 
             if (status > 0)
             {
-                return Ok();
+                return Ok(new Response<PurchaseTicket>()
+                {
+                    Message = "Purchase ticket deleted successfully!"
+                });
             }
-
-            return BadRequest();
+            return BadRequest(new Response<PurchaseTicket>()
+            {
+                Errors = new[] { "Error happened when deleting purchase ticket to database" }
+            });
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new Response<PurchaseTicket>()
+            {
+                Errors = new[] { ex.Message }
+            });
         }
     }
 }

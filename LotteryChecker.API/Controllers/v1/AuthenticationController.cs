@@ -1,9 +1,11 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using Asp.Versioning;
 using AutoMapper;
 using LotteryChecker.Common.Models.Authentications;
+using LotteryChecker.Common.Models.Http;
 using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.Core.Data;
 using LotteryChecker.Core.Entities;
@@ -46,7 +48,10 @@ public class AuthenticationController : ControllerBase
 		var userExists = await _userManager.FindByEmailAsync(registerVm.Email);
 		if (userExists != null)
 		{
-			return BadRequest($"User {registerVm.Email} already exists!");
+			return BadRequest(new Response<object>()
+			{
+				Errors = new[] { $"User {registerVm.Email} already exists!" }
+			});
 		}
 
 		var newUser = new AppUser()
@@ -58,10 +63,16 @@ public class AuthenticationController : ControllerBase
 		var result = await _userManager.CreateAsync(newUser, registerVm.Password);
 		if (!result.Succeeded)
 		{
-			return BadRequest("User could not be create!");
+			return BadRequest(new Response<object>()
+			{
+				Errors = new[] { "User could not be create!" }
+			});
 		}
 
-		return Created(nameof(Register), $"User {registerVm.Email} created!");
+		return Created(nameof(Register), new Response<object>()
+		{
+			Message = $"User {registerVm.Email} created!"
+		});
 	}
 
 	[HttpPost("login")]
@@ -69,7 +80,10 @@ public class AuthenticationController : ControllerBase
 	{
 		if (!ModelState.IsValid)
 		{
-			return BadRequest("Please, provide all required fields");
+			return BadRequest(new Response<object>()
+			{
+				Errors = new[] { "Please, provide all required fields" }
+			});
 		}
 
 		var user = await _userManager.FindByEmailAsync(payload.Email);
@@ -79,13 +93,22 @@ public class AuthenticationController : ControllerBase
 			var tokenValue = await GenerateJwtToken(user, roles);
 			user.LastLogin = DateTime.Now;
 			user.IsActive = true;
-            await _userManager.UpdateAsync(user);
-            return Ok(tokenValue);
+			await _userManager.UpdateAsync(user);
+			return Ok(new Response<AuthResultVm>()
+			{
+				Data = new Data<AuthResultVm>()
+				{
+					Result = [tokenValue]
+				}
+			});
 		}
 
-		return Unauthorized();
+		return BadRequest(new Response<Lottery>()
+		{
+			Errors = new[] { "Incorrect username or password!" }
+		});
 	}
-	
+
 	[HttpPost("logout")]
 	public async Task<IActionResult> Logout()
 	{
@@ -103,12 +126,12 @@ public class AuthenticationController : ControllerBase
 			new Claim(JwtRegisteredClaimNames.Sub, user.Email),
 			new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
 		};
-		
+
 		foreach (var role in roles)
 		{
 			authClaims.Add(new Claim(ClaimTypes.Role, role));
 		}
-		
+
 		var authSigningKey =
 			new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["JWT:Secret"] ?? string.Empty));
 		var token = new JwtSecurityToken(

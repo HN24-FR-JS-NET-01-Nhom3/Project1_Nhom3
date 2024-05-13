@@ -4,7 +4,6 @@ using Asp.Versioning.ApiExplorer;
 using LotteryChecker.Core.Data;
 using LotteryChecker.Core.Infrastructures;
 using LotteryChecker.Core.Entities;
-using LotteryChecker.API.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -135,7 +134,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.ConfigureBuildInExceptionHandler();
 
 app.Run();

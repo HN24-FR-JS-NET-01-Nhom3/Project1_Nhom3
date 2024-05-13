@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using LotteryChecker.Common.Models.Authentications;
 using LotteryChecker.Common.Models.Entities;
+using LotteryChecker.Common.Models.Http;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
@@ -30,7 +31,9 @@ namespace LotteryChecker.MVC.Controllers
         {
             try
             {
-    
+                var purchaseTicketResponse = await HttpUtils<Response<PurchaseTicketVm>>.SendRequest(HttpMethod.Get, $"{Constants.API_PURCHASE_TICKET}/get-all-purchase-tickets");
+                ViewData["PurchaseTickets"] = purchaseTicketResponse;
+                
                 var apiResponse = await _httpClient.GetAsync("https://localhost:7178/api/v1/purchase-ticket/get-all-purchase-tickets");
 
                 if (apiResponse.IsSuccessStatusCode)
@@ -43,7 +46,7 @@ namespace LotteryChecker.MVC.Controllers
 
              
                     return View(response.Result);
-                }
+            }
                 else if (apiResponse.StatusCode == HttpStatusCode.NotFound)
                 {
                     return NotFound();
@@ -63,9 +66,9 @@ namespace LotteryChecker.MVC.Controllers
 
         [HttpPost("create")]
         public async Task<IActionResult> Create(PurchaseTicket purchaseTicket)
-        {
-            try
             {
+            try
+                {
                 var purchaseTicketJson = JsonConvert.SerializeObject(purchaseTicket);
 
                 var content = new StringContent(purchaseTicketJson, Encoding.UTF8, "application/json");
@@ -77,16 +80,20 @@ namespace LotteryChecker.MVC.Controllers
                     return RedirectToAction("Index");
                 }
                 else
-                {
+                    {
                     var errorMessage = await apiResponse.Content.ReadAsStringAsync();
                     return StatusCode((int)apiResponse.StatusCode, errorMessage);
+                    }
+
+                    return View("Index");
+                }
+                catch (Exception ex)
+                {
+                return StatusCode(500, ex.Message);
                 }
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
 
+            return View("Index");
+        }
     }
 }
