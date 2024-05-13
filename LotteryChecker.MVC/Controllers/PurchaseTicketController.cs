@@ -92,8 +92,6 @@ namespace LotteryChecker.MVC.Controllers
                 return StatusCode(500, ex.Message);
                 }
             }
-
-            return View("Index");
         }
     }
 }
