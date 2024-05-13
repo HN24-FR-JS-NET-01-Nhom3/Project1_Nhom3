@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using LotteryChecker.Common.Models.Authentications;
 using LotteryChecker.Common.Models.Entities;
 using LotteryChecker.Common.Models.ViewModels;
@@ -85,6 +85,7 @@ public class LotteryController : BaseController
 					$"{Constants.API_LOTTERY}/get-ticket-result", searchTicketVm);
 				ViewData["Reward"] = searchResponse;
 
+
 				return View(searchTicketVm);
 			}
 
@@ -119,20 +120,24 @@ public class LotteryController : BaseController
 				var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
 					$"{Constants.API_LOTTERY}/get-ticket-result", searchTicketVm);
 				ViewData["Reward"] = searchResponse;
-
-				if (TempData["User"] is AppUser user)
+				if(TempData["User"] != null)
 				{
-					var addSearchHistoryResponse = await HttpUtils<SearchHistory>.SendRequest(
-						HttpMethod.Post,
-						$"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
-						{
-							LotteryNumber = searchTicketVm.TicketNumber,
-							SearchDate = DateTime.Now,
-							UserId = user.Id
-						});
-				}
-				
-				return RedirectToAction("CheckTicket", new { 
+                    var userData = TempData["User"].ToString(); 
+                    var user = JsonConvert.DeserializeObject<UserVm>(userData); 
+                    if (user != null)
+                    {
+                        var addSearchHistoryResponse = await HttpUtils<SearchHistory>.SendRequest(
+                            HttpMethod.Post,
+                            $"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
+                            {
+                                LotteryNumber = searchTicketVm.TicketNumber,
+                                SearchDate = DateTime.Now,
+                                UserId = user.Id
+                            });
+                    }
+
+                }
+                return RedirectToAction("CheckTicket", new { 
 					year = searchTicketVm.DrawDate.Year,
 					month = searchTicketVm.DrawDate.Month,
 					day = searchTicketVm.DrawDate.Day,
@@ -148,7 +153,6 @@ public class LotteryController : BaseController
 				}
 			}
 		}
-
 		return View();
 	}
 }

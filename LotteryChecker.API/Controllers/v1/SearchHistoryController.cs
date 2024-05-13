@@ -21,6 +21,24 @@ public class SearchHistoryController : ControllerBase
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
+    [HttpGet("get-search-histories-by-user-id")]
+    public IActionResult GetSearchHistoriesByUserId([FromQuery] Guid userId)
+    {
+        try
+        {
+            var searchHistories = _unitOfWork.SearchHistoryRepository.GetByUserId(userId).OrderByDescending(x => x.SearchDate).ToList().Take(5);
+            if (searchHistories != null)
+            {
+                var searchHistoryVm = _mapper.Map<List<SearchHistoryVm>>(searchHistories);
+                return Ok(searchHistoryVm);
+            }
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Internal server error");
+        }
+    }
 
     [HttpGet("get-all-search-histories")]
     public IActionResult GetAllSearchHistories([FromQuery] int page = 1, [FromQuery] int pageSize = 10)

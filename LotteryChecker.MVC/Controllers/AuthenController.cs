@@ -38,6 +38,7 @@ public class AuthenController : BaseController
 					Response.Cookies.Append("User", JsonConvert.SerializeObject(loginResponse.User));
 					return RedirectToAction("Index", "Lottery");
 				}
+				return View();
 			}
 
 			return View();

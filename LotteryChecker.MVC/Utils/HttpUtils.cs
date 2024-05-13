@@ -50,7 +50,7 @@ public class HttpUtils<TEntity> where TEntity : class
 
             // Xử lý các mã lỗi HTTP khác
             Console.WriteLine("HTTP error occurred: " + response.StatusCode);
-            throw new BadHttpRequestException("Something happened. Please try again later.");
+            return null;
         }
         catch (Exception ex)
         {

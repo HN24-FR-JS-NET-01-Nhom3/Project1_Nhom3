@@ -10,4 +10,9 @@ public class SearchHistoryRepository : BaseRepository<SearchHistory>, ISearchHis
     public SearchHistoryRepository(LotteryContext context) : base(context)
     {
         }
+
+    public IEnumerable<SearchHistory> GetByUserId(Guid userId)
+    {
+        return Find(x => x.UserId == userId).ToList();
+    }
 }
