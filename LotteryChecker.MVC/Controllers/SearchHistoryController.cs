@@ -25,16 +25,19 @@ namespace LotteryChecker.MVC.Controllers
                     var user = JsonConvert.DeserializeObject<UserVm>(userData);
                     if (user != null)
                     {
-                        var searchHistoryResponse = await HttpUtils<IEnumerable<SearchHistoryVm>>.SendRequest(HttpMethod.Get,
-                        $"{Constants.API_SEARCH_HISTORY}/get-search-histories-by-user-id?userId={user.Id}",accessToken: Request.Cookies["AccessToken"]);
-                        if(searchHistoryResponse != null)
+                        var searchHistoryResponse = await HttpUtils<SearchHistoryVm>.SendRequest(HttpMethod.Get,
+                        $"{Constants.API_SEARCH_HISTORY}/get-search-histories-by-user-id",accessToken: Request.Cookies["AccessToken"]);
+                        if (searchHistoryResponse.Errors == null)
                         {
-                            return View(searchHistoryResponse);
+                            return View(searchHistoryResponse.Data?.Result);
                         }
                         else
-                            return RedirectToAction("Login","Authen");
+                        {
+                            TempData["ErrorMessage"] = searchHistoryResponse.Errors;
+                            return View();
+                        }    
+                            
                     }
-                    return RedirectToAction("Login", "Authen");
                 }
                 return RedirectToAction("Login", "Authen");
             }

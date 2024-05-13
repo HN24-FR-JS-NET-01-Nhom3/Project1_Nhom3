@@ -7,6 +7,7 @@ using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace LotteryChecker.API.Controllers.v1;
 
@@ -25,10 +26,11 @@ public class SearchHistoryController : ControllerBase
         _mapper = mapper;
     }
     [HttpGet("get-search-histories-by-user-id")]
-    public IActionResult GetSearchHistoriesByUserId([FromQuery] Guid userId)
+    public IActionResult GetSearchHistoriesByUserId()
     {
         try
         {
+            var userId = Guid.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var searchHistories = _unitOfWork.SearchHistoryRepository.GetByUserId(userId).OrderByDescending(x => x.SearchDate).ToList().Take(5);
             if (!searchHistories.IsNullOrEmpty())
             {
