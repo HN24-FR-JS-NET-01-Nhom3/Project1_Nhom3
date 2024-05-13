@@ -30,16 +30,28 @@ public class SearchHistoryController : ControllerBase
         try
         {
             var searchHistories = _unitOfWork.SearchHistoryRepository.GetByUserId(userId).OrderByDescending(x => x.SearchDate).ToList().Take(5);
-            if (searchHistories != null)
+            if (!searchHistories.IsNullOrEmpty())
             {
-                var searchHistoryVm = _mapper.Map<IEnumerable<SearchHistoryVm>>(searchHistories);
-                return Ok(searchHistoryVm);
+                var response = new Response<SearchHistoryVm>()
+                {
+                    Data = new Data<SearchHistoryVm>()
+                    { 
+                        Result = _mapper.Map<IEnumerable<SearchHistoryVm>>(searchHistories)
+                    }
+                };
+                return Ok(response);
             }
-            return NotFound();
+            return NotFound(new Response<SearchHistoryVm>()
+            {
+                Errors = new[] { "No search historys found" }
+            });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Internal server error");
+            return BadRequest(new Response<SearchHistoryVm>()
+            {
+                Errors = new[] { ex.Message }
+            });
         }
     }
 

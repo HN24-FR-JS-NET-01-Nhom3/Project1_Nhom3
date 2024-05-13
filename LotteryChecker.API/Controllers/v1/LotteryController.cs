@@ -267,7 +267,7 @@ public class LotteryController : ControllerBase
 		lotteries = lotteries.OrderBy(l => l.RewardId).ToList();
 		foreach (var lottery in lotteries)
 		{
-			if (searchHistoryVm.TicketNumber.EndsWith(lottery.LotteryNumber))
+			if (searchHistoryVm.LotteryNumber.EndsWith(lottery.LotteryNumber))
 			{
 				var reward = _unitOfWork.RewardRepository.GetById(lottery.RewardId);
 				return Ok(new Response<RewardVm>()
@@ -283,7 +283,7 @@ public class LotteryController : ControllerBase
 		try
 		{
 			var specialPriceLottery = lotteries.First(l => l.RewardId == 1);
-			if (searchHistoryVm.TicketNumber.EndsWith(specialPriceLottery.LotteryNumber.Substring(1)))
+			if (searchHistoryVm.LotteryNumber.EndsWith(specialPriceLottery.LotteryNumber.Substring(1)))
 			{
 				var reward = _unitOfWork.RewardRepository.GetById(9);
 				return Ok(new Response<RewardVm>()
@@ -295,7 +295,7 @@ public class LotteryController : ControllerBase
 				});
 			}
 
-			var countDuplicate = specialPriceLottery.LotteryNumber.Where((t, i) => searchHistoryVm.TicketNumber[i] == t)
+			var countDuplicate = specialPriceLottery.LotteryNumber.Where((t, i) => searchHistoryVm.LotteryNumber[i] == t)
 				.Count();
 			if (countDuplicate == 5)
 			{

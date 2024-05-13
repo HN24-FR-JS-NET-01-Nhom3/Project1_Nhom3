@@ -10,7 +10,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Route("admin/user")]
-[CustomAuthorize("Admin, Contributor")]
+//[CustomAuthorize("Admin, Contributor")]
 public class UserController : Controller
 {
     private readonly IMapper _mapper;

@@ -2,6 +2,7 @@
 using LotteryChecker.Common.Models.Entities;
 using LotteryChecker.Common.Models.Http;
 using LotteryChecker.Common.Models.ViewModels;
+using LotteryChecker.Core.Entities;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -61,13 +62,13 @@ public class LotteryController : BaseController
 	[HttpGet]
 	[Route("check-ticket")]
 	[Route("check-ticket/{year}/{month}/{day}/{ticketNumber}")]
-	public async Task<IActionResult> CheckTicket(string? ticketNumber, int? year, int? month, int? day)
+	public async Task<IActionResult> CheckTicket(string? lotteryNumber, int? year, int? month, int? day)
 	{
 		try
 		{
 			
 			
-			if (ticketNumber != null && year != null && month != null && day != null)
+			if (lotteryNumber != null && year != null && month != null && day != null)
 			{
 				var lotteryResponse = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Get,
 					$"{Constants.API_LOTTERY}/get-lottery-result?year={year}&month={month}&day={day}");					
@@ -75,7 +76,7 @@ public class LotteryController : BaseController
 				
 				var searchHistoryVm = new SearchHistoryVm()
 				{
-					TicketNumber = ticketNumber,
+                    LotteryNumber = lotteryNumber,
 					SearchDate = DateTime.Now,
 					DrawDate = new DateTime((int)year, (int)month, (int)day)
 				};
@@ -139,7 +140,7 @@ public class LotteryController : BaseController
 						HttpMethod.Post,
 						$"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
 						{
-							TicketNumber = searchHistoryVm.TicketNumber,
+                            LotteryNumber = searchHistoryVm.LotteryNumber,
 							SearchDate = DateTime.Now,
 							UserId = user.Id
 						});
@@ -149,8 +150,8 @@ public class LotteryController : BaseController
 					year = searchHistoryVm.DrawDate.Year,
 					month = searchHistoryVm.DrawDate.Month,
 					day = searchHistoryVm.DrawDate.Day,
-					ticketNumber = searchHistoryVm.TicketNumber
-				});
+					ticketNumber = searchHistoryVm.LotteryNumber
+                });
 			}
 			catch (Exception ex)
 			{

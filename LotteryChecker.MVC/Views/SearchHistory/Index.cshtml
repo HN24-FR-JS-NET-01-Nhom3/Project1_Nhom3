@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LotteryChecker.Common.Models.ViewModels.SearchTicketVm>
+﻿@model IEnumerable<LotteryChecker.Common.Models.Entities.SearchHistoryVm>
 
 @{
     ViewData["Title"] = "Index";
@@ -14,10 +14,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.TicketNumber)
+                @Html.DisplayNameFor(model => model.LotteryNumber)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.DrawDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SearchDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserId)
             </th>
             <th></th>
         </tr>
@@ -26,10 +32,16 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.TicketNumber)
+                    @Html.DisplayFor(modelItem => item.LotteryNumber)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DrawDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SearchDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserId)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |

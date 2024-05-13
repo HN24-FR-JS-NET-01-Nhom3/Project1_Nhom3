@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using LotteryChecker.Common.Models.Entities;
+using LotteryChecker.Common.Models.Http;
 using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
@@ -23,14 +25,18 @@ namespace LotteryChecker.MVC.Controllers
                     var user = JsonConvert.DeserializeObject<UserVm>(userData);
                     if (user != null)
                     {
-                        var searchHistoryResponse = await HttpUtils<IEnumerable<SearchTicketVm>>.SendRequest(HttpMethod.Get,
-                        $"{Constants.API_SEARCH_HISTORY}/get-search-histories-by-user-id?userId={user.Id}");
-                        await Console.Out.WriteLineAsync(searchHistoryResponse.ToString());
-                        return View(searchHistoryResponse);
+                        var searchHistoryResponse = await HttpUtils<IEnumerable<SearchHistoryVm>>.SendRequest(HttpMethod.Get,
+                        $"{Constants.API_SEARCH_HISTORY}/get-search-histories-by-user-id?userId={user.Id}",accessToken: Request.Cookies["AccessToken"]);
+                        if(searchHistoryResponse != null)
+                        {
+                            return View(searchHistoryResponse);
+                        }
+                        else
+                            return RedirectToAction("Login","Authen");
                     }
-                    return View();
+                    return RedirectToAction("Login", "Authen");
                 }
-                return View();
+                return RedirectToAction("Login", "Authen");
             }
             catch (Exception ex)
             {
