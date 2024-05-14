@@ -4,7 +4,7 @@ public class RefreshToken
 {
 	public int Id { get; set; }
 	public string Token { get; set; }
-	public string Jwtld { get; set; }
+	public string JwtId { get; set; }
 	public bool IsRevoked { get; set; }
 	public DateTime AddDate { get; set; }
 	public DateTime ExpireDate { get; set; }
