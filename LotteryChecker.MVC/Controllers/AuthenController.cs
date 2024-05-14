@@ -58,4 +58,21 @@ public class AuthenController : BaseController
 			throw;
 		}
 	}
+
+	[HttpGet]
+	[Route("logout")]
+	public IActionResult Logout()
+	{
+		Response.Cookies.Delete("AccessToken");
+		Response.Cookies.Delete("RefreshToken");
+		Response.Cookies.Delete("User");
+		return RedirectToAction("Index", "Lottery");
+	}
+
+	[HttpGet]
+	[Route("change-password")]
+	public IActionResult ChangePassword()
+	{
+		throw new NotImplementedException();
+	}
 }

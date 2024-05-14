@@ -7,6 +7,18 @@
     var pageEnd = Model.Meta.Page * Model.Meta.PageSize;
     var prevPage = Model.Meta.Page - 1;
     var nextPage = Model.Meta.Page + 1;
+    
+    var messages = (TempData["Messages"] ?? "").ToString();
+    var errors = (TempData["Errors"] ?? "").ToString();
+}
+
+@if (!string.IsNullOrEmpty(messages))
+{
+    @await Html.PartialAsync("MessagePopup", messages)
+}
+@if (!string.IsNullOrEmpty(errors))
+{
+    @await Html.PartialAsync("MessagePopup", errors)
 }
 
 <h1>Quản lý người dùng</h1>
@@ -17,26 +29,14 @@
 <table class="table">
     <thead>
     <tr>
-        <th>
-            Họ và tên
-        </th>
-        <th>
-            Username
-        </th>
-        <th>
-        Email
-        <th>
-            Điện thoại
-        </th>
-        <th>
-            Last Login
-        </th>
-        <th>
-            Active
-        </th>
-        <th class="text-center">
-            Actions
-        </th>
+        <th>Họ và tên</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Điện thoại</th>
+        <th>Role</th>
+        <th>Last Login</th>
+        <th>Active</th>
+        <th class="text-center">Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -57,6 +57,9 @@
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Role)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.LastLogin)
             </td>
             <td>
@@ -68,8 +71,8 @@
                 </div>
             </td>
             <td class="justify-content-evenly d-flex">
-                <a class="btn btn-outline-success" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                <a class="btn btn-outline-info" asp-action="Detail" asp-route-id="@item.Id">Detail</a>
+                <a class="btn btn-outline-success" asp-action="Edit" methods="get" asp-route-id="@item.Id">Edit</a>
+                <a class="btn btn-outline-info" asp-action="Detail" methods="get" asp-route-id="@item.Id">Detail</a>
                 @* <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a> *@
             </td>
         </tr>
@@ -101,3 +104,27 @@
         }
     </div>
 </div>
+
+@section Scripts
+{
+    <script>
+            $(function () {
+                var errorMessage = '@Html.Raw(errors)';
+                var message = '@Html.Raw(messages)';
+                
+                if (errorMessage.length > 0) {
+                    $('#errorMessageModal').modal('show');
+                    setTimeout(function(){
+                        $('#errorMessageModal').modal('hide');
+                    }, 2000);
+                }
+                
+                if (message.length > 0) {
+                    $('#messageModal').modal('show');
+                    setTimeout(function(){
+                        $('#messageModal').modal('hide');
+                    }, 2000);
+                }
+            });
+        </script>
+}
