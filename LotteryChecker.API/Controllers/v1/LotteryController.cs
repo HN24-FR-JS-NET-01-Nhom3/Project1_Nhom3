@@ -31,7 +31,7 @@ public class LotteryController : ControllerBase
 	{
 		try
 		{
-			var lotteries = _unitOfWork.LotteryRepository.GetAll().OrderByDescending(l => l.DrawDate).ToList();
+			var lotteries = _unitOfWork.LotteryRepository.GetAll().OrderByDescending(l => l.LotteryId).ToList();
 			if (!lotteries.IsNullOrEmpty())
 			{
 				lotteries = query.Filters
@@ -129,12 +129,13 @@ public class LotteryController : ControllerBase
 		}
 	}
 
-	[HttpPut("update-lottery")]
+	[HttpPut("update-lottery/{id}")]
 	public IActionResult UpdateLottery([FromBody] LotteryVm lotteryVm)
 	{
 		try
 		{
 			var lottery = _mapper.Map<Lottery>(lotteryVm);
+			lottery.Reward.RewardId = lotteryVm.RewardId;
 			_unitOfWork.LotteryRepository.Update(lottery);
 			int result = _unitOfWork.SaveChanges();
 			if (result > 0)

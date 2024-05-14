@@ -1,0 +1,67 @@
+﻿@model LotteryChecker.Common.Models.Entities.LotteryVm
+
+@{
+    ViewData["Title"] = "Chỉnh sửa vé dò";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container mt-5">
+    <h2>@ViewData["Title"]</h2>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div hidden class="mb-3">
+                    <label for="lotteryId" class="form-label">Lottery Id</label>
+                    <input asp-for="LotteryId" type="text" class="form-control" id="lotteryId" name="LotteryId">
+                    <span asp-validation-for="LotteryId" class="text-danger"></span>
+                </div>
+                <div hidden class="mb-3">
+                    <label for="drawDate" class="form-label">Draw Date</label>
+                    <input readonly asp-for="DrawDate" type="text" class="form-control" id="drawDate" name="DrawDate">
+                    <span asp-validation-for="DrawDate" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="lotteryNumber" class="form-label">Lottery Number</label>
+                    <input readonly asp-for="LotteryNumber" type="text" class="form-control" id="lotteryNumber" name="LotteryNumber">
+                    <span asp-validation-for="LotteryNumber" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="isPublished" class="form-check-label">Is Published</label>
+                    <input asp-for="IsPublished" type="checkbox" class="form-check-input" id="isPublished" name="IsPublished">
+                </div>
+                <div class="mb-3">
+                    <label for="company" class="form-label">Company</label>
+                    <input asp-for="Company" type="text" class="form-control" id="company" name="Company">
+                    <span asp-validation-for="Company" class="text-danger"></span>
+                </div>
+                <div hidden class="mb-3">
+                    <label for="rewardId" class="form-label">Reward</label>
+                    <input asp-for="RewardId" class="form-control" id="rewardId" name="RewardId"></input>
+                    <span asp-validation-for="RewardId" class="text-danger"></span>
+                </div>
+                <div hidden class="mb-3">
+                    <label asp-for="RewardName" class="form-label">Reward Name</label>
+                    <input asp-for="RewardName" type="text" class="form-control" id="rewardName" name="RewardName">
+                    <span asp-validation-for="RewardName" class="text-danger"></span>
+                </div>
+                <div hidden class="mb-3">
+                    <label asp-for="RewardValue" class="form-label">Reward Value</label>
+                    <input asp-for="RewardValue" type="text" class="form-control" id="rewardValue" name="RewardValue">
+                    <span asp-validation-for="RewardValue" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
