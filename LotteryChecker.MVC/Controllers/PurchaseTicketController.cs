@@ -5,65 +5,67 @@ using LotteryChecker.Core.Entities;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Net;
+using System.Text;
 
-namespace LotteryChecker.MVC.Controllers
+namespace LotteryChecker.MVC.Controllers;
+
+[Route("purchase-ticket")]
+public class PurchaseTicketController : BaseController
 {
-    [Route("purchase-ticket")]
-    public class PurchaseTicketController : Controller
+    public PurchaseTicketController(IMapper mapper) : base(mapper)
     {
-        private readonly IMapper _mapper;
-
-        public PurchaseTicketController(IMapper mapper)
+    }
+    
+    [HttpGet("")]
+    [CustomAuthorize("User, Admin")]
+    public async Task<IActionResult> Index()
+    {
+        try
         {
-            _mapper = mapper;
+            var purchaseTicketResponse = await HttpUtils<Response<PurchaseTicketVm>>.SendRequest(HttpMethod.Get, $"{Constants.API_PURCHASE_TICKET}/get-all-purchase-tickets");
+            ViewData["PurchaseTickets"] = purchaseTicketResponse;
+
+            var apiResponse = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Get, 
+                $"{Constants.API_PURCHASE_TICKET}/get-all-purchase-tickets");
+
+            if (apiResponse.Errors == null)
+            {
+                return View(apiResponse.Data?.Result?.ToList());
+            }
+
+            TempData["ErrorMessage"] = apiResponse.Errors;
+            return View();
         }
-
-        [Route("")]
-        public async Task<IActionResult> Index()
+        catch (Exception ex)
         {
-            try
-            {
-                var purchaseTicketResponse = await HttpUtils<Response<PurchaseTicketVm>>.SendRequest(HttpMethod.Get, $"{Constants.API_PURCHASE_TICKET}/get-all-purchase-tickets");
-                ViewData["PurchaseTickets"] = purchaseTicketResponse;
-                
-                return View();
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
+            TempData["ErrorMessage"] = ex.Message;
+            return View();
         }
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> PurchaseTicket(PurchaseTicketVm? purchaseTicketVm)
+    [CustomAuthorize("User, Admin")]
+    [HttpPost("create")]
+    public async Task<IActionResult> Create([FromBody] PurchaseTicket purchaseTicket)
+    {
+        try
         {
-            if (ModelState.IsValid)
+            var apiResponse = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Post,
+                $"{Constants.API_PURCHASE_TICKET}/create-purchase-ticket", purchaseTicket);
+
+            if (apiResponse.Errors == null)
             {
-                if (purchaseTicketVm == null)
-                {
-                    return View("Index");
-                }
-
-                try
-                {
-                    var purchaseResponse = await HttpUtils<PurchaseTicket>.SendRequest(HttpMethod.Post,
-                        $"{Constants.API_PURCHASE_TICKET}/create-purchase-ticket", purchaseTicketVm);
-                    if (purchaseResponse != null)
-                    {
-                        return View("Index");
-                    }
-
-                    return View("Index");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    throw;
-                }
+                return RedirectToAction("Index");
             }
 
+            TempData["ErrorMessage"] = apiResponse.Errors;
+            return View("Index");
+        }
+        catch (Exception ex)
+        {
+
+            TempData["ErrorMessage"] = ex.Message;
             return View("Index");
         }
     }

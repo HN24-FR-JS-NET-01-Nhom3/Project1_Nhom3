@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using LotteryChecker.Common.Models.Entities;
 using LotteryChecker.Common.Models.Http;
 using LotteryChecker.Common.Models.ViewModels;
@@ -7,6 +7,7 @@ using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace LotteryChecker.MVC.Controllers;
 
@@ -61,14 +62,12 @@ public class LotteryController : BaseController
 
 	[HttpGet]
 	[Route("check-ticket")]
-	[Route("check-ticket/{year}/{month}/{day}/{ticketNumber}")]
-	public async Task<IActionResult> CheckTicket(string? ticketNumber, int? year, int? month, int? day)
+	[Route("check-ticket/{year}/{month}/{day}/{lotteryNumber}")]
+	public async Task<IActionResult> CheckTicket(string? lotteryNumber, int? year, int? month, int? day)
 	{
 		try
-		{
-			
-			
-			if (ticketNumber != null && year != null && month != null && day != null)
+		{		
+			if (lotteryNumber != null && year != null && month != null && day != null)
 			{
 				var lotteryResponse = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Get,
 					$"{Constants.API_LOTTERY}/get-lottery-result?year={year}&month={month}&day={day}");					
@@ -76,12 +75,23 @@ public class LotteryController : BaseController
 				
 				var searchHistoryVm = new SearchHistoryVm()
 				{
-					TicketNumber = ticketNumber,
+                    LotteryNumber = lotteryNumber,
 					SearchDate = DateTime.Now,
 					DrawDate = new DateTime((int)year, (int)month, (int)day)
 				};
+                if (TempData["User"] != null)
+                {
+                    var userData = TempData["User"].ToString();
+                    var user = JsonConvert.DeserializeObject<UserVm>(userData);
+                    if (user != null)
+                    {
+                        var searchHistoryResponse = await HttpUtils<SearchHistoryVm>.SendRequest(HttpMethod.Get,
+                        $"{Constants.API_SEARCH_HISTORY}/get-search-histories-by-user-id", accessToken: Request.Cookies["AccessToken"]);
+                        ViewData["SearchHistories"] = searchHistoryResponse.Data?.Result;
 
-				var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
+                    }
+                }
+                var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
 					$"{Constants.API_LOTTERY}/get-ticket-result", searchHistoryVm);
 				if (searchResponse.Errors.IsNullOrEmpty())
 				{
@@ -106,7 +116,7 @@ public class LotteryController : BaseController
 
 	[HttpPost]
 	[Route("check-ticket")]
-	[Route("check-ticket/{year}/{month}/{day}/{ticketNumber}")]
+	[Route("check-ticket/{year}/{month}/{day}/{lotteryNumber}")]
 	[ValidateAntiForgeryToken]
 	public async Task<IActionResult> CheckTicket(SearchHistoryVm? searchHistoryVm)
 	{
@@ -116,7 +126,6 @@ public class LotteryController : BaseController
 			{
 				return View();
 			}
-
 			try
 			{
 				var lotteryResponse = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Get,
@@ -133,32 +142,35 @@ public class LotteryController : BaseController
 				{
 					ViewData["ErrorMessage"] = searchResponse.Errors;
 				}
-
-				if (TempData["User"] is AppUser user)
+				if (TempData["User"] != null)
 				{
-					var addSearchHistoryResponse = await HttpUtils<SearchHistory>.SendRequest(
-						HttpMethod.Post,
-						$"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
-						{
-							TicketNumber = searchHistoryVm.TicketNumber,
-							SearchDate = DateTime.Now,
-							UserId = user.Id
-						});
+                    var userData = TempData["User"].ToString();
+                    var user = JsonConvert.DeserializeObject<UserVm>(userData);
+					if(user != null)
+					{
+                        var addSearchHistoryResponse = await HttpUtils<SearchHistory>.SendRequest(HttpMethod.Post,
+                       $"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
+                       {
+                           LotteryNumber = searchHistoryVm.LotteryNumber,
+                           SearchDate = DateTime.Now,
+                           UserId = user.Id,
+						   DrawDate=searchHistoryVm.DrawDate
+                       }, accessToken: Request.Cookies["AccessToken"]);
+                    }
 				}
 				
 				return RedirectToAction("CheckTicket", new { 
 					year = searchHistoryVm.DrawDate.Year,
 					month = searchHistoryVm.DrawDate.Month,
 					day = searchHistoryVm.DrawDate.Day,
-					ticketNumber = searchHistoryVm.TicketNumber
-				});
+                    lotteryNumber = searchHistoryVm.LotteryNumber
+                });
 			}
 			catch (Exception ex)
 			{
 				ViewData["ErrorMessage"] = ex.Message;
 			}
 		}
-
 		return View();
 	}
 }

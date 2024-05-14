@@ -7,6 +7,7 @@
     ViewData["Title"] = "Check Lottery";
     var reward = ViewData["Reward"] as RewardVm;
     var lotteryResult = ViewData["LotteryResult"] as IEnumerable<IGrouping<int, LotteryVm>>;
+    var searchHistory = ViewData["SearchHistories"] as IEnumerable<SearchHistoryVm>;
     Layout = "_Layout";
 }
 
@@ -29,9 +30,9 @@
                 <form asp-action="CheckTicket" method="post">
                     <div class="card-body">
                         <div class="form-group mb-2">
-                            <label class="text-for-checking-ticket" asp-for="TicketNumber">Nhập số vé <span class="text-danger">*</span></label>
-                            <input asp-for="TicketNumber" type="text" class="form-control input-for-checking-ticket" placeholder="Số vé"/>
-                            <span asp-validation-for="TicketNumber" class="text-danger d-block"></span>
+                            <label class="text-for-checking-ticket" asp-for="LotteryNumber">Nhập số vé <span class="text-danger">*</span></label>
+                            <input asp-for="LotteryNumber" type="text" class="form-control input-for-checking-ticket" placeholder="Số vé" />
+                            <span asp-validation-for="LotteryNumber" class="text-danger d-block"></span>
                         </div>
                         <div class="form-group mb-3">
                             <label class="text-for-checking-ticket" asp-for="DrawDate">Ngày quay thưởng <span class="text-danger">*</span></label>
@@ -70,8 +71,9 @@
         <div class="col-lg-3 d-flex flex-column align-items-center right-banner">
             <div class="w-100">
                 <div class="d-flex justify-content-between mb-4">
-                    <h4>Lịch sử dò vé</h4>
+                    <h4>Lịch sử dò vé</h4>                  
                 </div>
+                @await Html.PartialAsync("_SearchHistoryPartial",searchHistory)
             </div>
             <div class="mt-4 w-100">
                 <div class="d-flex justify-content-between mb-4">

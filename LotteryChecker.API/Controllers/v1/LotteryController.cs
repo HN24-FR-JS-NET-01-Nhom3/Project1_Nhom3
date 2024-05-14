@@ -3,8 +3,10 @@ using AutoMapper;
 using LotteryChecker.API.Helpers;
 using LotteryChecker.Common.Models.Entities;
 using LotteryChecker.Common.Models.Http;
+using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -24,13 +26,12 @@ public class LotteryController : ControllerBase
 		_mapper = mapper;
 	}
 
-	[HttpGet("get-all-lotteries")]
-	public IActionResult GetAllLotteries([FromQuery] LotteryQuery query, [FromQuery] int page = 1,
-		[FromQuery] int pageSize = 10)
+	[HttpGet("get-all-lotteries/page={page}&pageSize={pageSize}")]
+	public IActionResult GetAllLotteries([FromQuery] LotteryQuery query, int page = 1, int pageSize = 17)
 	{
 		try
 		{
-			var lotteries = _unitOfWork.LotteryRepository.GetAll().ToList();
+			var lotteries = _unitOfWork.LotteryRepository.GetAll().OrderByDescending(l => l.DrawDate).ToList();
 			if (!lotteries.IsNullOrEmpty())
 			{
 				lotteries = query.Filters
@@ -69,7 +70,7 @@ public class LotteryController : ControllerBase
 		}
 	}
 
-	[HttpGet("get-lottery-by-id")]
+	[HttpGet("get-lottery/{id}")]
 	public IActionResult GetLotteryById(int id)
 	{
 		try
@@ -99,7 +100,7 @@ public class LotteryController : ControllerBase
 	}
 
 	[HttpPost("create-lottery")]
-	public IActionResult CreateLottery([FromBody] LotteryVm lotteryVm)
+	public IActionResult CreateLottery([FromBody] CreateLotteryVm lotteryVm)
 	{
 		try
 		{
@@ -267,7 +268,7 @@ public class LotteryController : ControllerBase
 		lotteries = lotteries.OrderBy(l => l.RewardId).ToList();
 		foreach (var lottery in lotteries)
 		{
-			if (searchHistoryVm.TicketNumber.EndsWith(lottery.LotteryNumber))
+			if (searchHistoryVm.LotteryNumber.EndsWith(lottery.LotteryNumber))
 			{
 				var reward = _unitOfWork.RewardRepository.GetById(lottery.RewardId);
 				return Ok(new Response<RewardVm>()
@@ -283,7 +284,7 @@ public class LotteryController : ControllerBase
 		try
 		{
 			var specialPriceLottery = lotteries.First(l => l.RewardId == 1);
-			if (searchHistoryVm.TicketNumber.EndsWith(specialPriceLottery.LotteryNumber.Substring(1)))
+			if (searchHistoryVm.LotteryNumber.EndsWith(specialPriceLottery.LotteryNumber.Substring(1)))
 			{
 				var reward = _unitOfWork.RewardRepository.GetById(9);
 				return Ok(new Response<RewardVm>()
@@ -295,7 +296,7 @@ public class LotteryController : ControllerBase
 				});
 			}
 
-			var countDuplicate = specialPriceLottery.LotteryNumber.Where((t, i) => searchHistoryVm.TicketNumber[i] == t)
+			var countDuplicate = specialPriceLottery.LotteryNumber.Where((t, i) => searchHistoryVm.LotteryNumber[i] == t)
 				.Count();
 			if (countDuplicate == 5)
 			{
@@ -322,4 +323,42 @@ public class LotteryController : ControllerBase
 			});
 		}
 	}
+    [HttpPost("update-pubished-lottery/{id}/{isPublished}")]
+    public IActionResult UpdatePublishedLottery(int id, bool isPublished)
+    {
+        try
+        {
+            var lottery = _unitOfWork.LotteryRepository.GetById(id);
+            if (lottery == null)
+                return NotFound(new Response<LotteryVm>()
+                {
+                    Errors = new[] { "Not found." }
+                });
+            lottery.IsPublished = isPublished;
+            _unitOfWork.LotteryRepository.Update(lottery);
+            int result = _unitOfWork.SaveChanges();
+            if (result <= 0)
+            {
+                return BadRequest(new Response<LotteryVm>()
+                {
+                    Errors = new[] { "Lottery could not be update." }
+                });
+            }
+
+            return Ok(new Response<LotteryVm>()
+            {
+                Data = new Data<LotteryVm>()
+                {
+                    Result = [_mapper.Map<LotteryVm>(lottery)]
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new Response<LotteryVm>()
+            {
+                Errors = new[] { ex.Message }
+            });
+        }
+    }
 }

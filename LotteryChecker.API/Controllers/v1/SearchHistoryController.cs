@@ -7,6 +7,7 @@ using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace LotteryChecker.API.Controllers.v1;
 
@@ -24,6 +25,37 @@ public class SearchHistoryController : ControllerBase
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
+    [HttpGet("get-search-histories-by-user-id")]
+    public IActionResult GetSearchHistoriesByUserId()
+    {
+        try
+        {
+            var userId = Guid.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var searchHistories = _unitOfWork.SearchHistoryRepository.GetByUserId(userId).OrderByDescending(x => x.SearchDate).ToList().Take(5);
+            if (!searchHistories.IsNullOrEmpty())
+            {
+                var response = new Response<SearchHistoryVm>()
+                {
+                    Data = new Data<SearchHistoryVm>()
+                    { 
+                        Result = _mapper.Map<IEnumerable<SearchHistoryVm>>(searchHistories)
+                    }
+                };
+                return Ok(response);
+            }
+            return NotFound(new Response<SearchHistoryVm>()
+            {
+                Errors = new[] { "No search historys found" }
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new Response<SearchHistoryVm>()
+            {
+                Errors = new[] { ex.Message }
+            });
+        }
+    }
 
     [HttpGet("get-all-search-histories")]
     public IActionResult GetAllSearchHistories([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
@@ -31,7 +63,6 @@ public class SearchHistoryController : ControllerBase
         try
         {
             var searchHistories = _unitOfWork.SearchHistoryRepository.GetAll().ToList();
-
             if (!searchHistories.IsNullOrEmpty())
             {
                 var searchHistoryPaging = _unitOfWork.SearchHistoryRepository.GetPaging(searchHistories, null, page, pageSize).ToList();
