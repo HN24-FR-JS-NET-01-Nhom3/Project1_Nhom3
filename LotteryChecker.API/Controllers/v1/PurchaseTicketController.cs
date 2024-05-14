@@ -26,7 +26,7 @@ public class PurchaseTicketController : ControllerBase
     }
 
     [HttpGet("get-all-purchase-tickets")]
-    public IActionResult GetAllPurchaseTickets([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    public IActionResult GetAllPurchaseTickets([FromQuery] int page = 1, [FromQuery] int pageSize = 5)
     {
         try
         {
@@ -128,7 +128,7 @@ public class PurchaseTicketController : ControllerBase
         {
             return BadRequest(new Response<PurchaseTicket>()
             {
-                Errors = new[] { ex.Message }
+                Errors = new[] { "Error occurred while saving the entity changes", ex.InnerException?.Message }
             });
         }
     }
