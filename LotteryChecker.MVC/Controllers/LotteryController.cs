@@ -7,6 +7,7 @@ using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace LotteryChecker.MVC.Controllers;
 
@@ -133,17 +134,21 @@ public class LotteryController : BaseController
 				{
 					ViewData["ErrorMessage"] = searchResponse.Errors;
 				}
-
-				if (TempData["User"] is AppUser user)
+				if (TempData["User"] != null)
 				{
-					var addSearchHistoryResponse = await HttpUtils<SearchHistory>.SendRequest(
-						HttpMethod.Post,
-						$"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
-						{
-                            LotteryNumber = searchHistoryVm.LotteryNumber,
-							SearchDate = DateTime.Now,
-							UserId = user.Id
-						});
+                    var userData = TempData["User"].ToString();
+                    var user = JsonConvert.DeserializeObject<UserVm>(userData);
+					if(user != null)
+					{
+                        var addSearchHistoryResponse = await HttpUtils<SearchHistory>.SendRequest(
+                       HttpMethod.Post,
+                       $"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
+                       {
+                           LotteryNumber = searchHistoryVm.LotteryNumber,
+                           SearchDate = DateTime.Now,
+                           UserId = user.Id
+                       });
+                    }
 				}
 				
 				return RedirectToAction("CheckTicket", new { 

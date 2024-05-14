@@ -27,8 +27,15 @@ builder.Services.AddAuthentication(options =>
 		options.AccessDeniedPath = "/home/error";
 		options.LoginPath = "/authen/login";
 	});
+builder.Services.AddAuthentication().AddFacebook(options =>
+{
+	options.ClientId = "458255099920081";
+	options.ClientSecret = "61a21b7c045a182ecbd89953755ba581";
+});
+builder.Services.AddRazorPages();
 
 builder.Services.AddAuthorization();
+
 
 var app = builder.Build();
 
@@ -53,6 +60,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseAuthentication();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapRazorPages();
+});
 
 app.MapControllerRoute(
 	name: "default",
