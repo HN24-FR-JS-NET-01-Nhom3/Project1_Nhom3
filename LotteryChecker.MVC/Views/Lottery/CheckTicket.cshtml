@@ -7,6 +7,7 @@
     ViewData["Title"] = "Check Lottery";
     var reward = ViewData["Reward"] as RewardVm;
     var lotteryResult = ViewData["LotteryResult"] as IEnumerable<IGrouping<int, LotteryVm>>;
+    var searchHistory = ViewData["SearchHistories"] as IEnumerable<SearchHistoryVm>;
     Layout = "_Layout";
 }
 
@@ -71,7 +72,8 @@
             <div class="w-100">
                 <div class="d-flex justify-content-between mb-4">
                     <h4>Lịch sử dò vé</h4>                  
-                </div>            
+                </div>
+                @await Html.PartialAsync("_SearchHistoryPartial",searchHistory)
             </div>
             <div class="mt-4 w-100">
                 <div class="d-flex justify-content-between mb-4">

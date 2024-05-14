@@ -62,13 +62,11 @@ public class LotteryController : BaseController
 
 	[HttpGet]
 	[Route("check-ticket")]
-	[Route("check-ticket/{year}/{month}/{day}/{ticketNumber}")]
+	[Route("check-ticket/{year}/{month}/{day}/{lotteryNumber}")]
 	public async Task<IActionResult> CheckTicket(string? lotteryNumber, int? year, int? month, int? day)
 	{
 		try
-		{
-			
-			
+		{		
 			if (lotteryNumber != null && year != null && month != null && day != null)
 			{
 				var lotteryResponse = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Get,
@@ -81,8 +79,19 @@ public class LotteryController : BaseController
 					SearchDate = DateTime.Now,
 					DrawDate = new DateTime((int)year, (int)month, (int)day)
 				};
+                if (TempData["User"] != null)
+                {
+                    var userData = TempData["User"].ToString();
+                    var user = JsonConvert.DeserializeObject<UserVm>(userData);
+                    if (user != null)
+                    {
+                        var searchHistoryResponse = await HttpUtils<SearchHistoryVm>.SendRequest(HttpMethod.Get,
+                        $"{Constants.API_SEARCH_HISTORY}/get-search-histories-by-user-id", accessToken: Request.Cookies["AccessToken"]);
+                        ViewData["SearchHistories"] = searchHistoryResponse.Data?.Result;
 
-				var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
+                    }
+                }
+                var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
 					$"{Constants.API_LOTTERY}/get-ticket-result", searchHistoryVm);
 				if (searchResponse.Errors.IsNullOrEmpty())
 				{
@@ -107,7 +116,7 @@ public class LotteryController : BaseController
 
 	[HttpPost]
 	[Route("check-ticket")]
-	[Route("check-ticket/{year}/{month}/{day}/{ticketNumber}")]
+	[Route("check-ticket/{year}/{month}/{day}/{lotteryNumber}")]
 	[ValidateAntiForgeryToken]
 	public async Task<IActionResult> CheckTicket(SearchHistoryVm? searchHistoryVm)
 	{
@@ -117,7 +126,6 @@ public class LotteryController : BaseController
 			{
 				return View();
 			}
-
 			try
 			{
 				var lotteryResponse = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Get,
@@ -140,14 +148,14 @@ public class LotteryController : BaseController
                     var user = JsonConvert.DeserializeObject<UserVm>(userData);
 					if(user != null)
 					{
-                        var addSearchHistoryResponse = await HttpUtils<SearchHistory>.SendRequest(
-                       HttpMethod.Post,
+                        var addSearchHistoryResponse = await HttpUtils<SearchHistory>.SendRequest(HttpMethod.Post,
                        $"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
                        {
                            LotteryNumber = searchHistoryVm.LotteryNumber,
                            SearchDate = DateTime.Now,
-                           UserId = user.Id
-                       });
+                           UserId = user.Id,
+						   DrawDate=searchHistoryVm.DrawDate
+                       }, accessToken: Request.Cookies["AccessToken"]);
                     }
 				}
 				
@@ -155,7 +163,7 @@ public class LotteryController : BaseController
 					year = searchHistoryVm.DrawDate.Year,
 					month = searchHistoryVm.DrawDate.Month,
 					day = searchHistoryVm.DrawDate.Day,
-					ticketNumber = searchHistoryVm.LotteryNumber
+                    lotteryNumber = searchHistoryVm.LotteryNumber
                 });
 			}
 			catch (Exception ex)
