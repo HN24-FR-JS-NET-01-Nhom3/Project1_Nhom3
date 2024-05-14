@@ -1,4 +1,5 @@
 using LotteryChecker.Core.Data;
+using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -53,6 +54,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseAuthentication();
+
+app.UseMiddleware<TokenMiddleware>();
 
 app.MapControllerRoute(
 	name: "default",

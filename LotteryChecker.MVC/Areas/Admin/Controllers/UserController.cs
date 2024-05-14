@@ -28,6 +28,11 @@ public class UserController : Controller
 	{
 		try
 		{
+			if (Request.Cookies["User"] != null)
+			{
+				var user = JsonConvert.DeserializeObject<UserVm>(Request.Cookies["User"]);
+				TempData["UserId"] = user.Id;
+			}
 			var response = await HttpUtils<UserVm>.SendRequest(HttpMethod.Get,
 				$"{Constants.API_USER}/get-all-users/page={page}&pageSize={pageSize}", null,
 				Request.Cookies["AccessToken"]);
