@@ -112,6 +112,18 @@ builder.Services.AddControllersWithViews()
 		options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 	);
 
+builder.Services.AddSingleton(new TokenValidationParameters
+{
+	ValidateIssuer = true,
+	ValidateAudience = true,
+	ValidateLifetime = false, // Here we are saying that we don't care about the token's expiration date
+	ValidateIssuerSigningKey = true,
+	ValidIssuer = builder.Configuration["JWT:Issuer"],
+	ValidAudience = builder.Configuration["JWT:Audience"],
+	IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -130,6 +142,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
 
 app.UseAuthorization();
 

@@ -1,15 +1,9 @@
-﻿@using Newtonsoft.Json
-@using Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model LotteryChecker.Common.Models.ViewModels.CreateUserVm
 
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
-    ErrorVm? errorMessage = null;
-    if (ViewBag.ErrorMessage != null)
-    {
-        errorMessage = JsonConvert.DeserializeObject<ErrorVm>(ViewBag.ErrorMessage);
-    }
 }
 
 <div class="container">
@@ -18,7 +12,6 @@
     <div class="row">
         <div class="col-md-6">
             <form asp-action="Create">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group my-4">
                     <label asp-for="FirstName" class="control-label">First Name <span class="text-danger">*</span></label>
                     <input asp-for="FirstName" class="form-control"/>
@@ -49,13 +42,7 @@
                     <input asp-for="Phone" class="form-control"/>
                     <span asp-validation-for="Phone" class="text-danger"></span>
                 </div>
-
-                @if (errorMessage != null)
-                {
-                    <div class="text text-danger">
-                        @errorMessage.Message
-                    </div>
-                }
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group my-4">
                     <button type="submit" class="btn btn-primary mx-2">Create</button>
                     <a asp-action="Index" class="btn btn-secondary">Back to List</a>

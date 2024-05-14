@@ -4,6 +4,7 @@ using LotteryChecker.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,13 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LotteryChecker.Core.Migrations
 {
     [DbContext(typeof(LotteryContext))]
-    partial class LotteryContextModelSnapshot : ModelSnapshot
+    [Migration("20240514024838_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -115,7 +118,7 @@ namespace LotteryChecker.Core.Migrations
                         {
                             Id = new Guid("24dd0b58-c0e0-470c-8ed2-14467a3b868f"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2fd6795b-d448-46bc-9f33-28f160c29fdd",
+                            ConcurrencyStamp = "e5f85084-50a7-41e7-a58a-35bed091bf93",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Hoang Chi",
@@ -124,9 +127,9 @@ namespace LotteryChecker.Core.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAENyyHO4FLRsQVBFDbQhTQjKSU5gYkyyh96eIGoKUgOCPcJWt8ZZsIMfZ7ZfwlmyQPA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEE37HpqfzDKfjqFRstKRKlbfgU9G6RcOXCwF5j+ULOnGAItp86uwAlLScCo+M8dyQA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "9a07b491-4e09-447c-a8ea-273b45e80ab4",
+                            SecurityStamp = "a34a9a07-d7ee-4c32-b097-1b881756c7e8",
                             TwoFactorEnabled = false,
                             UserName = "admin@gmail.com"
                         },
@@ -134,7 +137,7 @@ namespace LotteryChecker.Core.Migrations
                         {
                             Id = new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7250f19f-c677-49c9-9cdf-bab5e9999e9e",
+                            ConcurrencyStamp = "a6ccf5c8-54f0-4406-86c4-d022ee26aba1",
                             Email = "hieuhv@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Ho Van",
@@ -143,9 +146,9 @@ namespace LotteryChecker.Core.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "HIEUHV@GMAIL.COM",
                             NormalizedUserName = "HIEUHV@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEIWIi9q9piEON1J+ePOfMFBcKVU7MWzXxbcKxnC74K9gMAxJnt43blKIuJtojX04Ww==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELlZi54+zq1jBcIX5ogfWu7ml9PyLUJO4y41/BaPqmn50xf2vqPamHfLx3Y5l+hH/g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7f19eacd-bcb7-444f-93c6-739ee4289948",
+                            SecurityStamp = "d06af497-c3c3-49c5-93b7-16c1fce6b526",
                             TwoFactorEnabled = false,
                             UserName = "hieuhv@gmail.com"
                         },
@@ -153,7 +156,7 @@ namespace LotteryChecker.Core.Migrations
                         {
                             Id = new Guid("36b35306-154c-4518-8fc1-d7e756522111"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "db448e53-d8a5-40f9-8730-cb55fcb7ee45",
+                            ConcurrencyStamp = "b531c6c4-d60a-4195-bae3-f247a8489bc1",
                             Email = "vietlq@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Le Quang",
@@ -162,9 +165,9 @@ namespace LotteryChecker.Core.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "VIETLQ@GMAIL.COM",
                             NormalizedUserName = "VIETLQ@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFoA1fYXsRZyvCq476MOOEVHPgBT5Vlfpo3mpEJdlQPKsa6BqUAuSPomIluRdkRzuA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGUFUVbrxRSezmWd2ewTKxgHVbkG262SnwsdEEwpGuKuGgI0QkwZEfGr/qkjtWnRQw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "183a06d6-78c1-4354-8152-671a8e8d2ca5",
+                            SecurityStamp = "406feaeb-7c53-484d-bd83-357f408951a8",
                             TwoFactorEnabled = false,
                             UserName = "vietlq@gmail.com"
                         });
@@ -292,7 +295,7 @@ namespace LotteryChecker.Core.Migrations
                         new
                         {
                             PurchaseTicketId = 1,
-                            DrawDate = new DateTime(2024, 5, 13, 22, 51, 50, 929, DateTimeKind.Local).AddTicks(5838),
+                            DrawDate = new DateTime(2024, 5, 14, 9, 48, 38, 5, DateTimeKind.Local).AddTicks(2797),
                             LotteryNumber = "123456",
                             PurchaseDate = new DateTime(2024, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserId = new Guid("36b35306-154c-4518-8fc1-d7e756522111")
@@ -300,7 +303,7 @@ namespace LotteryChecker.Core.Migrations
                         new
                         {
                             PurchaseTicketId = 2,
-                            DrawDate = new DateTime(2024, 5, 13, 22, 51, 50, 929, DateTimeKind.Local).AddTicks(5858),
+                            DrawDate = new DateTime(2024, 5, 14, 9, 48, 38, 5, DateTimeKind.Local).AddTicks(2807),
                             LotteryNumber = "234567",
                             PurchaseDate = new DateTime(2024, 5, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserId = new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d")
@@ -308,7 +311,7 @@ namespace LotteryChecker.Core.Migrations
                         new
                         {
                             PurchaseTicketId = 3,
-                            DrawDate = new DateTime(2024, 5, 13, 22, 51, 50, 929, DateTimeKind.Local).AddTicks(5860),
+                            DrawDate = new DateTime(2024, 5, 14, 9, 48, 38, 5, DateTimeKind.Local).AddTicks(2809),
                             LotteryNumber = "345678",
                             PurchaseDate = new DateTime(2024, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserId = new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d")

@@ -11,6 +11,7 @@ using LotteryChecker.Core.Data;
 using LotteryChecker.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace LotteryChecker.API.Controllers.v1;
@@ -26,20 +27,19 @@ public class AuthenticationController : ControllerBase
 	private readonly LotteryContext _context;
 	private readonly IConfiguration _configuration;
 	private readonly IMapper _mapper;
+	private readonly TokenValidationParameters _tokenValidationParameters;
 
-	public AuthenticationController(UserManager<AppUser> userManager,
-		SignInManager<AppUser> signInManager,
-		RoleManager<IdentityRole<Guid>> roleManager,
-		LotteryContext context,
-		IConfiguration configuration,
-		IMapper mapper)
+	public AuthenticationController(UserManager<AppUser> userManager, RoleManager<IdentityRole<Guid>> roleManager,
+		SignInManager<AppUser> signInManager, LotteryContext context, IConfiguration configuration, IMapper mapper,
+		TokenValidationParameters tokenValidationParameters)
 	{
 		_userManager = userManager;
-		_signInManager = signInManager;
 		_roleManager = roleManager;
+		_signInManager = signInManager;
 		_context = context;
 		_configuration = configuration;
 		_mapper = mapper;
+		_tokenValidationParameters = tokenValidationParameters;
 	}
 
 	[HttpPost("register")]
@@ -145,7 +145,7 @@ public class AuthenticationController : ControllerBase
 
 		var refreshToken = new RefreshToken
 		{
-			Jwtld = token.Id,
+			JwtId = token.Id,
 			IsRevoked = false,
 			UserId = user.Id,
 			AddDate = DateTime.UtcNow,
@@ -180,5 +180,122 @@ public class AuthenticationController : ControllerBase
 		}
 
 		return NotFound();
+	}
+
+	[HttpPost("refresh-token")]
+	public async Task<IActionResult> RefreshToken([FromBody] TokenRequestVm tokenRequest)
+	{
+		if (!ModelState.IsValid)
+		{
+			return BadRequest(new Response<string>()
+			{
+				Errors = new[] { "Invalid data." }
+			});
+		}
+
+		var authResult = await VerifyAndGenerateToken(tokenRequest);
+		if (authResult.Data == null)
+		{
+			return BadRequest(new Response<string>()
+			{
+				Errors = new[] { "Invalid token." }
+			});
+		}
+
+		return Ok(authResult);
+	}
+
+	private async Task<Response<AuthResultVm>> VerifyAndGenerateToken(TokenRequestVm tokenRequest)
+	{
+		var jwtTokenHandler = new JwtSecurityTokenHandler();
+
+		try
+		{
+			var tokenInVerification = jwtTokenHandler.ValidateToken(tokenRequest.AccessToken,
+				_tokenValidationParameters, out var validatedToken);
+
+			if (validatedToken is JwtSecurityToken jwtSecurityToken)
+			{
+				var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
+					StringComparison.InvariantCultureIgnoreCase);
+				if (!result)
+				{
+					return null;
+				}
+			}
+
+			var utcExpiryDate = long.Parse(tokenInVerification.Claims
+				.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+
+			var expiryDate = UnixTimeStampToDateTime(utcExpiryDate);
+
+			if (expiryDate > DateTime.UtcNow)
+			{
+				return new Response<AuthResultVm>()
+				{
+					Errors = new List<string> { "Access token has not expired yet." }
+				};
+			}
+
+			var storedToken =
+				await _context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == tokenRequest.RefreshToken);
+
+			if (storedToken == null || storedToken.IsRevoked)
+			{
+				return new Response<AuthResultVm>()
+				{
+					Errors = new List<string> { "Invalid refresh token." }
+				};
+			}
+
+			if (storedToken.ExpireDate < DateTime.UtcNow)
+			{
+				return new Response<AuthResultVm>()
+				{
+					Errors = new List<string> { "Refresh token has expired." }
+				};
+			}
+
+			var jti = tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+
+			if (storedToken.JwtId != jti)
+			{
+				return new Response<AuthResultVm>()
+				{
+					Errors = new List<string> { "Token doesn't match." }
+				};
+			}
+
+			storedToken.IsRevoked = true;
+			_context.RefreshTokens.Update(storedToken);
+			await _context.SaveChangesAsync();
+
+			var dbUser = await _userManager.FindByIdAsync(storedToken.UserId.ToString());
+			var roles = await _userManager.GetRolesAsync(dbUser);
+
+			var tokenResponse = await GenerateJwtToken(dbUser, roles);
+
+			return new Response<AuthResultVm>()
+			{
+				Data = new Data<AuthResultVm>()
+				{
+					Result = [tokenResponse]
+				}
+			};
+		}
+		catch (Exception)
+		{
+			return new Response<AuthResultVm>()
+			{
+				Errors = new List<string> { "Something went wrong." }
+			};
+		}
+	}
+
+	private DateTime UnixTimeStampToDateTime(long unixTimeStamp)
+	{
+		var dateTimeVal = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+		dateTimeVal = dateTimeVal.AddSeconds(unixTimeStamp).ToUniversalTime();
+		return dateTimeVal;
 	}
 }

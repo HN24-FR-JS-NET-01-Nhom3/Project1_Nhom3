@@ -7,8 +7,6 @@ using System.Reflection;
 using Asp.Versioning;
 using Microsoft.IdentityModel.Tokens;
 using LotteryChecker.Common.Models.ViewModels;
-using System.Net;
-using LotteryChecker.Common.Models.Authentications;
 using LotteryChecker.Common.Models.Http;
 using Microsoft.AspNetCore.Authorization;
 
@@ -23,12 +21,15 @@ public class UserController : ControllerBase
 	private readonly IUnitOfWork _unitOfWork;
 	private readonly IMapper _mapper;
 	private UserManager<AppUser> _userManager;
+	private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
-	public UserController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<AppUser> userManager)
+	public UserController(IUnitOfWork unitOfWork, IMapper mapper, UserManager<AppUser> userManager,
+		RoleManager<IdentityRole<Guid>> roleManager)
 	{
-		_mapper = mapper;
 		_unitOfWork = unitOfWork;
+		_mapper = mapper;
 		_userManager = userManager;
+		_roleManager = roleManager;
 	}
 
 	[HttpGet("get-all-users/page={page}&pageSize={pageSize}")]
@@ -40,7 +41,15 @@ public class UserController : ControllerBase
 			var userPagings = _unitOfWork.UserRepository.GetPaging(users, null, page, pageSize);
 			if (userPagings.IsNullOrEmpty())
 				return NotFound();
-			var userPagingsVm = _mapper.Map<IEnumerable<UserVm>>(userPagings);
+
+			var userPagingsVm = _mapper.Map<IEnumerable<UserVm>>(userPagings).ToList();
+
+			// Cập nhật trường Role của từng phần tử trong danh sách
+			foreach (var userVm in userPagingsVm)
+			{
+				userVm.Role = String.Join(",", _userManager.GetRolesAsync(_mapper.Map<AppUser>(userVm)).Result);
+			}
+
 			return Ok(new Response<UserVm>()
 			{
 				Data = new Data<UserVm>()
@@ -64,6 +73,7 @@ public class UserController : ControllerBase
 		}
 	}
 
+
 	[HttpGet("get-user/{id}")]
 	public async Task<IActionResult> GetUser(Guid id)
 	{
@@ -76,17 +86,18 @@ public class UserController : ControllerBase
 				{
 					Errors = new[] { "Not found!" }
 				});
-			else
+
+			var userResult = _mapper.Map<UserVm>(user);
+			var roles = await _userManager.GetRolesAsync(user);
+			userResult.Role = String.Join(",", roles);
+			
+			return Ok(new Response<UserVm>()
 			{
-				var userVm = _mapper.Map<UserVm>(user);
-				return Ok(new Response<UserVm>()
+				Data = new Data<UserVm>()
 				{
-					Data = new Data<UserVm>()
-					{
-						Result = [userVm]
-					}
-				});
-			}
+					Result = [userResult]
+				}
+			});
 		}
 		catch (Exception ex)
 		{
@@ -129,16 +140,27 @@ public class UserController : ControllerBase
 			{
 				return BadRequest(new Response<UserVm>()
 				{
-					Errors = new[] { $"User could not be created." }
+					Errors = new[] { "User could not be created." }
 				});
 			}
 
-			//return Created(nameof(CreateUser), $"User {userVm.Email} created.");
+			if (userVm.Role == null)
+			{
+				await _userManager.AddToRoleAsync(newUser, "User");
+			}
+			else
+			{
+				await _userManager.AddToRoleAsync(newUser, userVm.Role);
+			}
+
+			var userResult = _mapper.Map<UserVm>(newUser);
+			userResult.Role = String.Join(",", _userManager.GetRolesAsync(_mapper.Map<AppUser>(userResult)).Result);
+
 			return Ok(new Response<UserVm>()
 			{
 				Data = new Data<UserVm>()
 				{
-					Result = [_mapper.Map<UserVm>(newUser)]
+					Result = [userResult]
 				}
 			});
 		}
@@ -186,6 +208,14 @@ public class UserController : ControllerBase
 			}
 
 			await _userManager.UpdateAsync(user);
+
+
+			await _userManager.RemoveFromRolesAsync(user, _userManager.GetRolesAsync(user).Result);
+			await _userManager.AddToRoleAsync(user, userVm.Role);
+			
+			var userResult = _mapper.Map<UserVm>(user);
+			userResult.Role = String.Join(",", _userManager.GetRolesAsync(_mapper.Map<AppUser>(userResult)).Result);
+
 			return Ok(new Response<UserVm>()
 			{
 				Data = new Data<UserVm>()
@@ -198,7 +228,7 @@ public class UserController : ControllerBase
 		{
 			return BadRequest(new Response<UserVm>()
 			{
-				Errors = new[] { ex.Message}
+				Errors = new[] { ex.Message }
 			});
 		}
 	}
@@ -239,5 +269,17 @@ public class UserController : ControllerBase
 				Errors = new[] { ex.Message }
 			});
 		}
+	}
+
+	[HttpGet("get-all-roles")]
+	public IActionResult GetAllRoles()
+	{
+		return Ok(new Response<IdentityRole<Guid>>()
+		{
+			Data = new Data<IdentityRole<Guid>>()
+			{
+				Result = _roleManager.Roles
+			}
+		});
 	}
 }
