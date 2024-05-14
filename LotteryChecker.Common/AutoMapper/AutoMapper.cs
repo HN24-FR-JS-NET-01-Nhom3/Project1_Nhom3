@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LotteryChecker.Common.Models.Authentications;
 using LotteryChecker.Common.Models.Entities;
 using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.Core.Entities;
@@ -17,6 +18,7 @@ namespace LotteryChecker.Common.AutoMapper
             CreateMap<SearchHistory, SearchHistoryVm>().ReverseMap();
             CreateMap<Reward, RewardVm>().ReverseMap();
             CreateMap<AppUser, UserVm>().ReverseMap();
+            CreateMap<AppUser, RegisterVm>().ReverseMap();
         }
     }
 }
