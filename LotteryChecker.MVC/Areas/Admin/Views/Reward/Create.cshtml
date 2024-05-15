@@ -13,13 +13,13 @@
         <div class="col-md-6">
             <form asp-action="Create">
                 <div class="form-group my-4">
-                    <label class="control-label">First Name <span class="text-danger">*</span></label>
-                    <input  class="form-control" />
+                    <label asp-for="RewardName" class="control-label">Reward Name <span class="text-danger">*</span></label>
+                    <input asp-for="RewardName" class="form-control" />
                     <span  class="text-danger"></span>
                 </div>
                 <div class="form-group my-4">
-                    <label  class="control-label">Last Name <span class="text-danger">*</span></label>
-                    <input class="form-control" />
+                    <label asp-for="RewardValue"  class="control-label">Reward Value <span class="text-danger">*</span></label>
+                    <input asp-for="RewardValue" class="form-control" />
                     <span class="text-danger"></span>
                 </div>
 

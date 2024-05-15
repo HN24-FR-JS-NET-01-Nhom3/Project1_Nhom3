@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Azure.Core;
 using LotteryChecker.Common.Models.Entities;
 using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
 using Newtonsoft.Json;
+using LotteryChecker.Core.Entities;
 
 namespace LotteryChecker.MVC.Areas.Admin.Controllers
 {
@@ -12,14 +12,13 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
     [Route("admin/reward")]
     public class RewardController : Controller
     {
-
         public RewardController() { }
 
         [HttpGet]
         [Route("get-all-rewards")]
         [Route("get-all-rewards/{page}/{pageSize}")]
         [CustomAuthorize("Admin")]
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 5)
         {
             try
             {
@@ -30,7 +29,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
                 }
 
                 var response = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Get,
-                                       $"{Constants.API_REWARD}/get-all-rewards/", null,
+                                       $"{Constants.API_REWARD}/get-all-rewards?page={page}&pageSize={pageSize}", null,
                                                           Request.Cookies["AccessToken"]);
 
                 if (response.Data != null)
@@ -47,7 +46,6 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
                 return View();
             }
         }
-
         [Route("get-reward/{id}")]
         [CustomAuthorize("Admin")]
         public async Task<IActionResult> Detail(int id)
@@ -56,19 +54,27 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
             {
                 var response = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Get,
                                $"{Constants.API_REWARD}/get-reward/{id}", null, Request.Cookies["AccessToken"]);
-                if (response.Data != null)
-                    return View(response.Data);
+                if (response.Data?.Result != null)
+                    return View(response.Data.Result.FirstOrDefault());
                 else
                 {
                     TempData["Errors"] = response.Errors;
-                    return View();
+                    return RedirectToAction("Index");
                 }
             }
             catch (Exception ex)
             {
                 TempData["Errors"] = ex.Message;
-                return View();
+                return RedirectToAction("Index");
             }
+        }
+
+        [HttpGet]
+        [Route("create")]
+        [CustomAuthorize("Admin")]
+        public IActionResult Create()
+        {
+            return View();
         }
 
         [HttpPost]
@@ -96,22 +102,48 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("edit-reward/{id}")]
+        [CustomAuthorize("Admin")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var response = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Get,
+                               $"{Constants.API_REWARD}/get-reward/{id}", null, Request.Cookies["AccessToken"]);
+
+            if (response.Data?.Result == null)
+            {
+                TempData["Errors"] = "Failed to load reward details.";
+                return RedirectToAction("Index");
+            }
+
+            return View(response.Data.Result.FirstOrDefault());
+        }
+
         [HttpPost]
         [Route("edit-reward/{id}")]
         [CustomAuthorize("Admin")]
-        public async Task<IActionResult> EditReward(RewardVm rewardVm)
+        public async Task<IActionResult> Edit(RewardVm rewardVm)
         {
+          
             try
             {
-                var response = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
-                                              $"{Constants.API_REWARD}/edit-reward/{rewardVm.RewardName}", rewardVm, Request.Cookies["AccessToken"]);
-                if (response.Data != null)
-                    return RedirectToAction("Index");
-                else
+                if (ModelState.IsValid)
                 {
-                    TempData["Errors"] = response.Errors;
-                    return View();
+                    var response = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Put,
+                                          $"{Constants.API_REWARD}/update-reward/{rewardVm.RewardId}", rewardVm, Request.Cookies["AccessToken"]);
+                    if (response.Errors == null)
+                    {
+                        TempData["Messages"] = "Updated successfully!";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["Errors"] = response.Errors;
+                        return View(rewardVm);
+                    }
+                   
                 }
+                return View(rewardVm);
             }
             catch (Exception ex)
             {
@@ -120,6 +152,4 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
             }
         }
     }
-
-   
 }
