@@ -1,0 +1,45 @@
+﻿@model LotteryChecker.Common.Models.Entities.RewardVm
+
+@{
+    ViewData["Title"] = "Thông tin giải thưởng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container mt-5">
+    <h2>@ViewData["Title"]</h2>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <label for="id" class="form-label">Id</label>
+                    <input readonly asp-for="RewardValue" type="text" class="form-control" id="id" name="Id">
+                    <span asp-validation-for="RewardValue" class="text-danger"></span>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input readonly asp-for="RewardName" type="text" class="form-control" id="firstName" name="FirstName">
+                    <span asp-validation-for="RewardName" class="text-danger"></span>
+                </div>
+              
+               @*  @Html.HiddenFor(m => m.LastLogin)
+                <div class="mb-3 form-check">
+                    <input readonly asp-for="IsActive" type="checkbox" class="form-check-input" id="isActive" name="IsActive">
+                    <label class="form-check-label" for="isActive">Is Active</label>
+                </div> *@
+                <div class="mb-3">
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
