@@ -100,7 +100,7 @@ public class LotteryController : ControllerBase
 	}
 
 	[HttpPost("create-lottery")]
-	public IActionResult CreateLottery([FromBody] LotteryVm lotteryVm)
+	public IActionResult CreateLottery([FromBody] CreateLotteryVm lotteryVm)
 	{
 		try
 		{

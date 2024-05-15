@@ -1,4 +1,5 @@
-﻿@model IEnumerable<LotteryChecker.Common.Models.Entities.SearchHistoryVm>
+﻿@using Microsoft.IdentityModel.Tokens
+@model IEnumerable<LotteryChecker.Common.Models.Entities.SearchHistoryVm>
 
 @{
     ViewData["Title"] = "Index"; 
@@ -13,7 +14,7 @@
 }
 
 @{
-    @if (Model != null)
+    @if (!Model.IsNullOrEmpty())
     {
         <table class="table table-striped table-bordered">
             <thead>
@@ -35,8 +36,12 @@
             </tbody>
         </table>
     }
+    else if (TempData["User"] == null)
+    {
+        <p class="text-danger">Đăng nhập để lưu lại lịch sử tìm kiếm của bạn.</p>
+    }
     else
     {
-        <p class="text-danger">Đăng nhập để xem lịch sử tìm kiếm của bạn!!!!!</p>
+        <p class="text-danger">Chưa có lịch sử tìm kiếm.</p>
     }
 }

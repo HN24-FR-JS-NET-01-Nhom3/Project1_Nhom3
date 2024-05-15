@@ -4,6 +4,12 @@ namespace LotteryChecker.Common.Models.Authentications;
 
 public class RegisterVm
 {
+	[Required(ErrorMessage = "First name is required!")]
+	public string FirstName { get; set; }
+	
+	[Required(ErrorMessage = "Last name is required!")]
+	public string LastName { get; set; }
+	
 	[Required(ErrorMessage = "Username is required!")]
 	public string UserName { get; set; }
 
@@ -12,4 +18,7 @@ public class RegisterVm
 
 	[Required(ErrorMessage = "Password is required!")]
 	public string Password { get; set; }
+	
+	[Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+	public string ConfirmPassword { get; set; }
 }

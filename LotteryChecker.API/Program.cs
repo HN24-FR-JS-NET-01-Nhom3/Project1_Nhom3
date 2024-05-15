@@ -90,6 +90,13 @@ builder.Services
 		config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 		config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 	})
+	.AddFacebook(facebookOptions =>
+	{
+		facebookOptions.AppId = builder.Configuration["Facebook:AppId"];
+		facebookOptions.AppSecret = builder.Configuration["Facebook:AppSecret"];
+		facebookOptions.SaveTokens = true;
+		facebookOptions.CallbackPath = "/signin-facebook";
+	})
 	.AddJwtBearer(options =>
 	{
 		options.SaveToken = true;

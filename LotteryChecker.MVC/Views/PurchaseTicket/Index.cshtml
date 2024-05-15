@@ -1,4 +1,5 @@
 ﻿@using LotteryChecker.Common.Models.Entities
+@using Microsoft.IdentityModel.Tokens
 @model List<PurchaseTicketVm>
 
 @{
@@ -103,25 +104,34 @@
                 <div class="d-flex justify-content-between mb-4">
                     <h1>Lịch sử mua vé</h1>
                 </div>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Ngày mua vé</th>
-                            <th>Số vé</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var ticket in Model)
-                        {
+                @{
+                    if (Model.IsNullOrEmpty())
+                    {
+                        <p class="text-danger">@TempData["ErrorMessage"]</p>
+                    }
+                    else
+                    {
+                        <table class="table table-striped">
+                            <thead>
                             <tr>
-                                <td>@(Model.IndexOf(ticket)+1)</td>
-                                <td>@ticket.PurchaseDate.ToString("dd/MM/yyyy")</td>
-                                <td>@ticket.LotteryNumber</td>
+                                <th>#</th>
+                                <th>Ngày mua vé</th>
+                                <th>Số vé</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                            </thead>
+                            <tbody>
+                            @foreach (var ticket in Model)
+                            {
+                                <tr>
+                                    <td>@(Model.IndexOf(ticket)+1)</td>
+                                    <td>@ticket.PurchaseDate.ToString("dd/MM/yyyy")</td>
+                                    <td>@ticket.LotteryNumber</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    }
+                }
 
                 <div>Trang <span>1</span>/<span>5</span></div>
                 <input type="submit" class="btn btn-for-checking-ticket" value="TRang sau" />

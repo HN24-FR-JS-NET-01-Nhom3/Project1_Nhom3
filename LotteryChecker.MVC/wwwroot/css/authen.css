@@ -76,20 +76,48 @@ form {
     cursor: pointer;
 }
 
-.my-btn-register {
+.my-text-register {
+    color: #000;
+    font-size: 0.875rem;
+    font-weight: normal;
+    margin: 0;
+}
+
+.my-btn-login-facebook {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
     color: #fff;
-    background-color: #40f862;
+    border: none;
+    background-color: #1877f2;
 
     &:hover {
         color: #a6a6a6;
-        background-color: #159b44;
+        background-color: #1877f2;
     }
     &:focus {
         color: #a6a6a6;
-        background-color: #159b44;
+        background-color: #1877f2;
     }
     &:focus-visible {
         color: #a6a6a6;
-        background-color: #159b44;
+        background-color: #1877f2;
+    }
+}
+
+.my-btn-login-google {
+    color: #000;
+    border: none;
+    background-color: #e8eaee;
+
+    &:hover {
+        background-color: #afabab;
+    }
+    &:focus {
+        background-color: #afabab;
+    }
+    &:focus-visible {
+        background-color: #afabab;
     }
 }

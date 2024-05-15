@@ -102,7 +102,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
         [Route("edit-lottery/{id}")]
         [CustomAuthorize("Admin")]
         public async Task<IActionResult> Edit(int id)
-        { 
+        {
             var response = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Get,
                 $"{Constants.API_LOTTERY}/get-lottery/{id}", null, Request.Cookies["AccessToken"]);
 
@@ -142,7 +142,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
                 return View(lotteryVm);
             }
             catch (Exception ex)
-            {
+        {
                 TempData["Errors"] = ex.Message;
                 return View(lotteryVm);
             }

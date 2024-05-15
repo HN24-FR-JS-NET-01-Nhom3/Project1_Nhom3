@@ -1,25 +1,27 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
 using Asp.Versioning;
 using AutoMapper;
+using LotteryChecker.API.Helpers;
 using LotteryChecker.Common.Models.Authentications;
 using LotteryChecker.Common.Models.Http;
 using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.Core.Data;
 using LotteryChecker.Core.Entities;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace LotteryChecker.API.Controllers.v1;
 
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{v:apiVersion}/authen")]
-public class AuthenticationController : ControllerBase
+public class AuthenController : ControllerBase
 {
 	private readonly UserManager<AppUser> _userManager;
 	private readonly RoleManager<IdentityRole<Guid>> _roleManager;
@@ -29,7 +31,7 @@ public class AuthenticationController : ControllerBase
 	private readonly IMapper _mapper;
 	private readonly TokenValidationParameters _tokenValidationParameters;
 
-	public AuthenticationController(UserManager<AppUser> userManager, RoleManager<IdentityRole<Guid>> roleManager,
+	public AuthenController(UserManager<AppUser> userManager, RoleManager<IdentityRole<Guid>> roleManager,
 		SignInManager<AppUser> signInManager, LotteryContext context, IConfiguration configuration, IMapper mapper,
 		TokenValidationParameters tokenValidationParameters)
 	{
@@ -54,18 +56,15 @@ public class AuthenticationController : ControllerBase
 			});
 		}
 
-		var newUser = new AppUser()
-		{
-			UserName = registerVm.UserName,
-			Email = registerVm.Email,
-			SecurityStamp = new Guid().ToString()
-		};
+		var newUser = _mapper.Map<AppUser>(registerVm);
 		var result = await _userManager.CreateAsync(newUser, registerVm.Password);
+		await _userManager.AddToRoleAsync(newUser, "User");
+
 		if (!result.Succeeded)
 		{
 			return BadRequest(new Response<object>()
 			{
-				Errors = new[] { "User could not be create!" }
+				Errors = new[] { "User could not be created!" }
 			});
 		}
 
@@ -98,7 +97,7 @@ public class AuthenticationController : ControllerBase
 			{
 				Data = new Data<AuthResultVm>()
 				{
-					Result = [tokenValue]
+					Result = new List<AuthResultVm> { tokenValue }
 				}
 			});
 		}
@@ -279,7 +278,7 @@ public class AuthenticationController : ControllerBase
 			{
 				Data = new Data<AuthResultVm>()
 				{
-					Result = [tokenResponse]
+					Result = new List<AuthResultVm> { tokenResponse }
 				}
 			};
 		}
@@ -297,5 +296,54 @@ public class AuthenticationController : ControllerBase
 		var dateTimeVal = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 		dateTimeVal = dateTimeVal.AddSeconds(unixTimeStamp).ToUniversalTime();
 		return dateTimeVal;
+	}
+
+	[HttpGet("login-facebook")]
+	public IActionResult LoginWithFacebook()
+	{
+		var redirectUrl = Url.Action("FacebookResponse", "Authen", null, Request.Scheme);
+		var properties = _signInManager.ConfigureExternalAuthenticationProperties("Facebook", redirectUrl);
+		return Challenge(properties, "Facebook");
+	}
+
+	[HttpGet("facebook-response")]
+	public async Task<IActionResult> FacebookResponse()
+	{
+		var result = await HttpContext.AuthenticateAsync("Facebook");
+		if (!result.Succeeded || result.Principal == null)
+			return BadRequest(new Response<string> { Errors = new[] { "Facebook authentication failed." } });
+
+		var info = new ExternalLoginInfo(result.Principal, "Facebook",
+			result.Principal.FindFirstValue(ClaimTypes.NameIdentifier), result.Principal.Identity.Name);
+		var signInResult =
+			await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false, true);
+
+		if (!signInResult.Succeeded)
+		{
+			var email = result.Principal.FindFirstValue(ClaimTypes.Email);
+			var lastName = result.Principal.Identity.Name;
+			var user = new AppUser { LastName = lastName, UserName = email, Email = email };
+
+			var identityResult = await _userManager.CreateAsync(user);
+			await _userManager.AddToRoleAsync(user, "User");
+
+			if (!identityResult.Succeeded)
+				return BadRequest(new Response<string>
+					{ Errors = identityResult.Errors.Select(e => e.Description).ToArray() });
+
+			identityResult = await _userManager.AddLoginAsync(user, info);
+			if (!identityResult.Succeeded)
+				return BadRequest(new Response<string>
+					{ Errors = identityResult.Errors.Select(e => e.Description).ToArray() });
+
+			await _signInManager.SignInAsync(user, false);
+		}
+
+		var appUser = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+		var newToken = await GenerateJwtToken(appUser, new[] { "User" });
+
+		// Redirect to the MVC application with the token
+		var mvcRedirectUrl = $"{Constants.CLIENT_URL}/authen/facebook-response?accessToken={newToken.AccessToken}&refreshToken={newToken.RefreshToken}&user={JsonConvert.SerializeObject(newToken.User)}";
+		return Redirect(mvcRedirectUrl);
 	}
 }

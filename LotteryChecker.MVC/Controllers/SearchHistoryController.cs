@@ -47,5 +47,20 @@ namespace LotteryChecker.MVC.Controllers
                 throw;
             }
         }
+
+        public IActionResult Edit()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IActionResult Details()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IActionResult Delete()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
