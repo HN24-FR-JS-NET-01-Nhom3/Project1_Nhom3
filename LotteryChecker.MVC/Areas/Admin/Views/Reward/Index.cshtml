@@ -1,0 +1,107 @@
+﻿@* @model IEnumerable<LotteryChecker.Common.Models.Entities.LotteryVm> *@
+@model LotteryChecker.Common.Models.Http.Data<LotteryChecker.Common.Models.Entities.RewardVm>
+
+
+@{
+    ViewData["Title"] = "Quản lý giải thưởng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var pageStart = (Model.Meta.Page - 1) * Model.Meta.PageSize + 1;
+    var pageEnd = Model.Meta.Page * Model.Meta.PageSize;
+    var prevPage = Model.Meta.Page - 1;
+    var nextPage = Model.Meta.Page + 1;
+
+    var messages = (TempData["Messages"] ?? "").ToString();
+    var errors = (TempData["Errors"] ?? "").ToString();
+}
+@if (!string.IsNullOrEmpty(messages))
+{
+    @await Html.PartialAsync("MessagePopup", messages)
+}
+@if (!string.IsNullOrEmpty(errors))
+{
+    @await Html.PartialAsync("MessagePopup", errors)
+}
+
+<h1>Quản lý giải thưởng</h1>
+
+<p class="mt-4">
+    <a class="btn btn-outline-primary" asp-action="Create">Thêm mới</a>
+</p>
+
+<table class="table">
+    <thead>
+
+        <tr>
+            <th>Giá trị giải thưởng</th>
+            <th>Tên giải thưởng</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Result)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RewardName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RewardValue)
+                </td>
+      
+                <td class="justify-content-evenly d-flex">
+                    <a class="btn btn-outline-success" asp-action="Edit" asp-route-Id="@item.RewardId">Edit</a>
+                    <a class="btn btn-outline-info" asp-action="Detail" asp-route-Id="@item.RewardId">Detail</a>
+      
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="mt-5 d-flex justify-content-between">
+    <h6>Showing page @Model.Meta.Page, &nbsp;from &nbsp;@pageStart &nbsp;to &nbsp;@pageEnd</h6>
+    <div class="d-flex gap-2 buttons-change-page">
+        @{
+            if (Model.Meta.Page == 1)
+            {
+                <a class="disabled btn btn-outline-info fs-5" asp-area="Admin" asp-controller="Reward" asp-action="Index" asp-route-page="@prevPage" asp-route-pageSize="@Model.Meta.PageSize">&lt;</a>
+            }
+            else
+            {
+                <a class="btn btn-outline-info fs-5" asp-area="Admin" asp-controller="Reward" asp-action="Index" asp-route-page="@prevPage" asp-route-pageSize="@Model.Meta.PageSize">&lt;</a>
+            }
+
+            if (Model.Meta.Page >= Model.Meta.TotalPages)
+            {
+                <a class="disabled btn btn-outline-info fs-5" asp-area="Admin" asp-controller="Reward" asp-action="Index" asp-route-page="@nextPage" asp-route-pageSize="@Model.Meta.PageSize">&gt;</a>
+            }
+            else
+            {
+                <a class="btn btn-outline-info fs-5" asp-area="Admin" asp-controller="Reward" asp-action="Index" asp-route-page="@nextPage" asp-route-pageSize="@Model.Meta.PageSize">&gt;</a>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(function () {
+            var errorMessage = '@Html.Raw(errors)';
+            var message = '@Html.Raw(messages)';
+
+            if (errorMessage.length > 0) {
+                $('#errorMessageModal').modal('show');
+                setTimeout(function () {
+                    $('#errorMessageModal').modal('hide');
+                }, 2000);
+            }
+
+            if (message.length > 0) {
+                $('#messageModal').modal('show');
+                setTimeout(function () {
+                    $('#messageModal').modal('hide');
+                }, 2000);
+            }
+        });
+    </script>
+}

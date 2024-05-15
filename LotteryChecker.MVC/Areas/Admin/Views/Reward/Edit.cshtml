@@ -1,0 +1,55 @@
+﻿@model LotteryChecker.Common.Models.Entities.RewardVm
+
+@{
+    ViewData["Title"] = "Chỉnh sửa giải thưởng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container mt-5">
+    <h2>@ViewData["Title"]</h2>
+    <hr>
+
+    @if (!string.IsNullOrEmpty(Convert.ToString(TempData["Errors"])))
+    {
+        <div class="alert alert-danger">
+            @TempData["Errors"]
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <label for="id" class="form-label">Id</label>
+                    <input readonly asp-for="RewardId" type="text" class="form-control" id="id" name="Id">
+                    <span asp-validation-for="RewardId" class="text-danger"></span>
+                </div>
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <label for="rewardName" class="form-label">Reward Name</label>
+                    <input asp-for="RewardName" type="text" class="form-control" id="rewardName" name="RewardName">
+                    <span asp-validation-for="RewardName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="rewardValue" class="form-label">Reward Value</label>
+                    <input asp-for="RewardValue" type="text" class="form-control" id="rewardValue" name="RewardValue">
+                    <span asp-validation-for="RewardValue" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

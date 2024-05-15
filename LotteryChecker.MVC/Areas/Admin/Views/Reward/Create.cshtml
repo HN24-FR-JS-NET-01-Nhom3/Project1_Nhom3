@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model LotteryChecker.Common.Models.Entities.RewardVm
+
+@{
+    ViewData["Title"] = "Tạo giải thưởng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container">
+    <h1>Create User</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create">
+                <div class="form-group my-4">
+                    <label asp-for="RewardName" class="control-label">Reward Name <span class="text-danger">*</span></label>
+                    <input asp-for="RewardName" class="form-control" />
+                    <span  class="text-danger"></span>
+                </div>
+                <div class="form-group my-4">
+                    <label asp-for="RewardValue"  class="control-label">Reward Value <span class="text-danger">*</span></label>
+                    <input asp-for="RewardValue" class="form-control" />
+                    <span class="text-danger"></span>
+                </div>
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group my-4">
+                    <button type="submit" class="btn btn-primary mx-2">Create</button>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
