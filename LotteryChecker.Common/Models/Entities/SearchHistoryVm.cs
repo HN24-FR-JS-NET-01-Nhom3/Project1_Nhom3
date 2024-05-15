@@ -4,6 +4,7 @@ namespace LotteryChecker.Common.Models.Entities
 {
     public class SearchHistoryVm
     {
+        public int SearchHistoryId { get; set; }
         [Required(ErrorMessage = "Lottery number is required")]
         [RegularExpression(@"^\d{6}$", ErrorMessage = "Lottery number must be a 6-digit number")]
         public string LotteryNumber { get; set; }

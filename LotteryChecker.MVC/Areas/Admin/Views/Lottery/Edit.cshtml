@@ -22,9 +22,14 @@
                     <input readonly asp-for="DrawDate" type="text" class="form-control" id="drawDate" name="DrawDate">
                     <span asp-validation-for="DrawDate" class="text-danger"></span>
                 </div>
+                <div hidden class="mb-3">
+                    <label for="drawDate" class="form-label">Publish Date</label>
+                    <input readonly asp-for="PublishDate" type="text" class="form-control" id="publishDate" name="PublishDate">
+                    <span asp-validation-for="PublishDate" class="text-danger"></span>
+                </div>
                 <div class="mb-3">
                     <label for="lotteryNumber" class="form-label">Lottery Number</label>
-                    <input readonly asp-for="LotteryNumber" type="text" class="form-control" id="lotteryNumber" name="LotteryNumber">
+                    <input asp-for="LotteryNumber" type="text" class="form-control" id="lotteryNumber" name="LotteryNumber">
                     <span asp-validation-for="LotteryNumber" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
