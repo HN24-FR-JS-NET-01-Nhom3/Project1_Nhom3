@@ -28,7 +28,7 @@ public class RewardController : ControllerBase
     {
         try
         {
-            var rewards = _unitOfWork.RewardRepository.GetAll().ToList();
+            var rewards = _unitOfWork.RewardRepository.GetAll().OrderBy(r => r.RewardId).ToList();
 
             if (!rewards.IsNullOrEmpty())
             {

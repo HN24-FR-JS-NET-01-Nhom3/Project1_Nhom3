@@ -13,11 +13,8 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
     [Route("admin/lottery")]
     public class LotteryController : Controller
     {
-        private readonly IMapper _mapper;
-
-        public LotteryController(IMapper mapper)
+        public LotteryController()
         {
-            _mapper = mapper;
         }
 
         [HttpGet]
@@ -28,11 +25,6 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
         {
             try
             {
-                if(Request.Cookies["User"] != null)
-                {
-                    var user = JsonConvert.DeserializeObject<UserVm>(Request.Cookies["User"]);
-                    TempData["UserId"] = user.Id;
-                }
                 var response = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Get,
                     $"{Constants.API_LOTTERY}/get-all-lotteries/page={page}&pageSize={pageSize}", null, 
                     Request.Cookies["AccessToken"]);
@@ -53,7 +45,6 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
 
         [Route("get-lottery/{id}")]
         [CustomAuthorize("Admin")]
-
         public async Task<IActionResult> Detail(int id)
         {
             try

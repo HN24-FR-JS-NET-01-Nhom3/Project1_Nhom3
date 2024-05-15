@@ -2,6 +2,7 @@
 using AutoMapper;
 using LotteryChecker.Common.Models.Entities;
 using LotteryChecker.Common.Models.Http;
+using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,7 @@ namespace LotteryChecker.API.Controllers.v1;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{v:apiVersion}/search-history")]
-[Authorize(Roles = "User, Admin")]
+    
 public class SearchHistoryController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -132,11 +133,11 @@ public class SearchHistoryController : ControllerBase
     }
 
     [HttpPost("create-search-history")]
-    public IActionResult CreateSearchHistory([FromBody] SearchHistoryVm searchHistoryVm)
+    public IActionResult CreateSearchHistory([FromBody] CreateSearchHistoryVm searchHistoryVm)
     {
         try
         {
-            var searchHistory = _mapper.Map<SearchHistory>(searchHistoryVm);
+            var searchHistory = _mapper.Map<SearchHistory>(searchHistoryVm);         
             _unitOfWork.SearchHistoryRepository.Create(searchHistory);
             var status = _unitOfWork.SaveChanges();
 

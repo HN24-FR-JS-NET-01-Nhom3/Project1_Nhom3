@@ -23,7 +23,7 @@ public class LotteryContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Gui
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
-		string connectionString = "Server=.;Database=FSA_Lottery;uid=sa;pwd=12345678;Trusted_Connection=true;TrustServerCertificate=True; MultipleActiveResultSets=true";
+		string connectionString = "Server=DESKTOP-38FHDTU\\SQLEXPRESS;Database=FSA_Lottery;uid=sa;pwd=12345678;Trusted_Connection=true;TrustServerCertificate=True; MultipleActiveResultSets=true";
 		base.OnConfiguring(optionsBuilder);
 		if (!optionsBuilder.IsConfigured)
 		{
@@ -37,5 +37,6 @@ public class LotteryContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Gui
 		base.OnModelCreating(builder);
 
 		builder.Entity<Lottery>().Navigation<Reward>(l => l.Reward).AutoInclude();
+		builder.Entity<SearchHistory>().Navigation(l => l.User).AutoInclude();
 	}
 }
