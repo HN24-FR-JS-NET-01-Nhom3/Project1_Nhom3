@@ -343,7 +343,78 @@ public class AuthenController : ControllerBase
 		var newToken = await GenerateJwtToken(appUser, new[] { "User" });
 
 		// Redirect to the MVC application with the token
-		var mvcRedirectUrl = $"{Constants.CLIENT_URL}/authen/facebook-response?accessToken={newToken.AccessToken}&refreshToken={newToken.RefreshToken}&user={JsonConvert.SerializeObject(newToken.User)}";
+		var mvcRedirectUrl =
+			$"{Constants.CLIENT_URL}/authen/facebook-response?accessToken={newToken.AccessToken}&refreshToken={newToken.RefreshToken}&user={JsonConvert.SerializeObject(newToken.User)}";
 		return Redirect(mvcRedirectUrl);
+	}
+
+	[HttpGet("login-google")]
+	public IActionResult LoginWithGoogle()
+	{
+		var redirectUrl = $"{Constants.CLIENT_URL}/authen/google-response";
+		var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+		return Challenge(properties, "Google");
+	}
+
+	[HttpGet("google-response")]
+	public async Task<IActionResult> GoogleResponse()
+	{
+		var result = await HttpContext.AuthenticateAsync("Google");
+		if (!result.Succeeded || result.Principal == null)
+			return BadRequest(new Response<string> { Errors = new[] { "Google authentication failed." } });
+
+		var info = new ExternalLoginInfo(result.Principal, "Google",
+			result.Principal.FindFirstValue(ClaimTypes.NameIdentifier), result.Principal.Identity.Name);
+		var signInResult =
+			await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false, true);
+
+		if (!signInResult.Succeeded)
+		{
+			var email = result.Principal.FindFirstValue(ClaimTypes.Email);
+			var lastName = result.Principal.Identity.Name;
+			var user = new AppUser { LastName = lastName, UserName = email, Email = email };
+
+			var identityResult = await _userManager.CreateAsync(user);
+			await _userManager.AddToRoleAsync(user, "User");
+
+			if (!identityResult.Succeeded)
+				return BadRequest(new Response<string>
+					{ Errors = identityResult.Errors.Select(e => e.Description).ToArray() });
+
+			identityResult = await _userManager.AddLoginAsync(user, info);
+			if (!identityResult.Succeeded)
+				return BadRequest(new Response<string>
+					{ Errors = identityResult.Errors.Select(e => e.Description).ToArray() });
+
+			await _signInManager.SignInAsync(user, false);
+			var token = await GenerateJwtToken(user, new[] { "User" });
+			return Ok(new Response<AuthResultVm> { Data = new Data<AuthResultVm> { Result = new[] { token } } });
+		}
+
+		var appUser = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+		var newToken = await GenerateJwtToken(appUser, new[] { "User" });
+		return Ok(new Response<AuthResultVm> { Data = new Data<AuthResultVm> { Result = new[] { newToken } } });
+	}
+
+	[HttpPost("change-password")]
+	public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordVm changePasswordVm)
+	{
+		var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+		if (userId == null)
+			return Unauthorized(new Response<string> { Errors = new[] { "User is not authenticated." } });
+
+		var user = await _userManager.FindByIdAsync(userId);
+		if (user == null)
+			return NotFound(new Response<string> { Errors = new[] { "User not found." } });
+
+		var isCurrentPasswordValid = await _userManager.CheckPasswordAsync(user, changePasswordVm.CurrentPassword);
+		if (!isCurrentPasswordValid)
+			return BadRequest(new Response<string> { Errors = new[] { "Current password is incorrect." } });
+
+		var result = await _userManager.ChangePasswordAsync(user, changePasswordVm.CurrentPassword, changePasswordVm.NewPassword);
+		if (!result.Succeeded)
+			return BadRequest(new Response<string> { Errors = result.Errors.Select(e => e.Description).ToArray() });
+
+		return Ok(new Response<string> { Message = "Password changed successfully." });
 	}
 }

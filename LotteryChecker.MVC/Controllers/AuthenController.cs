@@ -151,4 +151,47 @@ public class AuthenController : BaseController
 		ModelState.AddModelError(string.Empty, "Invalid token received from API.");
 		return RedirectToAction("Index", "Home");
 	}
+	
+	[HttpGet("login-google")]
+	public IActionResult LoginGoogle()
+	{
+		var redirectUrl = $"{Constants.API_AUTHEN}/login-google";
+		return Redirect(redirectUrl);
+	}
+
+	[HttpGet("google-response")]
+	public async Task<IActionResult> GoogleResponse()
+	{
+		try
+		{
+			var tokenResponse = await HttpUtils<AuthResultVm>.SendRequest(HttpMethod.Get, $"{Constants.API_AUTHEN}/google-response");
+
+			if (tokenResponse.Data != null)
+			{
+				// Save token to cookie
+				Response.Cookies.Append("AccessToken", tokenResponse.Data?.Result?.First().AccessToken);
+
+				// Redirect to home page or other page after login
+				return RedirectToAction("Index", "Lottery");
+			}
+
+			// If there are errors, display error messages
+			if (tokenResponse.Errors != null)
+			{
+				foreach (var error in tokenResponse.Errors)
+				{
+					ModelState.AddModelError(string.Empty, error);
+				}
+			}
+
+			// Redirect to home page or other page after login
+			return RedirectToAction("Index", "Lottery");
+		}
+		catch (Exception ex)
+		{
+			ModelState.AddModelError(string.Empty, ex.Message);
+			return RedirectToAction("Index", "Lottery");
+		}
+	}
+
 }

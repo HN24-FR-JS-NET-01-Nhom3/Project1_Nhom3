@@ -20,18 +20,13 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [Route("get-all-lotteries")]
-        [Route("get-all-lotteries/{page}/{pageSize}")]
+        [Route("")]
+        [Route("{page}/{pageSize}")]
         [CustomAuthorize("Admin")]
         public async Task<IActionResult> Index(int page = 1, int pageSize = 17)
         {
             try
             {
-                if(Request.Cookies["User"] != null)
-                {
-                    var user = JsonConvert.DeserializeObject<UserVm>(Request.Cookies["User"]);
-                    TempData["UserId"] = user.Id;
-                }
                 var response = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Get,
                     $"{Constants.API_LOTTERY}/get-all-lotteries/page={page}&pageSize={pageSize}", null, 
                     Request.Cookies["AccessToken"]);

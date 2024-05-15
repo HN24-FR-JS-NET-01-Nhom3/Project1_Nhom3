@@ -94,19 +94,23 @@ form {
 
     &:hover {
         color: #a6a6a6;
-        background-color: #1877f2;
+        background-color: #21589f;
     }
     &:focus {
         color: #a6a6a6;
-        background-color: #1877f2;
+        background-color: #21589f;
     }
     &:focus-visible {
         color: #a6a6a6;
-        background-color: #1877f2;
+        background-color: #21589f;
     }
 }
 
 .my-btn-login-google {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
     color: #000;
     border: none;
     background-color: #e8eaee;

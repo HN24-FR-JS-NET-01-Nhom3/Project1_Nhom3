@@ -97,6 +97,12 @@ builder.Services
 		facebookOptions.SaveTokens = true;
 		facebookOptions.CallbackPath = "/signin-facebook";
 	})
+	.AddGoogle(options =>
+	{
+		options.ClientId = builder.Configuration["Google:ClientId"];
+		options.ClientSecret = builder.Configuration["Google:ClientSecret"];
+		options.CallbackPath = "/signin-google";
+	})
 	.AddJwtBearer(options =>
 	{
 		options.SaveToken = true;

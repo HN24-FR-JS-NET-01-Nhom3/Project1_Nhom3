@@ -1,8 +1,13 @@
-﻿<!doctype html>
+﻿@inject IHttpContextAccessor context
+@using LotteryChecker.Common.Models.ViewModels
+@using Newtonsoft.Json
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+<!doctype html>
 <html lang="en">
 
 @{
-    var userId = TempData["UserId"] as string;
+    var user = JsonConvert.DeserializeObject<UserVm>(context.HttpContext?.Request.Cookies["User"]);
+    var userId = user.Id;
 }
 
 <head>
@@ -56,24 +61,32 @@
                             </span>
                             <span class="hide-menu">Users</span>
                         </a>
+                    </li>
+                    <li class="sidebar-item">
                         <a class="sidebar-link" asp-area="Admin" asp-controller="Lottery" asp-action="Index" aria-expanded="false">
                             <span>
                                 <i class="ti ti-ticket"></i>
                             </span>
                             <span class="hide-menu">Lotteries</span>
                         </a>
+                    </li>
+                    <li class="sidebar-item">
                         <a class="sidebar-link" asp-area="Admin" asp-controller="User" asp-action="Index" aria-expanded="false">
                             <span>
                                 <i class="ti ti-brand-cashapp"></i>
                             </span>
                             <span class="hide-menu">Rewards</span>
                         </a>
+                    </li>
+                    <li class="sidebar-item">
                         <a class="sidebar-link" asp-area="Admin" asp-controller="User" asp-action="Index" aria-expanded="false">
                             <span>
                                 <i class="ti ti-ticket-off"></i>
                             </span>
                             <span class="hide-menu">Purchase Tickets</span>
                         </a>
+                    </li>
+                    <li class="sidebar-item">
                         <a class="sidebar-link" asp-area="Admin" asp-controller="User" asp-action="Index" aria-expanded="false">
                             <span>
                                 <i class="ti ti-search"></i>
@@ -81,8 +94,8 @@
                             <span class="hide-menu">Search Histories</span>
                         </a>
                     </li>
-
                 </ul>
+
                 <div class="unlimited-access hide-menu bg-light-primary position-relative mb-7 mt-5 rounded">
                     <div class="d-flex">
                         <div class="unlimited-access-title me-3">
@@ -131,7 +144,7 @@
                                         <i class="ti ti-user fs-6"></i>
                                         <p class="mb-0 fs-3">My Profile</p>
                                     </a>
-                                    <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                                    <a asp-area="Admin" asp-controller="User" asp-action="ChangePassword" class="d-flex align-items-center gap-2 dropdown-item">
                                         <i class="ti ti-mail fs-6"></i>
                                         <p class="mb-0 fs-3">Change Password</p>
                                     </a>
@@ -151,7 +164,7 @@
 </div>
 <script src="~/assets/libs/jquery/dist/jquery.min.js"></script>
 <script src="~/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/assets/js/sidebarmenu.js"></script>
+<script src="~/assets/js/sidebarmenu.js" defer></script>
 <script src="~/assets/js/app.min.js"></script>
 <script src="~/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
 <script src="~/assets/libs/simplebar/dist/simplebar.js"></script>

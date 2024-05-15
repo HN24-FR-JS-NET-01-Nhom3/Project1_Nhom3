@@ -18,6 +18,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddAutoMapper(typeof(LotteryChecker.Common.AutoMapper.MyAutoMapper).Assembly);
 
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 builder.Services.AddAuthentication(options =>
 	{
 		options.DefaultScheme = "Cookies";
@@ -28,11 +30,6 @@ builder.Services.AddAuthentication(options =>
 		options.AccessDeniedPath = "/home/error";
 		options.LoginPath = "/authen/login";
 	});
-builder.Services.AddAuthentication().AddFacebook(options =>
-{
-	options.ClientId = "458255099920081";
-	options.ClientSecret = "61a21b7c045a182ecbd89953755ba581";
-});
 builder.Services.AddRazorPages();
 
 builder.Services.AddAuthorization();
@@ -57,14 +54,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseAuthentication();
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapRazorPages();
-});
+app.MapRazorPages();
 
 app.UseMiddleware<TokenMiddleware>();
 
@@ -73,7 +67,7 @@ app.MapControllerRoute(
 	pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
-    name : "areas",
-    pattern : "{area:exists}/{controller}/{action}");
+	name: "areas",
+	pattern: "{area:exists}/{controller}/{action}");
 
 app.Run();
