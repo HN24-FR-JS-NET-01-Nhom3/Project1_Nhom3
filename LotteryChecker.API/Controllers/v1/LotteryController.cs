@@ -31,7 +31,7 @@ public class LotteryController : ControllerBase
 	{
 		try
 		{
-			var lotteries = _unitOfWork.LotteryRepository.GetAll().OrderByDescending(l => l.LotteryId).ToList();
+			var lotteries = _unitOfWork.LotteryRepository.GetAll().OrderByDescending(l => l.DrawDate.Date).ThenBy(l => l.RewardId).ToList();
 			if (!lotteries.IsNullOrEmpty())
 			{
 				lotteries = query.Filters
@@ -105,6 +105,8 @@ public class LotteryController : ControllerBase
 		try
 		{
 			var lottery = _mapper.Map<Lottery>(lotteryVm);
+			lottery.IsPublished = false;
+			lottery.PublishDate = DateTime.MinValue;
 			_unitOfWork.LotteryRepository.Create(lottery);
 			int result = _unitOfWork.SaveChanges();
 			if (result > 0)
@@ -135,7 +137,8 @@ public class LotteryController : ControllerBase
 		try
 		{
 			var lottery = _mapper.Map<Lottery>(lotteryVm);
-			lottery.Reward.RewardId = lotteryVm.RewardId;
+			lottery.Reward = null;
+			lottery.DrawDate = lottery.DrawDate;
 			_unitOfWork.LotteryRepository.Update(lottery);
 			int result = _unitOfWork.SaveChanges();
 			if (result > 0)
@@ -336,6 +339,7 @@ public class LotteryController : ControllerBase
                     Errors = new[] { "Not found." }
                 });
             lottery.IsPublished = isPublished;
+			lottery.PublishDate = isPublished ? (lottery.DrawDate.AddDays(-1)) : DateTime.MinValue;
             _unitOfWork.LotteryRepository.Update(lottery);
             int result = _unitOfWork.SaveChanges();
             if (result <= 0)

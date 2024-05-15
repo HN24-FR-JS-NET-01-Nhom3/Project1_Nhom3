@@ -106,6 +106,15 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
             var response = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Get,
                 $"{Constants.API_LOTTERY}/get-lottery/{id}", null, Request.Cookies["AccessToken"]);
 
+            var rewards = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Get,
+                $"{Constants.API_REWARD}/get-all-rewards", null, Request.Cookies["AccessToken"]);
+            if (rewards.Data?.Result == null)
+            {
+                TempData["Errors"] = "Failed to load rewards.";
+            }
+            else
+                ViewBag.RewardList = new SelectList(rewards.Data.Result, "RewardId", "RewardName");
+
             if (response.Data?.Result == null)
             {
                 TempData["Errors"] = "Failed to load lottery details.";
@@ -145,6 +154,58 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
         {
                 TempData["Errors"] = ex.Message;
                 return View(lotteryVm);
+            }
+        }
+
+        [HttpGet]
+        [Route("add-lottery")]
+        [CustomAuthorize("Admin")]
+        public async Task<IActionResult> Create()
+        {
+            var rewards = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Get,
+                $"{Constants.API_REWARD}/get-all-rewards", null, Request.Cookies["AccessToken"]);
+            if (rewards.Data?.Result == null)
+            {
+                TempData["Errors"] = "Failed to load rewards.";
+            }
+            else
+                ViewBag.RewardList = new SelectList(rewards.Data.Result, "RewardId", "RewardName");
+
+            return View();
+        }
+
+        [HttpPost]
+        [Route("add-lottery")]
+        [CustomAuthorize("Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(LotteryVm lotteryVm)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var response = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Post,
+                        $"{Constants.API_LOTTERY}/create-lottery", lotteryVm, Request.Cookies["AccessToken"]);
+                    if(response.Data != null)
+                    {
+                        TempData["Messages"] = "Created successfully!";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        foreach (var error in response.Errors ?? [])
+                        {
+                            ModelState.AddModelError(string.Empty, error);
+                        }
+                        return View();
+                    }
+                }
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View();
             }
         }
     }

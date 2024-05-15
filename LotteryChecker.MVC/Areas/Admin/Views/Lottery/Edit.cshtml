@@ -41,9 +41,11 @@
                     <input asp-for="Company" type="text" class="form-control" id="company" name="Company">
                     <span asp-validation-for="Company" class="text-danger"></span>
                 </div>
-                <div hidden class="mb-3">
+                <div class="mb-3">
                     <label for="rewardId" class="form-label">Reward</label>
-                    <input asp-for="RewardId" class="form-control" id="rewardId" name="RewardId"></input>
+                    <select asp-for="RewardId" class="form-control" id="rewardId" name="RewardId" asp-items="ViewBag.RewardList">
+                        <option value="">-- Select a reward --</option>
+                    </select>
                     <span asp-validation-for="RewardId" class="text-danger"></span>
                 </div>
                 <div hidden class="mb-3">
