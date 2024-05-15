@@ -4,6 +4,7 @@ using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 
 namespace LotteryChecker.MVC.Areas.Admin.Controllers
@@ -94,6 +95,56 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
             {
                 TempData["ErrorMessage"] = JsonConvert.DeserializeObject<ErrorVm>(ex.Message);
                 return RedirectToAction("Index");
+            }
+        }
+
+        [HttpGet]
+        [Route("edit-lottery/{id}")]
+        [CustomAuthorize("Admin")]
+        public async Task<IActionResult> Edit(int id)
+        { 
+            var response = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Get,
+                $"{Constants.API_LOTTERY}/get-lottery/{id}", null, Request.Cookies["AccessToken"]);
+
+            if (response.Data?.Result == null)
+            {
+                TempData["Errors"] = "Failed to load lottery details.";
+                return RedirectToAction("Index");
+            }
+
+            return View(response.Data.Result.FirstOrDefault());
+        }
+
+        [HttpPost]
+        [Route("edit-lottery/{id}")]
+        [CustomAuthorize("Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, LotteryVm lotteryVm)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var response = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Put,
+                        $"{Constants.API_LOTTERY}/update-lottery/{id}", lotteryVm, Request.Cookies["AccessToken"]);                  
+
+                    if (response.Errors == null)
+                    {
+                        TempData["Messages"] = "Updated successfully!";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["Errors"] = response.Errors;
+                        return View(lotteryVm);
+                    }
+                }
+                return View(lotteryVm);
+            }
+            catch (Exception ex)
+            {
+                TempData["Errors"] = ex.Message;
+                return View(lotteryVm);
             }
         }
     }
