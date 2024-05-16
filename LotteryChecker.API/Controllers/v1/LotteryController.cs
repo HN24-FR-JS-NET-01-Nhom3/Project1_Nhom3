@@ -9,6 +9,7 @@ using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Linq;
 
 namespace LotteryChecker.API.Controllers.v1;
 
@@ -264,8 +265,8 @@ public class LotteryController : ControllerBase
 			}
 		});
 	}
-
-	[HttpPost("get-ticket-result")]
+   
+    [HttpPost("get-ticket-result")]
 	public IActionResult GetTicketResult([FromBody] SearchHistoryVm searchHistoryVm)
 	{
 		var lotteries = _unitOfWork.LotteryRepository.GetLotteryResult(searchHistoryVm.DrawDate).ToList();
@@ -284,7 +285,6 @@ public class LotteryController : ControllerBase
 				});
 			}
 		}
-
 		try
 		{
 			var specialPriceLottery = lotteries.First(l => l.RewardId == 1);
@@ -299,7 +299,6 @@ public class LotteryController : ControllerBase
 					}
 				});
 			}
-
 			var countDuplicate = specialPriceLottery.LotteryNumber.Where((t, i) => searchHistoryVm.LotteryNumber[i] == t)
 				.Count();
 			if (countDuplicate == 5)
@@ -327,6 +326,41 @@ public class LotteryController : ControllerBase
 			});
 		}
 	}
+	[HttpPost("get-multiple-ticket-results")]
+	public IActionResult GetMultipleTicketResults([FromBody] MultipleLotteryNumbersVm multipleLotteryNumbersVm)
+	{
+		try
+		{
+			var lotteryNumbers = multipleLotteryNumbersVm.LotteryNumbers.Split(',', StringSplitOptions.RemoveEmptyEntries);
+			var results = new Dictionary<string, RewardVm?>();
+			foreach (var number in lotteryNumbers)
+			{
+				var searchHistoryVm = new SearchHistoryVm
+				{
+					LotteryNumber = number.Trim(),
+					DrawDate = multipleLotteryNumbersVm.DrawDate
+				};
+				var result = GetTicketResult(searchHistoryVm);
+
+				if (result is OkObjectResult okResult)
+				{
+					var rewardVm = (okResult.Value as Response<RewardVm>)?.Data?.Result?.FirstOrDefault();
+					results.Add(number, rewardVm);
+				}
+				else
+				{
+					results.Add(number, null);
+				}
+			}
+
+			return Ok(new Response<Dictionary<string, RewardVm>> { Data = new Data<Dictionary<string, RewardVm>> { Result = [results] } });
+		}
+		catch (Exception ex)
+		{
+			return BadRequest(new Response<IEnumerable<KeyValuePair<string, RewardVm>>> { Errors = new[] { ex.Message } });
+		}
+	}
+
     [HttpPost("update-pubished-lottery/{id}/{isPublished}")]
     public IActionResult UpdatePublishedLottery(int id, bool isPublished)
     {
@@ -365,5 +399,5 @@ public class LotteryController : ControllerBase
                 Errors = new[] { ex.Message }
             });
         }
-    }
+    }   
 }

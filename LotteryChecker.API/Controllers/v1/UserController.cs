@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.Common.Models.Http;
 using Microsoft.AspNetCore.Authorization;
+using OfficeOpenXml;
 
 namespace LotteryChecker.API.Controllers.v1;
 
@@ -282,4 +283,37 @@ public class UserController : ControllerBase
 			}
 		});
 	}
+    [HttpGet("excel-export")]
+    public async Task<IActionResult> ExcelExport()
+    {
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        try
+        {
+            var users = _unitOfWork.UserRepository.GetAll().ToList();
+			
+			var userVms = _mapper.Map<IEnumerable<UserVm>>(users);
+
+            foreach (var userVm in userVms)
+            {
+                userVm.Role = String.Join(",", _userManager.GetRolesAsync(_mapper.Map<AppUser>(userVm)).Result);
+            }
+
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Sheet1");
+                worksheet.Cells.LoadFromCollection(userVms, true);
+
+                // Return Excel file
+                var stream = new MemoryStream(package.GetAsByteArray());
+                return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "filename.xlsx");
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new Response<UserVm>()
+            {
+                Errors = new[] { ex.Message }
+            });
+        }
+    }
 }
