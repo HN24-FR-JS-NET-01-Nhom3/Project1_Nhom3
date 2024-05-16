@@ -122,7 +122,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
         [HttpPost]
         [Route("edit-reward/{id}")]
         [CustomAuthorize("Admin")]
-        public async Task<IActionResult> Edit(RewardVm rewardVm)
+        public async Task<IActionResult> Edit(int id, RewardVm rewardVm)
         {
           
             try
@@ -130,7 +130,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
                 if (ModelState.IsValid)
                 {
                     var response = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Put,
-                                          $"{Constants.API_REWARD}/update-reward/{rewardVm.RewardId}", rewardVm, Request.Cookies["AccessToken"]);
+                                          $"{Constants.API_REWARD}/update-reward/{id}", rewardVm, Request.Cookies["AccessToken"]);
                     if (response.Errors == null)
                     {
                         TempData["Messages"] = "Updated successfully!";
