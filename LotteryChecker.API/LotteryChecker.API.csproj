@@ -26,6 +26,7 @@
     <ItemGroup>
       <ProjectReference Include="..\LotteryChecker.Common\LotteryChecker.Common.csproj" />
       <ProjectReference Include="..\LotteryChecker.Core\LotteryChecker.Core.csproj" />
+      <ProjectReference Include="..\LotteryChecker.EmailService\LotteryChecker.EmailService.csproj" />
     </ItemGroup>
 
     <ItemGroup>

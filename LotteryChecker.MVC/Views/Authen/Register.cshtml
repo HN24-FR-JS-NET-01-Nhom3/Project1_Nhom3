@@ -5,76 +5,9 @@
     Layout = "_AuthenLayout";
 }
 
-<div class="mt-5">
+<div class="my-5">
     <div class="row">
-        <div class="col-lg-5 me-auto">
-            <h2>
-                Tạo tài khoản free chỉ trong một nốt nhạc
-            </h2>
-            <div class="break-line d-block mt-5"></div>
-            <table class="mt-5">
-                <tr>
-                    <td rowspan="2">
-                        <img src="@Url.Content("~/images/icons/account.png")" alt="Account" class="me-5"/>
-                    </td>
-                    <td>
-                        <strong>
-                            <h4>Tài khoản duy nhất</h4>
-                        </strong>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="pb-4">
-                        Truy cập vào tất cả các nền tảng của chúng tôi (Web, app)
-                    </td>
-                </tr>
-                <tr>
-                    <td rowspan="2">
-                        <img src="@Url.Content("~/images/icons/connect.png")" alt="Connect" class="me-5"/>
-                    </td>
-                    <td>
-                        <strong>
-                            <h4>Duy trì kết nối</h4>
-                        </strong>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="pb-4">
-                        Hãy là người đầu tiên nhận thông tin về jackpot, giải thưởng, tài khoản
-                    </td>
-                </tr>
-                <tr>
-                    <td rowspan="2">
-                        <img src="@Url.Content("~/images/icons/control.png")" alt="Control" class="me-5"/>
-                    </td>
-                    <td>
-                        <strong>
-                            <h4>Kiểm soát tài khoản của bạn dễ dàng</h4>
-                        </strong>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="pb-4">
-                        Chỉ vài click, có thể kiểm tra vé, xem giải thưởng, tài khoản và rút tiền nhanh chóng
-                    </td>
-                </tr>
-                <tr>
-                    <td rowspan="2">
-                        <img src="@Url.Content("~/images/icons/secure.png")" alt="Secure" class="me-5"/>
-                    </td>
-                    <td>
-                        <strong>
-                            <h4>Nhanh và an toàn</h4>
-                        </strong>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="pb-4">
-                        Thông tin người dùng bảo mật tuyệt đối
-                    </td>
-                </tr>
-            </table>
-        </div>
+        @await Html.PartialAsync("_LeftPanelPartial")
         <div class="col-lg-5 ms-auto">
             <div class="login-form">
                 <div class="d-flex justify-content-between mb-3 text-center">

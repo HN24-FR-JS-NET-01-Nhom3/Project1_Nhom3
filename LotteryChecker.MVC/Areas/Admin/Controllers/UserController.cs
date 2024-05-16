@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LotteryChecker.Common.Models.Authentications;
 using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;

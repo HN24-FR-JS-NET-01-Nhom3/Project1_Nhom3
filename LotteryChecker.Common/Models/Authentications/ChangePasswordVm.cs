@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace LotteryChecker.Common.Models.ViewModels;
+namespace LotteryChecker.Common.Models.Authentications;
 
 public class ChangePasswordVm
 {

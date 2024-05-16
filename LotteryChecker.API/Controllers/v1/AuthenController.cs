@@ -9,11 +9,14 @@ using LotteryChecker.Common.Models.Http;
 using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.Core.Data;
 using LotteryChecker.Core.Entities;
+using LotteryChecker.EmailService.Entities;
+using LotteryChecker.EmailService.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit;
 using Newtonsoft.Json;
 
 namespace LotteryChecker.API.Controllers.v1;
@@ -29,10 +32,11 @@ public class AuthenController : ControllerBase
 	private readonly LotteryContext _context;
 	private readonly IConfiguration _configuration;
 	private readonly IMapper _mapper;
+	private readonly IEmailSender _emailSender;
 	private readonly TokenValidationParameters _tokenValidationParameters;
 
 	public AuthenController(UserManager<AppUser> userManager, RoleManager<IdentityRole<Guid>> roleManager,
-		SignInManager<AppUser> signInManager, LotteryContext context, IConfiguration configuration, IMapper mapper,
+		SignInManager<AppUser> signInManager, LotteryContext context, IConfiguration configuration, IMapper mapper, IEmailSender emailSender,
 		TokenValidationParameters tokenValidationParameters)
 	{
 		_userManager = userManager;
@@ -41,6 +45,7 @@ public class AuthenController : ControllerBase
 		_context = context;
 		_configuration = configuration;
 		_mapper = mapper;
+		_emailSender = emailSender;
 		_tokenValidationParameters = tokenValidationParameters;
 	}
 
@@ -416,5 +421,61 @@ public class AuthenController : ControllerBase
 			return BadRequest(new Response<string> { Errors = result.Errors.Select(e => e.Description).ToArray() });
 
 		return Ok(new Response<string> { Message = "Password changed successfully." });
+	}
+	
+	[HttpPost("reset-password")]
+	public async Task<IActionResult> ChangePassword([FromBody] ResetPasswordVm resetPasswordVm)
+	{
+		var user = await _userManager.FindByEmailAsync(resetPasswordVm.Email);
+		if (user == null)
+			return NotFound(new Response<string> { Errors = new[] { "User not found." } });
+
+		var result = await _userManager.ResetPasswordAsync(user, resetPasswordVm.Token.Replace(' ', '+'), resetPasswordVm.Password);
+		if (!result.Succeeded)
+			return BadRequest(new Response<string> { Errors = result.Errors.Select(e => e.Description).ToArray() });
+
+		return Ok(new Response<string> { Message = "Password changed successfully." });
+	}
+	
+	[HttpPost("forgot-password")]
+	public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordVm forgotPasswordVm)
+	{
+		try
+		{
+			var user = await _userManager.FindByEmailAsync(forgotPasswordVm.Email);
+			if (user == null)
+				return NotFound(new Response<string>()
+				{
+					Errors = new[] { "User not found!" }
+				});
+
+			var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+			var callback = $"{Constants.CLIENT_URL}/authen/reset-password?token={token}&email={user.Email}";
+
+			var message = new Message(
+				new List<EmailAddress>()
+				{
+					new EmailAddress()
+					{
+						DisplayName = user.UserName, Address = user.Email
+					}
+				},
+				"Reset password token",
+				callback
+			);
+			await _emailSender.SendEmailAsync(message);
+
+			return Ok(new Response<string>()
+			{
+				Message = "Sent successfully!"
+			});
+		}
+		catch (Exception ex)
+		{
+			return BadRequest(new Response<string>()
+			{
+				Errors = new[] { ex.Message }
+			});
+		}
 	}
 }

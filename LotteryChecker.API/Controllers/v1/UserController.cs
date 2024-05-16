@@ -15,7 +15,6 @@ namespace LotteryChecker.API.Controllers.v1;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{v:apiVersion}/user")]
-[Authorize(Roles = "Admin")]
 public class UserController : ControllerBase
 {
 	private readonly IUnitOfWork _unitOfWork;
@@ -32,6 +31,7 @@ public class UserController : ControllerBase
 		_roleManager = roleManager;
 	}
 
+	[Authorize(Roles = "Admin")]
 	[HttpGet("get-all-users/page={page}&pageSize={pageSize}")]
 	public IActionResult GetAllUsers(int page = 1, int pageSize = 5)
 	{
@@ -74,6 +74,7 @@ public class UserController : ControllerBase
 	}
 
 
+	[Authorize(Roles = "Admin")]
 	[HttpGet("get-user/{id}")]
 	public async Task<IActionResult> GetUser(Guid id)
 	{
@@ -108,6 +109,7 @@ public class UserController : ControllerBase
 		}
 	}
 
+	[Authorize(Roles = "Admin")]
 	[HttpPost("create-user")]
 	public async Task<IActionResult> CreateUser([FromBody] CreateUserVm userVm)
 	{
@@ -173,6 +175,7 @@ public class UserController : ControllerBase
 		}
 	}
 
+	[Authorize(Roles = "Admin")]
 	[HttpPut("update-user/{id}")]
 	public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UserVm userVm)
 	{
@@ -233,6 +236,7 @@ public class UserController : ControllerBase
 		}
 	}
 
+	[Authorize(Roles = "Admin")]
 	[HttpPost("update-status-user/{id}/{isActive}")]
 	public async Task<IActionResult> UpdateStatusUser(string id, bool isActive)
 	{
@@ -271,6 +275,7 @@ public class UserController : ControllerBase
 		}
 	}
 
+	[Authorize(Roles = "Admin")]
 	[HttpGet("get-all-roles")]
 	public IActionResult GetAllRoles()
 	{
@@ -281,5 +286,38 @@ public class UserController : ControllerBase
 				Result = _roleManager.Roles
 			}
 		});
+	}
+	
+	[HttpPost("get-user-by-email")]
+	public async Task<IActionResult> GetUser([FromBody] string email)
+	{
+		try
+		{
+			var user = await _userManager.FindByEmailAsync(email);
+			if (user == null)
+				return NotFound(new Response<UserVm>()
+				{
+					Errors = new[] { "Not found!" }
+				});
+
+			var userResult = _mapper.Map<UserVm>(user);
+			var roles = await _userManager.GetRolesAsync(user);
+			userResult.Role = String.Join(",", roles);
+			
+			return Ok(new Response<UserVm>()
+			{
+				Data = new Data<UserVm>()
+				{
+					Result = [userResult]
+				}
+			});
+		}
+		catch (Exception ex)
+		{
+			return BadRequest(new Response<UserVm>()
+			{
+				Errors = new[] { ex.Message }
+			});
+		}
 	}
 }

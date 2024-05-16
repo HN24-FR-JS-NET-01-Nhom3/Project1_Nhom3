@@ -1,6 +1,5 @@
 using LotteryChecker.Core.Data;
 using LotteryChecker.MVC.Utils;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,7 +32,6 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddRazorPages();
 
 builder.Services.AddAuthorization();
-
 
 var app = builder.Build();
 

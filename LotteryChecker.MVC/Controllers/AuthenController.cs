@@ -119,13 +119,6 @@ public class AuthenController : BaseController
 		throw new NotImplementedException();
 	}
 
-	[HttpGet]
-	[Route("forgot-password")]
-	public IActionResult ForgotPassword()
-	{
-		throw new NotImplementedException();
-	}
-
 	[HttpGet("login-facebook")]
 	public IActionResult LoginFacebook()
 	{
@@ -194,4 +187,76 @@ public class AuthenController : BaseController
 		}
 	}
 
+	[HttpGet("forgot-password")]
+	public IActionResult ForgotPassword()
+	{
+		return View();
+	}
+
+	[HttpPost("forgot-password")]
+	[ValidateAntiForgeryToken]
+	public async Task<IActionResult> ForgotPassword(ForgotPasswordVm forgotPasswordVm)
+	{
+		if (ModelState.IsValid)
+		{
+			var response = await HttpUtils<string>.SendRequest(HttpMethod.Post,
+				$"{Constants.API_AUTHEN}/forgot-password", forgotPasswordVm);
+			if (response.Errors != null)
+			{
+				foreach (var error in response.Errors)
+				{
+					ModelState.AddModelError(string.Empty, error);
+				}
+
+				return View();
+			}
+
+			return RedirectToAction("ForgotPasswordConfirmation");
+		}
+
+		return View();
+	}
+
+	[HttpGet("forgot-password-confirm")]
+	public IActionResult ForgotPasswordConfirmation()
+	{
+		return View();
+	}
+	
+	[HttpGet("reset-password")]
+	public IActionResult ResetPassword(string token, string email)
+	{
+		var model = new ResetPasswordVm() { Token = token, Email = email };
+		return View(model);
+	}
+
+	[HttpPost("reset-password")]
+	[ValidateAntiForgeryToken]
+	public async Task<IActionResult> ResetPassword(ResetPasswordVm resetPasswordVm)
+	{
+		if (ModelState.IsValid)
+		{
+			var response = await HttpUtils<string>.SendRequest(HttpMethod.Post,
+				$"{Constants.API_AUTHEN}/reset-password", resetPasswordVm);
+			if (response.Errors != null)
+			{
+				foreach (var error in response.Errors)
+				{
+					ModelState.AddModelError(string.Empty, error);
+				}
+
+				return View();
+			}
+
+			return RedirectToAction("ResetPasswordConfirmation");
+		}
+
+		return View();
+	}
+
+	[HttpGet("reset-password-confirm")]
+	public IActionResult ResetPasswordConfirmation()
+	{
+		return View();
+	}
 }
