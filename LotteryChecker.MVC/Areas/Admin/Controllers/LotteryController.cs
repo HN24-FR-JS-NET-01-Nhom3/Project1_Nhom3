@@ -4,6 +4,7 @@ using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 
 namespace LotteryChecker.MVC.Areas.Admin.Controllers
@@ -12,11 +13,8 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
     [Route("admin/lottery")]
     public class LotteryController : Controller
     {
-        private readonly IMapper _mapper;
-
-        public LotteryController(IMapper mapper)
+        public LotteryController()
         {
-            _mapper = mapper;
         }
 
         [HttpGet]
@@ -47,7 +45,6 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
 
         [Route("get-lottery/{id}")]
         [CustomAuthorize("Admin")]
-
         public async Task<IActionResult> Detail(int id)
         {
             try
@@ -92,14 +89,115 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
             }
         }
 
-        public IActionResult Create()
+        [HttpGet]
+        [Route("edit-lottery/{id}")]
+        [CustomAuthorize("Admin")]
+        public async Task<IActionResult> Edit(int id)
         {
-            throw new NotImplementedException();
+            var response = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Get,
+                $"{Constants.API_LOTTERY}/get-lottery/{id}", null, Request.Cookies["AccessToken"]);
+
+            var rewards = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Get,
+                $"{Constants.API_REWARD}/get-all-rewards", null, Request.Cookies["AccessToken"]);
+            if (rewards.Data?.Result == null)
+            {
+                TempData["Errors"] = "Failed to load rewards.";
+            }
+            else
+                ViewBag.RewardList = new SelectList(rewards.Data.Result, "RewardId", "RewardName");
+
+            if (response.Data?.Result == null)
+            {
+                TempData["Errors"] = "Failed to load lottery details.";
+                return RedirectToAction("Index");
+            }
+
+            return View(response.Data.Result.FirstOrDefault());
         }
 
-        public IActionResult Edit()
+        [HttpPost]
+        [Route("edit-lottery/{id}")]
+        [CustomAuthorize("Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, LotteryVm lotteryVm)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var response = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Put,
+                        $"{Constants.API_LOTTERY}/update-lottery/{id}", lotteryVm, Request.Cookies["AccessToken"]);                  
+
+                    if (response.Errors == null)
+                    {
+                        TempData["Messages"] = "Updated successfully!";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["Errors"] = response.Errors;
+                        return View(lotteryVm);
+                    }
+                }
+                return View(lotteryVm);
+            }
+            catch (Exception ex)
+        {
+                TempData["Errors"] = ex.Message;
+                return View(lotteryVm);
+            }
+        }
+
+        [HttpGet]
+        [Route("add-lottery")]
+        [CustomAuthorize("Admin")]
+        public async Task<IActionResult> Create()
+        {
+            var rewards = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Get,
+                $"{Constants.API_REWARD}/get-all-rewards", null, Request.Cookies["AccessToken"]);
+            if (rewards.Data?.Result == null)
+            {
+                TempData["Errors"] = "Failed to load rewards.";
+            }
+            else
+                ViewBag.RewardList = new SelectList(rewards.Data.Result, "RewardId", "RewardName");
+
+            return View();
+        }
+
+        [HttpPost]
+        [Route("add-lottery")]
+        [CustomAuthorize("Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(LotteryVm lotteryVm)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var response = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Post,
+                        $"{Constants.API_LOTTERY}/create-lottery", lotteryVm, Request.Cookies["AccessToken"]);
+                    if(response.Data != null)
+                    {
+                        TempData["Messages"] = "Created successfully!";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        foreach (var error in response.Errors ?? [])
+                        {
+                            ModelState.AddModelError(string.Empty, error);
+                        }
+                        return View();
+                    }
+                }
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View();
+            }
         }
     }
 }

@@ -1,0 +1,51 @@
+﻿@model LotteryChecker.Common.Models.ViewModels.CreateLotteryVm
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>CreateLotteryVm</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="DrawDate" class="control-label"></label>
+                <input type="date" asp-for="DrawDate" class="form-control" placeholder="dd/mm/yyyy" />
+                <span asp-validation-for="DrawDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LotteryNumber" class="control-label"></label>
+                <input asp-for="LotteryNumber" class="form-control" placeholder="xxxxxx" />
+                <span asp-validation-for="LotteryNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Company" class="control-label"></label>
+                <input asp-for="Company" class="form-control"placeholder="Tên công ty" />
+                <span asp-validation-for="Company" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label for="rewardId" class="form-label">Reward</label>
+                <select asp-for="RewardId" class="form-control" id="rewardId" name="RewardId" asp-items="ViewBag.RewardList">
+                    <option value="">-- Select a reward --</option>
+                </select>
+                <span asp-validation-for="RewardId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

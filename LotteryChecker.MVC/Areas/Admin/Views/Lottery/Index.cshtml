@@ -32,12 +32,13 @@
 
         <tr>
             <th>Tên giải</th>
-            <th>Ngày quay</th>
             <th>Số vé</th>
+            <th>Ngày quay</th>
+            <th>Ngày phát hành</th>
             <th>Publised</th>
             <th>Công ty</th>
             <th>Giá trị</th>
-            <th>Actions</th>
+            <th class="text-center">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -52,6 +53,9 @@
                 </td>
                 <td>
                     @item.DrawDate.ToString("yyyy-MM-dd")
+                </td>
+                <td>
+                    @item.PublishDate.ToString("yyyy-MM-dd")
                 </td>
                 <td class="text-center">
                     @* @Html.DisplayFor(modelItem => item.IsPublished) *@

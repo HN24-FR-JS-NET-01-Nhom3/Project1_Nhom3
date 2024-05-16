@@ -3,6 +3,7 @@ using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
 using LotteryChecker.Core.IRepositories;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LotteryChecker.Core.Repositories;
 
@@ -132,7 +133,14 @@ public class LotteryRepository : BaseRepository<Lottery>, ILotteryRepository
 		                 && x.DrawDate.Year == dateTime.Year);
 	}
 
-	public void UnpublishExpiredLotteries()
+    public IEnumerable<Lottery> GetMultipleLotteryResult(DateTime dateTime)
+    {
+        return Find(x => x.DrawDate.Day == dateTime.Day
+                         && x.DrawDate.Month == dateTime.Month
+                         && x.DrawDate.Year == dateTime.Year).ToList();
+    }
+
+    public void UnpublishExpiredLotteries()
 	{
 		DbSet.Where(l => l.DrawDate.AddDays(-30) > DateTime.Now).ForEachAsync(l => l.IsPublished = false);
 	}

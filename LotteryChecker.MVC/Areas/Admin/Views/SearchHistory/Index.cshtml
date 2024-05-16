@@ -1,0 +1,84 @@
+﻿@model LotteryChecker.Common.Models.Http.Data<LotteryChecker.Common.Models.Entities.SearchHistoryVm>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var pageStart = (Model.Meta.Page - 1) * Model.Meta.PageSize + 1;
+    var pageEnd = Model.Meta.Page * Model.Meta.PageSize;
+    var prevPage = Model.Meta.Page - 1;
+    var nextPage = Model.Meta.Page + 1;
+
+    var messages = (TempData["Messages"] ?? "").ToString();
+    var errors = (TempData["Errors"] ?? "").ToString();
+}
+@if (!string.IsNullOrEmpty(messages))
+{
+    @await Html.PartialAsync("MessagePopup", messages)
+}
+@if (!string.IsNullOrEmpty(errors))
+{
+    @await Html.PartialAsync("MessagePopup", errors)
+}
+
+<h1>Quản lý lịch sử tìm kiếm</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Số vé</th>
+            <th>Ngày quay</th>
+            <th>Ngày tìm kiếm</th>
+            <th>Email người dùng</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Result)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LotteryNumber)
+                </td>
+                <td>
+                    @item.DrawDate.ToString("yyyy-MM-dd")
+                </td>
+                <td>
+                    @item.SearchDate.ToString("yyyy-MM-dd")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td class="justify-content-evenly d-flex">
+                    <a class="btn btn-outline-info" asp-action="Detail" asp-route-Id="@item.SearchHistoryId">Detail</a>
+                    @* <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a> *@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="mt-5 d-flex justify-content-between">
+    <h6>Showing page @Model.Meta.Page, &nbsp;from &nbsp;@pageStart &nbsp;to &nbsp;@pageEnd</h6>
+    <div class="d-flex gap-2 buttons-change-page">
+        @{
+            if (Model.Meta.Page == 1)
+            {
+                <a class="disabled btn btn-outline-info fs-5" asp-area="Admin" asp-controller="SearchHistory" asp-action="Index" asp-route-page="@prevPage" asp-route-pageSize="@Model.Meta.PageSize">&lt;</a>
+            }
+            else
+            {
+                <a class="btn btn-outline-info fs-5" asp-area="Admin" asp-controller="SearchHistory" asp-action="Index" asp-route-page="@prevPage" asp-route-pageSize="@Model.Meta.PageSize">&lt;</a>
+            }
+
+            if (Model.Meta.Page >= Model.Meta.TotalPages)
+            {
+                <a class="disabled btn btn-outline-info fs-5" asp-area="Admin" asp-controller="SearchHistory" asp-action="Index" asp-route-page="@nextPage" asp-route-pageSize="@Model.Meta.PageSize">&gt;</a>
+            }
+            else
+            {
+                <a class="btn btn-outline-info fs-5" asp-area="Admin" asp-controller="SearchHistory" asp-action="Index" asp-route-page="@nextPage" asp-route-pageSize="@Model.Meta.PageSize">&gt;</a>
+            }
+        }
+    </div>
+</div>
+

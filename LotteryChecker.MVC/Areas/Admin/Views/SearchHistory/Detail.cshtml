@@ -1,0 +1,42 @@
+﻿@model LotteryChecker.Common.Models.Entities.SearchHistoryVm
+
+@{
+    ViewData["Title"] = "Detail";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container mt-5">
+    <h2>@ViewData["Title"]</h2>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <form>
+                <div class="mb-3">
+                    <label for="lotteryNumber" class="form-label">@Html.DisplayNameFor(model => model.LotteryNumber)</label>
+                    <input readonly asp-for="LotteryNumber" type="text" class="form-control" id="lotteryNumber">
+                </div>
+                <div class="mb-3">
+                    <label for="drawDate" class="form-label">@Html.DisplayNameFor(model => model.DrawDate)</label>
+                    <input readonly asp-for="DrawDate" type="text" class="form-control" id="drawDate">
+                </div>
+                <div class="mb-3">
+                    <label for="searchDate" class="form-label">@Html.DisplayNameFor(model => model.SearchDate)</label>
+                    <input readonly asp-for="SearchDate" type="text" class="form-control" id="searchDate">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">@Html.DisplayNameFor(model => model.Email)</label>
+                    <input readonly asp-for="Email" type="text" class="form-control" id="email">
+                </div>
+                <div class="mb-3">
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

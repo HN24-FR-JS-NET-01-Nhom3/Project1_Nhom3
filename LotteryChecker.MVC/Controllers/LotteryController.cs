@@ -2,7 +2,6 @@
 using LotteryChecker.Common.Models.Entities;
 using LotteryChecker.Common.Models.Http;
 using LotteryChecker.Common.Models.ViewModels;
-using LotteryChecker.Core.Entities;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -88,7 +87,6 @@ public class LotteryController : BaseController
                         var searchHistoryResponse = await HttpUtils<SearchHistoryVm>.SendRequest(HttpMethod.Get,
                         $"{Constants.API_SEARCH_HISTORY}/get-search-histories-by-user-id", accessToken: Request.Cookies["AccessToken"]);
                         ViewData["SearchHistories"] = searchHistoryResponse.Data?.Result;
-
                     }
                 }
                 var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
@@ -148,13 +146,14 @@ public class LotteryController : BaseController
                     var user = JsonConvert.DeserializeObject<UserVm>(userData);
 					if(user != null)
 					{
-                        var addSearchHistoryResponse = await HttpUtils<SearchHistory>.SendRequest(HttpMethod.Post,
+                        var addSearchHistoryResponse = await HttpUtils<SearchHistoryVm>.SendRequest(HttpMethod.Post,
                        $"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
                        {
                            LotteryNumber = searchHistoryVm.LotteryNumber,
                            SearchDate = DateTime.Now,
                            UserId = user.Id,
-						   DrawDate=searchHistoryVm.DrawDate
+						   DrawDate = searchHistoryVm.DrawDate,
+						   Email = user.Email
                        }, accessToken: Request.Cookies["AccessToken"]);
                     }
 				}

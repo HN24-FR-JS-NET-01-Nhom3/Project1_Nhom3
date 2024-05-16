@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LotteryChecker.Core.Migrations
 {
     [DbContext(typeof(LotteryContext))]
-    [Migration("20240504080653_InitialDb")]
-    partial class InitialDb
+    [Migration("20240513155151_InitDB")]
+    partial class InitDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -46,12 +46,19 @@ namespace LotteryChecker.Core.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastLogin")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -88,6 +95,10 @@ namespace LotteryChecker.Core.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -96,6 +107,10 @@ namespace LotteryChecker.Core.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("UserName")
+                        .IsUnique()
+                        .HasFilter("[UserName] IS NOT NULL");
+
                     b.ToTable("AspNetUsers", (string)null);
 
                     b.HasData(
@@ -103,17 +118,18 @@ namespace LotteryChecker.Core.Migrations
                         {
                             Id = new Guid("24dd0b58-c0e0-470c-8ed2-14467a3b868f"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "34f42146-9119-4f22-b501-79b6f0c70bea",
+                            ConcurrencyStamp = "2fd6795b-d448-46bc-9f33-28f160c29fdd",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Hoang Chi",
+                            IsActive = false,
                             LastName = "Hieu",
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEObZWxNG1r8UZeN5UtnuVV0m8cnqzpmS03D7q4v5PmDhLqgrYNzxO/RkInKPNgpEcQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENyyHO4FLRsQVBFDbQhTQjKSU5gYkyyh96eIGoKUgOCPcJWt8ZZsIMfZ7ZfwlmyQPA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "9030bb00-9429-44f8-bdad-0b411089e113",
+                            SecurityStamp = "9a07b491-4e09-447c-a8ea-273b45e80ab4",
                             TwoFactorEnabled = false,
                             UserName = "admin@gmail.com"
                         },
@@ -121,17 +137,18 @@ namespace LotteryChecker.Core.Migrations
                         {
                             Id = new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d6e8ebde-1bc0-4164-a6bc-2976010b6e4c",
+                            ConcurrencyStamp = "7250f19f-c677-49c9-9cdf-bab5e9999e9e",
                             Email = "hieuhv@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Ho Van",
+                            IsActive = false,
                             LastName = "Hieu",
                             LockoutEnabled = false,
                             NormalizedEmail = "HIEUHV@GMAIL.COM",
                             NormalizedUserName = "HIEUHV@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEE80fOihAt/JJtnr9wxAiuOQJhMRayPOlWbSmYRMXXnkbI7xZxi0yUIH6kEJ79/YnA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIWIi9q9piEON1J+ePOfMFBcKVU7MWzXxbcKxnC74K9gMAxJnt43blKIuJtojX04Ww==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2849a7c2-c0f7-4a36-af0b-5bbd906ece59",
+                            SecurityStamp = "7f19eacd-bcb7-444f-93c6-739ee4289948",
                             TwoFactorEnabled = false,
                             UserName = "hieuhv@gmail.com"
                         },
@@ -139,17 +156,18 @@ namespace LotteryChecker.Core.Migrations
                         {
                             Id = new Guid("36b35306-154c-4518-8fc1-d7e756522111"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "afe10563-9256-4561-a53a-d2ceed9f02b5",
+                            ConcurrencyStamp = "db448e53-d8a5-40f9-8730-cb55fcb7ee45",
                             Email = "vietlq@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Le Quang",
+                            IsActive = false,
                             LastName = "Viet",
                             LockoutEnabled = false,
                             NormalizedEmail = "VIETLQ@GMAIL.COM",
                             NormalizedUserName = "VIETLQ@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOGurqtrCr8+LcxC1T4Wl09zH5XyWOD1q3YA474U2uZ18YFWtFJI6gLpTHxwBoW0Lg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFoA1fYXsRZyvCq476MOOEVHPgBT5Vlfpo3mpEJdlQPKsa6BqUAuSPomIluRdkRzuA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ed9d7a80-5a4b-43df-9e2a-5128d0bdeffd",
+                            SecurityStamp = "183a06d6-78c1-4354-8152-671a8e8d2ca5",
                             TwoFactorEnabled = false,
                             UserName = "vietlq@gmail.com"
                         });
@@ -163,11 +181,19 @@ namespace LotteryChecker.Core.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LotteryId"));
 
-                    b.Property<DateTime>("DueDate")
+                    b.Property<string>("Company")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("DrawDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LotteryNumber")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LotteryNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("PublishDate")
                         .HasColumnType("datetime2");
@@ -185,43 +211,55 @@ namespace LotteryChecker.Core.Migrations
                         new
                         {
                             LotteryId = 1,
-                            DueDate = new DateTime(2024, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LotteryNumber = 123456,
+                            DrawDate = new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsPublished = false,
+                            LotteryNumber = "123456",
+                            PublishDate = new DateTime(2024, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RewardId = 1
                         },
                         new
                         {
                             LotteryId = 2,
-                            DueDate = new DateTime(2024, 5, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LotteryNumber = 234567,
+                            DrawDate = new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsPublished = false,
+                            LotteryNumber = "234567",
+                            PublishDate = new DateTime(2024, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RewardId = 2
                         },
                         new
                         {
                             LotteryId = 3,
-                            DueDate = new DateTime(2024, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LotteryNumber = 345678,
+                            DrawDate = new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsPublished = false,
+                            LotteryNumber = "345678",
+                            PublishDate = new DateTime(2024, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RewardId = 3
                         },
                         new
                         {
                             LotteryId = 4,
-                            DueDate = new DateTime(2024, 5, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LotteryNumber = 456789,
+                            DrawDate = new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsPublished = false,
+                            LotteryNumber = "456789",
+                            PublishDate = new DateTime(2024, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RewardId = 4
                         },
                         new
                         {
                             LotteryId = 5,
-                            DueDate = new DateTime(2024, 5, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LotteryNumber = 567890,
+                            DrawDate = new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsPublished = false,
+                            LotteryNumber = "567890",
+                            PublishDate = new DateTime(2024, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RewardId = 5
                         },
                         new
                         {
                             LotteryId = 6,
-                            DueDate = new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LotteryNumber = 678901,
+                            DrawDate = new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsPublished = false,
+                            LotteryNumber = "678901",
+                            PublishDate = new DateTime(2024, 5, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             RewardId = 6
                         });
                 });
@@ -234,8 +272,12 @@ namespace LotteryChecker.Core.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PurchaseTicketId"));
 
-                    b.Property<int>("LotteryNumber")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("DrawDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LotteryNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime2");
@@ -245,37 +287,78 @@ namespace LotteryChecker.Core.Migrations
 
                     b.HasKey("PurchaseTicketId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("PurchaseTickets");
 
                     b.HasData(
                         new
                         {
                             PurchaseTicketId = 1,
-                            LotteryNumber = 123456,
+                            DrawDate = new DateTime(2024, 5, 13, 22, 51, 50, 929, DateTimeKind.Local).AddTicks(5838),
+                            LotteryNumber = "123456",
                             PurchaseDate = new DateTime(2024, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserId = new Guid("36b35306-154c-4518-8fc1-d7e756522111")
                         },
                         new
                         {
                             PurchaseTicketId = 2,
-                            LotteryNumber = 234567,
+                            DrawDate = new DateTime(2024, 5, 13, 22, 51, 50, 929, DateTimeKind.Local).AddTicks(5858),
+                            LotteryNumber = "234567",
                             PurchaseDate = new DateTime(2024, 5, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserId = new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d")
                         },
                         new
                         {
                             PurchaseTicketId = 3,
-                            LotteryNumber = 345678,
+                            DrawDate = new DateTime(2024, 5, 13, 22, 51, 50, 929, DateTimeKind.Local).AddTicks(5860),
+                            LotteryNumber = "345678",
                             PurchaseDate = new DateTime(2024, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserId = new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d")
                         },
                         new
                         {
                             PurchaseTicketId = 4,
-                            LotteryNumber = 456789,
+                            DrawDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LotteryNumber = "456789",
                             PurchaseDate = new DateTime(2024, 5, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserId = new Guid("36b35306-154c-4518-8fc1-d7e756522111")
                         });
+                });
+
+            modelBuilder.Entity("LotteryChecker.Core.Entities.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AddDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Jwtld")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("LotteryChecker.Core.Entities.Reward", b =>
@@ -287,10 +370,11 @@ namespace LotteryChecker.Core.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RewardId"));
 
                     b.Property<string>("RewardName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<decimal>("RewardValue")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("RewardValue")
+                        .HasColumnType("int");
 
                     b.HasKey("RewardId");
 
@@ -301,62 +385,66 @@ namespace LotteryChecker.Core.Migrations
                         {
                             RewardId = 1,
                             RewardName = "Prize 8",
-                            RewardValue = 1000000m
+                            RewardValue = 1000000
                         },
                         new
                         {
                             RewardId = 2,
                             RewardName = "Prize 7",
-                            RewardValue = 2000000m
+                            RewardValue = 2000000
                         },
                         new
                         {
                             RewardId = 3,
                             RewardName = "Prize 6",
-                            RewardValue = 3000000m
+                            RewardValue = 3000000
                         },
                         new
                         {
                             RewardId = 4,
                             RewardName = "Prize 5",
-                            RewardValue = 4000000m
+                            RewardValue = 4000000
                         },
                         new
                         {
                             RewardId = 5,
                             RewardName = "Prize 4",
-                            RewardValue = 5000000m
+                            RewardValue = 5000000
                         },
                         new
                         {
                             RewardId = 6,
                             RewardName = "Prize 3",
-                            RewardValue = 6000000m
+                            RewardValue = 6000000
                         },
                         new
                         {
                             RewardId = 7,
                             RewardName = "Prize 2",
-                            RewardValue = 7000000m
+                            RewardValue = 7000000
                         },
                         new
                         {
                             RewardId = 8,
                             RewardName = "Prize 1",
-                            RewardValue = 8000000m
+                            RewardValue = 8000000
                         });
                 });
 
             modelBuilder.Entity("LotteryChecker.Core.Entities.SearchHistory", b =>
                 {
-                    b.Property<int>("SearchId")
+                    b.Property<int>("SearchHistoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SearchId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SearchHistoryId"));
 
-                    b.Property<int>("LotteryNumber")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("DrawDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LotteryNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("SearchDate")
                         .HasColumnType("datetime2");
@@ -364,29 +452,34 @@ namespace LotteryChecker.Core.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("SearchId");
+                    b.HasKey("SearchHistoryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("SearchHistories");
 
                     b.HasData(
                         new
                         {
-                            SearchId = 1,
-                            LotteryNumber = 123456,
+                            SearchHistoryId = 1,
+                            DrawDate = new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LotteryNumber = "123456",
                             SearchDate = new DateTime(2024, 5, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserId = new Guid("36b35306-154c-4518-8fc1-d7e756522111")
                         },
                         new
                         {
-                            SearchId = 2,
-                            LotteryNumber = 234567,
+                            SearchHistoryId = 2,
+                            DrawDate = new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LotteryNumber = "234567",
                             SearchDate = new DateTime(2024, 5, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserId = new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d")
                         },
                         new
                         {
-                            SearchId = 3,
-                            LotteryNumber = 345678,
+                            SearchHistoryId = 3,
+                            DrawDate = new DateTime(2024, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LotteryNumber = "345678",
                             SearchDate = new DateTime(2024, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UserId = new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d")
                         });
@@ -563,6 +656,39 @@ namespace LotteryChecker.Core.Migrations
                         .IsRequired();
 
                     b.Navigation("Reward");
+                });
+
+            modelBuilder.Entity("LotteryChecker.Core.Entities.PurchaseTicket", b =>
+                {
+                    b.HasOne("LotteryChecker.Core.Entities.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LotteryChecker.Core.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("LotteryChecker.Core.Entities.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LotteryChecker.Core.Entities.SearchHistory", b =>
+                {
+                    b.HasOne("LotteryChecker.Core.Entities.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
