@@ -3,7 +3,7 @@
 @model List<PurchaseTicketVm>
 
 @{
-    ViewData["Title"] = "PurchaseTicket";
+    ViewData["Title"] = "Purchase Ticket";
     Layout = "_Layout";
 }
 
@@ -29,22 +29,22 @@
                 <form asp-action="Create" method="post" onsubmit="handleSubmit(event)">
                     <div class="card-body">
 
-                        <div class="d-flex">
+                        <div class="d-flex gap-4">
                             <div class="form-group mb-2 mr-50">
-                                <label class="text-for-checking-ticket" for="manual-ticket">Thủ công</label>
-                                <input type="radio" id="manual-ticket" class="input-for-checking-ticket" name="TicketType" value="Thủ công" onchange="handleTicketTypeChange()" />
+                                <label class="text-for-checking-ticket w-auto" for="manual-ticket">Thủ công</label>
+                                <input type="radio" id="manual-ticket" class="" name="TicketType" value="Thủ công" onchange="handleTicketTypeChange()" />
                         </div>
 
                         <div class="form-group mb-3">
-                                <label class="text-for-checking-ticket" for="automatic-ticket">Ngẫu nhiên</label>
-                                <input type="radio" id="automatic-ticket" class="input-for-checking-ticket" name="TicketType" value="Ngẫu nhiên" onchange="handleTicketTypeChange()" />
+                                <label class="text-for-checking-ticket w-auto" for="automatic-ticket">Ngẫu nhiên</label>
+                                <input type="radio" id="automatic-ticket" class="" name="TicketType" value="Ngẫu nhiên" onchange="handleTicketTypeChange()" />
                                 <i class="fas fa-sync-alt" onclick="generateRandomNumber()" style="cursor: pointer;"></i>
                             </div>
                         </div>
 
                         <div class="form-group mb-3">
-                            <label class="text-for-checking-ticket" for="lottery-number">Số vé</label>
-                            <input type="text" id="lottery-number" class="input-for-checking-ticket" name="LotteryNumber" />
+                            <label class="text-for-checking-ticket" for="lottery-number">Nhập số vé <span class="text-danger">*</span></label>
+                            <input type="text" id="lottery-number" class="form-control input-for-checking-ticket" name="LotteryNumber" />
                         </div>
                     </div>
 
