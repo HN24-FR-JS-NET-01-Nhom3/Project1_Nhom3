@@ -146,15 +146,16 @@ public class LotteryController : BaseController
                     var user = JsonConvert.DeserializeObject<UserVm>(userData);
 					if(user != null)
 					{
-                        var addSearchHistoryResponse = await HttpUtils<SearchHistoryVm>.SendRequest(HttpMethod.Post,
-                       $"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
-                       {
-                           LotteryNumber = searchHistoryVm.LotteryNumber,
-                           SearchDate = DateTime.Now,
-                           UserId = user.Id,
+						var addSearchHistoryResponse = await HttpUtils<SearchHistoryVm>.SendRequest(HttpMethod.Post,
+					   $"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
+					   {
+						   LotteryNumber = searchHistoryVm.LotteryNumber,
+						   SearchDate = DateTime.Now,
+						   UserId = user.Id,
+						   Prize = searchResponse.Data?.Result?.FirstOrDefault()?.RewardValue ?? 0,
 						   DrawDate = searchHistoryVm.DrawDate,
 						   Email = user.Email
-                       }, accessToken: Request.Cookies["AccessToken"]);
+					   }, accessToken: Request.Cookies["AccessToken"]) ;
                     }
 				}
 				

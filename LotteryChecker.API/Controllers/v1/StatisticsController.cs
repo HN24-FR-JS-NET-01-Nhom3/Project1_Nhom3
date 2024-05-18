@@ -38,7 +38,8 @@ namespace LotteryChecker.API.Controllers.v1
                 {
                     Year = currentYear,
                     Month = month,
-                    Count = 0
+                    Count = 0,
+                    SumPrize = 0
                 }).ToList();
 
                 var userStatistics = await _unitOfWork.Context.SearchHistories
@@ -48,7 +49,8 @@ namespace LotteryChecker.API.Controllers.v1
                     {
                         Year = g.Key.Year,
                         Month = g.Key.Month,
-                        Count = g.Count()
+                        Count = g.Count(),
+                        SumPrize = g.Sum(t => t.Prize)
                     })
                     .ToListAsync();
 
@@ -59,6 +61,7 @@ namespace LotteryChecker.API.Controllers.v1
                     if (monthStat != null)
                     {
                         monthStat.Count = stat.Count;
+                        monthStat.SumPrize = stat.SumPrize;
                     }
                 }
 

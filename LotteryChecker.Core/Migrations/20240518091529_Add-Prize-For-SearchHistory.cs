@@ -6,108 +6,129 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LotteryChecker.Core.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class AddPrizeForSearchHistory : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "Jwtld",
-                table: "RefreshTokens",
-                newName: "JwtId");
+            migrationBuilder.AddColumn<int>(
+                name: "Prize",
+                table: "SearchHistories",
+                type: "int",
+                nullable: true);
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: new Guid("24dd0b58-c0e0-470c-8ed2-14467a3b868f"),
                 columns: new[] { "ConcurrencyStamp", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "e5f85084-50a7-41e7-a58a-35bed091bf93", "AQAAAAIAAYagAAAAEE37HpqfzDKfjqFRstKRKlbfgU9G6RcOXCwF5j+ULOnGAItp86uwAlLScCo+M8dyQA==", "a34a9a07-d7ee-4c32-b097-1b881756c7e8" });
+                values: new object[] { "e8da3917-0f61-4556-96ca-2847daee1d04", "AQAAAAIAAYagAAAAEKLQpNK1A4uwCmLsV6teOfZCIVkcxec+rwM+Isl6lV5QCHWFh3qZ0JnuYKhWolTjaw==", "e8b6d373-6eae-4b02-b8e7-36c6644c6277" });
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: new Guid("36b35306-154c-4518-8fc1-d7e756522111"),
                 columns: new[] { "ConcurrencyStamp", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "b531c6c4-d60a-4195-bae3-f247a8489bc1", "AQAAAAIAAYagAAAAEGUFUVbrxRSezmWd2ewTKxgHVbkG262SnwsdEEwpGuKuGgI0QkwZEfGr/qkjtWnRQw==", "406feaeb-7c53-484d-bd83-357f408951a8" });
+                values: new object[] { "a494a41e-4f2f-48b6-a7a4-afd48f954ba6", "AQAAAAIAAYagAAAAELWxxgiBkGNprB+wah6b9JN/XXQ5ULpsfW2N1/jclkv5qZwr3LdhZb4sRMdk+C6xBQ==", "2136260d-c218-4539-a455-fdc8657a85ff" });
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d"),
                 columns: new[] { "ConcurrencyStamp", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "a6ccf5c8-54f0-4406-86c4-d022ee26aba1", "AQAAAAIAAYagAAAAELlZi54+zq1jBcIX5ogfWu7ml9PyLUJO4y41/BaPqmn50xf2vqPamHfLx3Y5l+hH/g==", "d06af497-c3c3-49c5-93b7-16c1fce6b526" });
+                values: new object[] { "efe6e01f-f21b-4e71-80b2-2f3979d2fd0e", "AQAAAAIAAYagAAAAEC2n40vUm0+jN4MIwKe+RPAOWe7dGzFMXMdZBwHKJMWSmRnpQV6cbYmUzeRea8H9HQ==", "761f7c02-6e25-4e0e-931f-b30b209b430b" });
 
             migrationBuilder.UpdateData(
                 table: "PurchaseTickets",
                 keyColumn: "PurchaseTicketId",
                 keyValue: 1,
                 column: "DrawDate",
-                value: new DateTime(2024, 5, 14, 9, 48, 38, 5, DateTimeKind.Local).AddTicks(2797));
+                value: new DateTime(2024, 5, 18, 16, 15, 26, 635, DateTimeKind.Local).AddTicks(1851));
 
             migrationBuilder.UpdateData(
                 table: "PurchaseTickets",
                 keyColumn: "PurchaseTicketId",
                 keyValue: 2,
                 column: "DrawDate",
-                value: new DateTime(2024, 5, 14, 9, 48, 38, 5, DateTimeKind.Local).AddTicks(2807));
+                value: new DateTime(2024, 5, 18, 16, 15, 26, 635, DateTimeKind.Local).AddTicks(1904));
 
             migrationBuilder.UpdateData(
                 table: "PurchaseTickets",
                 keyColumn: "PurchaseTicketId",
                 keyValue: 3,
                 column: "DrawDate",
-                value: new DateTime(2024, 5, 14, 9, 48, 38, 5, DateTimeKind.Local).AddTicks(2809));
+                value: new DateTime(2024, 5, 18, 16, 15, 26, 635, DateTimeKind.Local).AddTicks(1906));
+
+            migrationBuilder.UpdateData(
+                table: "SearchHistories",
+                keyColumn: "SearchHistoryId",
+                keyValue: 1,
+                column: "Prize",
+                value: 0);
+
+            migrationBuilder.UpdateData(
+                table: "SearchHistories",
+                keyColumn: "SearchHistoryId",
+                keyValue: 2,
+                column: "Prize",
+                value: 0);
+
+            migrationBuilder.UpdateData(
+                table: "SearchHistories",
+                keyColumn: "SearchHistoryId",
+                keyValue: 3,
+                column: "Prize",
+                value: 0);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "JwtId",
-                table: "RefreshTokens",
-                newName: "Jwtld");
+            migrationBuilder.DropColumn(
+                name: "Prize",
+                table: "SearchHistories");
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: new Guid("24dd0b58-c0e0-470c-8ed2-14467a3b868f"),
                 columns: new[] { "ConcurrencyStamp", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "42f0a52c-eed0-4c9d-8f0a-3be84dba74c9", "AQAAAAIAAYagAAAAEEOyR0NM6fPG075LfIyQQDrxCEVAzxc876TdOrxGF+hvAouuMKxpTks/TXOwuTJEKA==", "6245f13c-3985-4318-a387-3977c22db7e0" });
+                values: new object[] { "2fd6795b-d448-46bc-9f33-28f160c29fdd", "AQAAAAIAAYagAAAAENyyHO4FLRsQVBFDbQhTQjKSU5gYkyyh96eIGoKUgOCPcJWt8ZZsIMfZ7ZfwlmyQPA==", "9a07b491-4e09-447c-a8ea-273b45e80ab4" });
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: new Guid("36b35306-154c-4518-8fc1-d7e756522111"),
                 columns: new[] { "ConcurrencyStamp", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "c3762301-fb2e-4435-b4ac-e6feb3d35a65", "AQAAAAIAAYagAAAAEJCMrv4O9e3kKRuaJ3kSHdYHgunVLWDOfl0++766MuFVDC7RLTcuMh2m3h5fgalhmQ==", "ccd92ea2-f3c3-479e-8dbb-b6440ec0db98" });
+                values: new object[] { "db448e53-d8a5-40f9-8730-cb55fcb7ee45", "AQAAAAIAAYagAAAAEFoA1fYXsRZyvCq476MOOEVHPgBT5Vlfpo3mpEJdlQPKsa6BqUAuSPomIluRdkRzuA==", "183a06d6-78c1-4354-8152-671a8e8d2ca5" });
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: new Guid("57fa9a8e-3105-49a0-b0f2-6d88fdfcff8d"),
                 columns: new[] { "ConcurrencyStamp", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "8152ca82-d169-42ad-9818-9c8981580398", "AQAAAAIAAYagAAAAEFqhZcnWVLZAqDdagqoXp/VxL6DZIbnIdTRzd4gu85l3nxv1mt4fbsH1vq3dcYGnwg==", "94070b7d-6f40-44f9-a9b4-a0d027afe459" });
+                values: new object[] { "7250f19f-c677-49c9-9cdf-bab5e9999e9e", "AQAAAAIAAYagAAAAEIWIi9q9piEON1J+ePOfMFBcKVU7MWzXxbcKxnC74K9gMAxJnt43blKIuJtojX04Ww==", "7f19eacd-bcb7-444f-93c6-739ee4289948" });
 
             migrationBuilder.UpdateData(
                 table: "PurchaseTickets",
                 keyColumn: "PurchaseTicketId",
                 keyValue: 1,
                 column: "DrawDate",
-                value: new DateTime(2024, 5, 12, 16, 29, 50, 970, DateTimeKind.Local).AddTicks(8590));
+                value: new DateTime(2024, 5, 13, 22, 51, 50, 929, DateTimeKind.Local).AddTicks(5838));
 
             migrationBuilder.UpdateData(
                 table: "PurchaseTickets",
                 keyColumn: "PurchaseTicketId",
                 keyValue: 2,
                 column: "DrawDate",
-                value: new DateTime(2024, 5, 12, 16, 29, 50, 970, DateTimeKind.Local).AddTicks(8605));
+                value: new DateTime(2024, 5, 13, 22, 51, 50, 929, DateTimeKind.Local).AddTicks(5858));
 
             migrationBuilder.UpdateData(
                 table: "PurchaseTickets",
                 keyColumn: "PurchaseTicketId",
                 keyValue: 3,
                 column: "DrawDate",
-                value: new DateTime(2024, 5, 12, 16, 29, 50, 970, DateTimeKind.Local).AddTicks(8607));
+                value: new DateTime(2024, 5, 13, 22, 51, 50, 929, DateTimeKind.Local).AddTicks(5860));
         }
     }
 }
