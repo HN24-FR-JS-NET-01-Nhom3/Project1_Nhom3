@@ -6,10 +6,8 @@ using LotteryChecker.Common.Models.Http;
 using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using System.Linq;
 
 namespace LotteryChecker.API.Controllers.v1;
 
