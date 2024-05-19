@@ -321,16 +321,15 @@ public class UserController : ControllerBase
 			});
 		}
 	}
-}
-[HttpGet("excel-export")]
+    [HttpGet("excel-export")]
     public async Task<IActionResult> ExcelExport()
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         try
         {
             var users = _unitOfWork.UserRepository.GetAll().ToList();
-			
-			var userVms = _mapper.Map<IEnumerable<UserVm>>(users);
+
+            var userVms = _mapper.Map<IEnumerable<UserVm>>(users);
 
             foreach (var userVm in userVms)
             {
