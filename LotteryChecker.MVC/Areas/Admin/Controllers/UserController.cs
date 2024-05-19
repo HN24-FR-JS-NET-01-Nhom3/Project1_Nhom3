@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LotteryChecker.Common.Models.Authentications;
 using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
@@ -21,8 +22,8 @@ public class UserController : Controller
 	}
 
 	[HttpGet]
-	[Route("get-all-users")]
-	[Route("get-all-users/{page}/{pageSize}")]
+	[Route("")]
+	[Route("{page}/{pageSize}")]
 	[CustomAuthorize("Admin")]
 	public async Task<IActionResult> Index(int page = 1, int pageSize = 5)
 	{
@@ -219,6 +220,51 @@ public class UserController : Controller
 		{
 			TempData["ErrorMessage"] = JsonConvert.DeserializeObject<ErrorVm>(ex.Message);
 			return RedirectToAction("Index");
+		}
+	}
+
+	[HttpGet]
+	[Route("change-password")]
+	[CustomAuthorize("Admin, User")]
+	public IActionResult ChangePassword()
+	{
+		return View();
+	}
+
+	[HttpPost]
+	[Route("change-password")]
+	[CustomAuthorize("Admin, User")]
+	public async Task<IActionResult> ChangePassword(ChangePasswordVm changePasswordVm)
+	{
+		try
+		{
+			if (ModelState.IsValid)
+			{
+				var response = await HttpUtils<string>.SendRequest(HttpMethod.Post,
+					$"{Constants.API_AUTHEN}/change-password", changePasswordVm, Request.Cookies["AccessToken"]);
+				if (response.Message != null)
+				{
+					TempData["Messages"] = "Change password successfully!";
+					return RedirectToAction("Index", "HomeAdmin");
+				}
+
+				if (response.Errors != null)
+				{
+					foreach (var error in response.Errors)
+					{
+						ModelState.AddModelError(string.Empty, error);
+					}
+
+					return View();
+				}
+			}
+
+			return View();
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex);
+			throw;
 		}
 	}
 }

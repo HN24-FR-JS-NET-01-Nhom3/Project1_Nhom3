@@ -18,8 +18,8 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [Route("get-all-lotteries")]
-        [Route("get-all-lotteries/{page}/{pageSize}")]
+        [Route("")]
+        [Route("{page}/{pageSize}")]
         [CustomAuthorize("Admin")]
         public async Task<IActionResult> Index(int page = 1, int pageSize = 17)
         {

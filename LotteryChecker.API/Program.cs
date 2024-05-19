@@ -4,6 +4,8 @@ using Asp.Versioning.ApiExplorer;
 using LotteryChecker.Core.Data;
 using LotteryChecker.Core.Infrastructures;
 using LotteryChecker.Core.Entities;
+using LotteryChecker.EmailService.Entities;
+using LotteryChecker.EmailService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -97,6 +99,12 @@ builder.Services
 		facebookOptions.SaveTokens = true;
 		facebookOptions.CallbackPath = "/signin-facebook";
 	})
+	.AddGoogle(options =>
+	{
+		options.ClientId = builder.Configuration["Google:ClientId"];
+		options.ClientSecret = builder.Configuration["Google:ClientSecret"];
+		options.CallbackPath = "/signin-google";
+	})
 	.AddJwtBearer(options =>
 	{
 		options.SaveToken = true;
@@ -130,6 +138,13 @@ builder.Services.AddSingleton(new TokenValidationParameters
 	IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
 });
 
+var emailConfig = builder.Configuration.GetSection("EmailConfig").Get<EmailConfig>();
+builder.Services.AddSingleton<EmailConfig>(emailConfig);
+
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
+	opt.TokenLifespan = TimeSpan.FromHours(2));
 
 var app = builder.Build();
 

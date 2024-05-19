@@ -9,11 +9,14 @@ using LotteryChecker.Common.Models.Http;
 using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.Core.Data;
 using LotteryChecker.Core.Entities;
+using LotteryChecker.EmailService.Entities;
+using LotteryChecker.EmailService.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit;
 using Newtonsoft.Json;
 
 namespace LotteryChecker.API.Controllers.v1;
@@ -29,10 +32,11 @@ public class AuthenController : ControllerBase
 	private readonly LotteryContext _context;
 	private readonly IConfiguration _configuration;
 	private readonly IMapper _mapper;
+	private readonly IEmailSender _emailSender;
 	private readonly TokenValidationParameters _tokenValidationParameters;
 
 	public AuthenController(UserManager<AppUser> userManager, RoleManager<IdentityRole<Guid>> roleManager,
-		SignInManager<AppUser> signInManager, LotteryContext context, IConfiguration configuration, IMapper mapper,
+		SignInManager<AppUser> signInManager, LotteryContext context, IConfiguration configuration, IMapper mapper, IEmailSender emailSender,
 		TokenValidationParameters tokenValidationParameters)
 	{
 		_userManager = userManager;
@@ -41,6 +45,7 @@ public class AuthenController : ControllerBase
 		_context = context;
 		_configuration = configuration;
 		_mapper = mapper;
+		_emailSender = emailSender;
 		_tokenValidationParameters = tokenValidationParameters;
 	}
 
@@ -343,7 +348,134 @@ public class AuthenController : ControllerBase
 		var newToken = await GenerateJwtToken(appUser, new[] { "User" });
 
 		// Redirect to the MVC application with the token
-		var mvcRedirectUrl = $"{Constants.CLIENT_URL}/authen/facebook-response?accessToken={newToken.AccessToken}&refreshToken={newToken.RefreshToken}&user={JsonConvert.SerializeObject(newToken.User)}";
+		var mvcRedirectUrl =
+			$"{Constants.CLIENT_URL}/authen/facebook-response?accessToken={newToken.AccessToken}&refreshToken={newToken.RefreshToken}&user={JsonConvert.SerializeObject(newToken.User)}";
 		return Redirect(mvcRedirectUrl);
+	}
+
+	[HttpGet("login-google")]
+	public IActionResult LoginWithGoogle()
+	{
+		var redirectUrl = $"{Constants.CLIENT_URL}/authen/google-response";
+		var properties = _signInManager.ConfigureExternalAuthenticationProperties("Google", redirectUrl);
+		return Challenge(properties, "Google");
+	}
+
+	[HttpGet("google-response")]
+	public async Task<IActionResult> GoogleResponse()
+	{
+		var result = await HttpContext.AuthenticateAsync("Google");
+		if (!result.Succeeded || result.Principal == null)
+			return BadRequest(new Response<string> { Errors = new[] { "Google authentication failed." } });
+
+		var info = new ExternalLoginInfo(result.Principal, "Google",
+			result.Principal.FindFirstValue(ClaimTypes.NameIdentifier), result.Principal.Identity.Name);
+		var signInResult =
+			await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false, true);
+
+		if (!signInResult.Succeeded)
+		{
+			var email = result.Principal.FindFirstValue(ClaimTypes.Email);
+			var lastName = result.Principal.Identity.Name;
+			var user = new AppUser { LastName = lastName, UserName = email, Email = email };
+
+			var identityResult = await _userManager.CreateAsync(user);
+			await _userManager.AddToRoleAsync(user, "User");
+
+			if (!identityResult.Succeeded)
+				return BadRequest(new Response<string>
+					{ Errors = identityResult.Errors.Select(e => e.Description).ToArray() });
+
+			identityResult = await _userManager.AddLoginAsync(user, info);
+			if (!identityResult.Succeeded)
+				return BadRequest(new Response<string>
+					{ Errors = identityResult.Errors.Select(e => e.Description).ToArray() });
+
+			await _signInManager.SignInAsync(user, false);
+			var token = await GenerateJwtToken(user, new[] { "User" });
+			return Ok(new Response<AuthResultVm> { Data = new Data<AuthResultVm> { Result = new[] { token } } });
+		}
+
+		var appUser = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+		var newToken = await GenerateJwtToken(appUser, new[] { "User" });
+		return Ok(new Response<AuthResultVm> { Data = new Data<AuthResultVm> { Result = new[] { newToken } } });
+	}
+
+	[HttpPost("change-password")]
+	public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordVm changePasswordVm)
+	{
+		var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+		if (userId == null)
+			return Unauthorized(new Response<string> { Errors = new[] { "User is not authenticated." } });
+
+		var user = await _userManager.FindByIdAsync(userId);
+		if (user == null)
+			return NotFound(new Response<string> { Errors = new[] { "User not found." } });
+
+		var isCurrentPasswordValid = await _userManager.CheckPasswordAsync(user, changePasswordVm.CurrentPassword);
+		if (!isCurrentPasswordValid)
+			return BadRequest(new Response<string> { Errors = new[] { "Current password is incorrect." } });
+
+		var result = await _userManager.ChangePasswordAsync(user, changePasswordVm.CurrentPassword, changePasswordVm.NewPassword);
+		if (!result.Succeeded)
+			return BadRequest(new Response<string> { Errors = result.Errors.Select(e => e.Description).ToArray() });
+
+		return Ok(new Response<string> { Message = "Password changed successfully." });
+	}
+	
+	[HttpPost("reset-password")]
+	public async Task<IActionResult> ChangePassword([FromBody] ResetPasswordVm resetPasswordVm)
+	{
+		var user = await _userManager.FindByEmailAsync(resetPasswordVm.Email);
+		if (user == null)
+			return NotFound(new Response<string> { Errors = new[] { "User not found." } });
+
+		var result = await _userManager.ResetPasswordAsync(user, resetPasswordVm.Token.Replace(' ', '+'), resetPasswordVm.Password);
+		if (!result.Succeeded)
+			return BadRequest(new Response<string> { Errors = result.Errors.Select(e => e.Description).ToArray() });
+
+		return Ok(new Response<string> { Message = "Password changed successfully." });
+	}
+	
+	[HttpPost("forgot-password")]
+	public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordVm forgotPasswordVm)
+	{
+		try
+		{
+			var user = await _userManager.FindByEmailAsync(forgotPasswordVm.Email);
+			if (user == null)
+				return NotFound(new Response<string>()
+				{
+					Errors = new[] { "User not found!" }
+				});
+
+			var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+			var callback = $"{Constants.CLIENT_URL}/authen/reset-password?token={token}&email={user.Email}";
+
+			var message = new Message(
+				new List<EmailAddress>()
+				{
+					new EmailAddress()
+					{
+						DisplayName = user.UserName, Address = user.Email
+					}
+				},
+				"Reset password token",
+				callback
+			);
+			await _emailSender.SendEmailAsync(message);
+
+			return Ok(new Response<string>()
+			{
+				Message = "Sent successfully!"
+			});
+		}
+		catch (Exception ex)
+		{
+			return BadRequest(new Response<string>()
+			{
+				Errors = new[] { ex.Message }
+			});
+		}
 	}
 }
