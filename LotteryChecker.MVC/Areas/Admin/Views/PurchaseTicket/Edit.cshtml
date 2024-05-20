@@ -1,0 +1,65 @@
+﻿@model LotteryChecker.Common.Models.Entities.PurchaseTicketVm
+
+@{
+    ViewData["Title"] = "Chỉnh sửa vé mua";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container mt-5">
+    <h2>@ViewData["Title"]</h2>
+
+
+
+
+    @if (!string.IsNullOrEmpty(Convert.ToString(TempData["Errors"])))
+    {
+        <div class="alert alert-danger">
+            @TempData["Errors"]
+        </div>
+    }
+
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label for="userId" class="form-label">User Id</label>
+                    <input readonly asp-for="UserId" type="text" class="form-control" id="userId" name="UserId">
+                    <span asp-validation-for="UserId" class="text-danger"></span>
+                </div>
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <label for="lotteryNumber" class="form-label">Lottery Number</label>
+                    <input asp-for="LotteryNumber" type="text" class="form-control" id="lotteryNumber" name="LotteryNumber">
+                    <span asp-validation-for="LotteryNumber" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="purchaseDate" class="form-label">Purchase Date</label>
+                    <input asp-for="PurchaseDate" type="text" class="form-control" id="purchaseDate" name="PurchaseDate">
+                    <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="drawDate" class="form-label">Draw Date</label>
+                    <input asp-for="DrawDate" type="text" class="form-control" id="drawDate" name="DrawDate">
+                    <span asp-validation-for="DrawDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

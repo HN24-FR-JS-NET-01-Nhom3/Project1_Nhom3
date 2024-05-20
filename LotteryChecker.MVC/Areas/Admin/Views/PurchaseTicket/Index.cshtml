@@ -1,11 +1,10 @@
 ﻿@* @model IEnumerable<LotteryChecker.Common.Models.Entities.LotteryVm> *@
-@using System.Globalization
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model LotteryChecker.Common.Models.Http.Data<LotteryChecker.Common.Models.Entities.RewardVm>
+@model LotteryChecker.Common.Models.Http.Data<LotteryChecker.Common.Models.Entities.PurchaseTicketVm>
+@using static LotteryChecker.MVC.Utils.DateTimeHelper
 
 
 @{
-    ViewData["Title"] = "Quản lý giải thưởng";
+    ViewData["Title"] = "Quản lý vé mua";
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
     var pageStart = (Model.Meta.Page - 1) * Model.Meta.PageSize + 1;
     var pageEnd = Model.Meta.Page * Model.Meta.PageSize;
@@ -24,18 +23,20 @@
     @await Html.PartialAsync("MessagePopup", errors)
 }
 
-<h1>Quản lý giải thưởng</h1>
+<h1>Quản lý vé mua</h1>
 
 <p class="mt-4">
-    <a class="btn btn-outline-primary" asp-action="Create">Thêm mới</a>
+@*     <a class="btn btn-outline-primary" asp-action="Create">Thêm mới</a> *@
 </p>
 
 <table class="table">
     <thead>
 
         <tr>
-            <th>Giá trị giải thưởng</th>
-            <th>Tên giải thưởng</th>
+            <th>Id người dùng</th>
+            <th>Số vé</th>
+            <th>Ngày quay thưởng</th>
+            <th>Ngày mua vé</th>
             <th class="text-center">Actions</th>
         </tr>
     </thead>
@@ -44,16 +45,21 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.RewardName)
+                    @Html.DisplayFor(modelItem => item.UserId)
                 </td>
                 <td>
-                    @item.RewardValue.ToString("N0", new CultureInfo("vi-VN")) VND
+                    @Html.DisplayFor(modelItem => item.LotteryNumber)
                 </td>
-      
+                <td>
+                    @item.DrawDate.ToString("dd-MM-yyyy")
+                </td>
+                <td>
+                    @item.PurchaseDate.ToString("dd-MM-yyyy")
+                </td>
+
                 <td class="justify-content-center d-flex gap-2">
-                    <a class="btn btn-outline-success" asp-action="Edit" asp-route-Id="@item.RewardId">Edit</a>
-                    <a class="btn btn-outline-info" asp-action="Detail" asp-route-Id="@item.RewardId">Detail</a>
-      
+                    <a class="btn btn-outline-success" asp-action="Edit" asp-route-Id="@item.PurchaseTicketId">Edit</a>
+                    <a class="btn btn-outline-info" asp-action="Detail" asp-route-Id="@item.PurchaseTicketId">Detail</a>
                 </td>
             </tr>
         }
@@ -65,20 +71,20 @@
         @{
             if (Model.Meta.Page == 1)
             {
-                <a class="disabled btn btn-outline-info fs-5" asp-area="Admin" asp-controller="Reward" asp-action="Index" asp-route-page="@prevPage" asp-route-pageSize="@Model.Meta.PageSize">&lt;</a>
+                <a class="disabled btn btn-outline-info fs-5" asp-area="Admin" asp-controller="PurchaseTicket" asp-action="Index" asp-route-page="@prevPage" asp-route-pageSize="@Model.Meta.PageSize">&lt;</a>
             }
             else
             {
-                <a class="btn btn-outline-info fs-5" asp-area="Admin" asp-controller="Reward" asp-action="Index" asp-route-page="@prevPage" asp-route-pageSize="@Model.Meta.PageSize">&lt;</a>
+                <a class="btn btn-outline-info fs-5" asp-area="Admin" asp-controller="PurchaseTicket" asp-action="Index" asp-route-page="@prevPage" asp-route-pageSize="@Model.Meta.PageSize">&lt;</a>
             }
 
             if (Model.Meta.Page >= Model.Meta.TotalPages)
             {
-                <a class="disabled btn btn-outline-info fs-5" asp-area="Admin" asp-controller="Reward" asp-action="Index" asp-route-page="@nextPage" asp-route-pageSize="@Model.Meta.PageSize">&gt;</a>
+                <a class="disabled btn btn-outline-info fs-5" asp-area="Admin" asp-controller="PurchaseTicket" asp-action="Index" asp-route-page="@nextPage" asp-route-pageSize="@Model.Meta.PageSize">&gt;</a>
             }
             else
             {
-                <a class="btn btn-outline-info fs-5" asp-area="Admin" asp-controller="Reward" asp-action="Index" asp-route-page="@nextPage" asp-route-pageSize="@Model.Meta.PageSize">&gt;</a>
+                <a class="btn btn-outline-info fs-5" asp-area="Admin" asp-controller="PurchaseTicket" asp-action="Index" asp-route-page="@nextPage" asp-route-pageSize="@Model.Meta.PageSize">&gt;</a>
             }
         }
     </div>

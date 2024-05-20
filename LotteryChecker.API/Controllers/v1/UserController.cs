@@ -322,19 +322,17 @@ public class UserController : ControllerBase
 		}
 	}
 	
-	[HttpGet("excel-export")]
-	public async Task<IActionResult> ExcelExport()
+	[HttpPost("excel-export")]
+	public async Task<IActionResult> ExcelExport([FromBody] IEnumerable<UserVm> userList)
 	{
 		ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 		try
 		{
-			var users = _unitOfWork.UserRepository.GetAll().ToList();
-			
-			var userVms = _mapper.Map<IEnumerable<UserVm>>(users);
+			var userVms = _mapper.Map<IEnumerable<UserVm>>(userList).ToList();
 
 			foreach (var userVm in userVms)
 			{
-				userVm.Role = String.Join(",", _userManager.GetRolesAsync(_mapper.Map<AppUser>(userVm)).Result);
+				userVm.Role = String.Join(",", await _userManager.GetRolesAsync(_mapper.Map<AppUser>(userVm)));
 			}
 
 			using (var package = new ExcelPackage())
@@ -342,17 +340,31 @@ public class UserController : ControllerBase
 				var worksheet = package.Workbook.Worksheets.Add("Sheet1");
 				worksheet.Cells.LoadFromCollection(userVms, true);
 
-				// Return Excel file
-				var stream = new MemoryStream(package.GetAsByteArray());
-				return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "filename.xlsx");
+				var fileContents = Convert.ToBase64String(package.GetAsByteArray());
+
+				var response = new Response<FileResultVm>
+				{
+					Data = new Data<FileResultVm>
+					{
+						Result = new[] { new FileResultVm
+						{
+							FileContents = fileContents,
+							ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+							FileDownloadName = "filename.xlsx"
+						}}
+					}
+				};
+
+				return Ok(response);
 			}
 		}
 		catch (Exception ex)
 		{
-			return BadRequest(new Response<UserVm>()
+			return BadRequest(new Response<UserVm>
 			{
 				Errors = new[] { ex.Message }
 			});
 		}
 	}
+
 }

@@ -11,8 +11,8 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
         public SearchHistoryController()
         {
         }
-        [Route("get-all-search-histories")]
-        [Route("get-all-search-histories/{page}/{pageSize}")]
+        [Route("")]
+        [Route("{page}/{pageSize}")]
         [CustomAuthorize("Admin")]
         public async Task<IActionResult> Index(int page = 1, int pageSize = 5)
         {

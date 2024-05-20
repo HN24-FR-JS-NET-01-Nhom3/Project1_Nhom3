@@ -1,0 +1,53 @@
+﻿@model LotteryChecker.Common.Models.Entities.PurchaseTicketVm
+
+@{
+    ViewData["Title"] = "Tạo vé";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container">
+    <h1>Create User</h1>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create">
+                <div class="form-group my-4">
+                    <label asp-for="LotteryNumber" class="control-label">Lottery Number <span class="text-danger">*</span></label>
+                    <input asp-for="LotteryNumber" class="form-control" />
+                    <span class="text-danger"></span>
+                </div>
+                <div class="form-group my-4">
+                    <label asp-for="DrawDate" class="control-label">Draw Date <span class="text-danger">*</span></label>
+                    <input asp-for="DrawDate" class="form-control" />
+                    <span class="text-danger"></span>
+                </div>
+
+                <div class="form-group my-4">
+                    <label asp-for="PurchaseDate" class="control-label">Purchase Date <span class="text-danger">*</span></label>
+                    <input asp-for="PurchaseDate" class="form-control" />
+                    <span class="text-danger"></span>
+                </div>
+
+                <div class="form-group my-4">
+                    <label for="UserId" class="form-label">User</label>
+                    <select asp-for="UserId" class="form-control" id="userId" name="UserId" asp-items="ViewBag.Users">
+                        <option value="">-- Select an user --</option>
+                    </select>
+                    <span asp-validation-for="UserId" class="text-danger"></span>
+                </div>
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group my-4">
+                    <button type="submit" class="btn btn-primary mx-2">Create</button>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

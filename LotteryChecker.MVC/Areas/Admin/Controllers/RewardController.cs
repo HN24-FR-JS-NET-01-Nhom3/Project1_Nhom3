@@ -15,16 +15,22 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
         public RewardController() { }
 
         [HttpGet]
-        [Route("get-all-rewards")]
-        [Route("get-all-rewards/{page}/{pageSize}")]
+        [Route("")]
+        [Route("{page}/{pageSize}")]
         [CustomAuthorize("Admin")]
         public async Task<IActionResult> Index(int page = 1, int pageSize = 5)
         {
             try
             {
+                if (Request.Cookies["User"] != null)
+                {
+                    var user = JsonConvert.DeserializeObject<UserVm>(Request.Cookies["User"]);
+                    TempData["UserId"] = user.Id;
+                }
+
                 var response = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Get,
-                    $"{Constants.API_REWARD}/get-all-rewards?page={page}&pageSize={pageSize}", null,
-                    Request.Cookies["AccessToken"]);
+                                       $"{Constants.API_REWARD}/get-all-rewards?page={page}&pageSize={pageSize}", null,
+                                                          Request.Cookies["AccessToken"]);
 
                 if (response.Data != null)
                     return View(response.Data);
@@ -116,7 +122,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
         [HttpPost]
         [Route("edit-reward/{id}")]
         [CustomAuthorize("Admin")]
-        public async Task<IActionResult> Edit( int id,RewardVm rewardVm)
+        public async Task<IActionResult> Edit(int id, RewardVm rewardVm)
         {
           
             try
@@ -135,6 +141,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
                         TempData["Errors"] = response.Errors;
                         return View(rewardVm);
                     }
+                   
                 }
                 return View(rewardVm);
             }

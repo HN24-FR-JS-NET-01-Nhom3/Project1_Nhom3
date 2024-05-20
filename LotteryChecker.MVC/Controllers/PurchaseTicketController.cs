@@ -6,8 +6,7 @@ using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Net;
-using System.Text;
+using LotteryChecker.Common.Models.ViewModels;
 
 namespace LotteryChecker.MVC.Controllers;
 
@@ -51,8 +50,20 @@ public class PurchaseTicketController : BaseController
     {
         try
         {
+            if (TempData["User"] != null)
+            {
+                var userData = TempData["User"].ToString();
+                var user = JsonConvert.DeserializeObject<UserVm>(userData);
+                if (user != null)
+                {
+                    purchaseTicket.UserId = user.Id;
+                }
+            }
+            var currentDate = DateTime.Now;
+            purchaseTicket.PurchaseDate = currentDate;
+
             var apiResponse = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Post,
-                $"{Constants.API_PURCHASE_TICKET}/create-purchase-ticket", purchaseTicket);
+                $"{Constants.API_PURCHASE_TICKET}/create-purchase-ticket", purchaseTicket, Request.Cookies["AccessToken"]);
 
             if (apiResponse.Errors == null)
             {

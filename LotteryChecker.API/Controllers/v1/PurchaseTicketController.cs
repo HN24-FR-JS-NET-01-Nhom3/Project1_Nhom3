@@ -7,6 +7,7 @@ using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace LotteryChecker.API.Controllers.v1;
 
@@ -65,7 +66,6 @@ public class PurchaseTicketController : ControllerBase
                 Errors = new[] { ex.Message }
             });
         }
-         
     }
 
     [HttpGet("get-purchase-ticket/{id}")]
