@@ -1,18 +1,16 @@
 ﻿using Asp.Versioning;
 using AutoMapper;
 using LotteryChecker.Common.Models.Entities;
-using LotteryChecker.Common.Models.Http;
 using LotteryChecker.Core.Infrastructures;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace LotteryChecker.API.Controllers.v1
 {
-    [ApiVersion("1.0")]
-    [Route("api/v{v:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{v:apiVersion}/statistic")]
     public class StatisticsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -75,5 +73,7 @@ namespace LotteryChecker.API.Controllers.v1
                 });
             }
         }
+
+        
     }
 }
