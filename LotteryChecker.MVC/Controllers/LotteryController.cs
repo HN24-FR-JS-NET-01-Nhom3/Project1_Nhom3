@@ -154,7 +154,8 @@ public class LotteryController : BaseController
                            SearchDate = DateTime.Now,
                            UserId = user.Id,
 						   DrawDate = searchHistoryVm.DrawDate,
-						   Email = user.Email
+						   Email = user.Email,
+						   Prize = searchResponse.Data?.Result?.FirstOrDefault()?.RewardValue ?? 0
                        }, accessToken: Request.Cookies["AccessToken"]);
                     }
                 }
