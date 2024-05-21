@@ -13,68 +13,87 @@ namespace LotteryChecker.MVC.Controllers;
 [Route("purchase-ticket")]
 public class PurchaseTicketController : BaseController
 {
-    public PurchaseTicketController(IMapper mapper) : base(mapper)
-    {
-    }
-    
-    [HttpGet("")]
-    [CustomAuthorize("User, Admin")]
-    public async Task<IActionResult> Index()
-    {
-        try
-        {
-            var apiResponse = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Get, 
-                $"{Constants.API_PURCHASE_TICKET}/get-all-purchase-tickets", accessToken: Request.Cookies["AccessToken"]);
+	public PurchaseTicketController(IMapper mapper) : base(mapper)
+	{
+	}
 
-            if (apiResponse.Errors == null)
-            {
-                return View(apiResponse.Data?.Result?.ToList());
-            }
+	[HttpGet("")]
+	[CustomAuthorize("User, Admin")]
+	public async Task<IActionResult> Index()
+	{
+		try
+		{
+			var apiResponse = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Get,
+				$"{Constants.API_PURCHASE_TICKET}/get-all-purchase-tickets-by-user",
+				accessToken: Request.Cookies["AccessToken"]);
 
-            TempData["ErrorMessage"] = apiResponse.Errors;
-            return View();
-        }
-        catch (Exception ex)
-        {
-            TempData["ErrorMessage"] = ex.Message;
-            return View();
-        }
-    }
+			if (apiResponse.Errors == null)
+			{
+				ViewData["PurchaseTickets"] = apiResponse.Data?.Result;
+				return View();
+			}
 
-    [CustomAuthorize("User, Admin")]
-    [HttpPost("create")]
-    public async Task<IActionResult> Create(PurchaseTicket purchaseTicket)
-    {
-        try
-        {
-            if (TempData["User"] != null)
-            {
-                var userData = TempData["User"].ToString();
-                var user = JsonConvert.DeserializeObject<UserVm>(userData);
-                if (user != null)
-                {
-                    purchaseTicket.UserId = user.Id;
-                }
-            }
-            var currentDate = DateTime.Now;
-            purchaseTicket.PurchaseDate = currentDate;
-                
-            var apiResponse = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Post,
-                $"{Constants.API_PURCHASE_TICKET}/create-purchase-ticket", purchaseTicket, Request.Cookies["AccessToken"]);
+			TempData["ErrorMessage"] = string.Join(',', apiResponse.Errors);
+			return View();
+		}
+		catch (Exception ex)
+		{
+			TempData["ErrorMessage"] = ex.Message;
+			return View();
+		}
+	}
 
-            if (apiResponse.Errors == null)
-            {
-                return RedirectToAction("Index");
-            }
+	[CustomAuthorize("User, Admin")]
+	[HttpPost("create")]
+	public async Task<IActionResult> Create(PurchaseTicket purchaseTicket)
+	{
+		var purchaseTicketResponse = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Get,
+			$"{Constants.API_PURCHASE_TICKET}/get-all-purchase-tickets-by-user",
+			accessToken: Request.Cookies["AccessToken"]);
 
-            TempData["ErrorMessage"] = apiResponse.Errors;
-            return View("Index");
-        }
-        catch (Exception ex)
-        {
+		if (purchaseTicketResponse.Errors == null)
+		{
+			ViewData["PurchaseTickets"] = purchaseTicketResponse.Data?.Result;
+		}
+		if (ModelState.IsValid)
+		{
+			try
+			{
+				if (TempData["User"] != null)
+				{
+					var userData = TempData["User"].ToString();
+					var user = JsonConvert.DeserializeObject<UserVm>(userData);
+					if (user != null)
+					{
+						purchaseTicket.UserId = user.Id;
+					}
+				}
 
-            TempData["ErrorMessage"] = ex.Message;
-            return View("Index");
-        }
-    }
+				var currentDate = DateTime.Now;
+				purchaseTicket.PurchaseDate = currentDate;
+
+				var apiResponse = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Post,
+					$"{Constants.API_PURCHASE_TICKET}/create-purchase-ticket", purchaseTicket,
+					Request.Cookies["AccessToken"]);
+
+				if (apiResponse.Errors == null)
+				{
+					return RedirectToAction("Index");
+				}
+
+				foreach (var error in apiResponse.Errors)
+				{
+					ModelState.AddModelError(string.Empty, error);
+				}
+				return View("Index");
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError(string.Empty, ex.Message);
+				return View("Index");
+			}
+		}
+
+		return View("Index");
+	}
 }

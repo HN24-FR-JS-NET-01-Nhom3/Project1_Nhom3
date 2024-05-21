@@ -119,12 +119,20 @@ public class LotteryController : BaseController
 	[ValidateAntiForgeryToken]
 	public async Task<IActionResult> CheckTicket(SearchHistoryVm? searchHistoryVm)
 	{
+		if (TempData["User"] != null)
+		{
+			var userData = TempData["User"].ToString();
+			var user = JsonConvert.DeserializeObject<UserVm>(userData);
+			if (user != null)
+			{
+				var searchHistoryResponse = await HttpUtils<SearchHistoryVm>.SendRequest(HttpMethod.Get,
+					$"{Constants.API_SEARCH_HISTORY}/get-search-histories-by-user-id", accessToken: Request.Cookies["AccessToken"]);
+				ViewData["SearchHistories"] = searchHistoryResponse.Data?.Result;
+			}
+		}
+		
 		if (ModelState.IsValid)
 		{
-			if (searchHistoryVm == null)
-			{
-				return View();
-			}
 			try
 			{
 				var lotteryResponse = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Get,
@@ -169,8 +177,9 @@ public class LotteryController : BaseController
 			catch (Exception ex)
 			{
 				ViewData["ErrorMessage"] = ex.Message;
+				return RedirectToAction();
 			}
 		}
-		return View();
+		return RedirectToAction();
 	}
 }

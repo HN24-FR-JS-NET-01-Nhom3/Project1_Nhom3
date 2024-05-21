@@ -48,6 +48,7 @@
                     if (reward != null)
                     {
                         <p class="mt-4 mb-1"><strong>XIN CHÚC MỪNG</strong>, vé số của bạn đã trúng giải <span class="fw-bold text-danger">@reward.RewardName</span>, trị giá <span class="fw-bold text-danger">@reward.RewardValue.ToString("N0", new CultureInfo("vi-VN")) VND</span>!</p>
+                        @await Html.PartialAsync("_SocialSharing", ViewData["Title"])
                     }
                     else if (ViewData["ErrorMessage"] != null)
                     {

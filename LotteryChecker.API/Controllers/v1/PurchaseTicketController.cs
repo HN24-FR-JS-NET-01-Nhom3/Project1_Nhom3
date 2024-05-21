@@ -201,4 +201,47 @@ public class PurchaseTicketController : ControllerBase
             });
         }
     }
+    
+    [HttpGet("get-all-purchase-tickets-by-user")]
+    public IActionResult GetAllPurchaseTicketsByUser([FromQuery] int page = 1, [FromQuery] int pageSize = 5)
+    {
+        try
+        {
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var purchaseTickets = _unitOfWork.PurchaseTicketRepository.Find(pt => pt.UserId.ToString() == userId).ToList();
+
+            if (!purchaseTickets.IsNullOrEmpty())
+            {
+                var purchaseTicketPaging = _unitOfWork.PurchaseTicketRepository.GetPaging(purchaseTickets, null, page, pageSize).ToList();
+                
+                var response = new Response<PurchaseTicketVm>()
+                {
+                    Data = new Data<PurchaseTicketVm>()
+                    {
+                        Result = _mapper.Map<IEnumerable<PurchaseTicketVm>>(purchaseTicketPaging),
+                        Meta = new Meta()
+                        {
+                            Page = page,
+                            PageSize = pageSize > purchaseTicketPaging.Count ? purchaseTicketPaging.Count : pageSize,
+                            TotalPages = (int)Math.Ceiling((decimal)purchaseTickets.Count / pageSize)
+                        }
+                    }
+                };
+                
+                return Ok(response);
+            }
+
+            return NotFound(new Response<PurchaseTicketVm>()
+            {
+                Errors = new[] { "No purchase tickets found" }
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new Response<PurchaseTicketVm>()
+            {
+                Errors = new[] { ex.Message }
+            });
+        }
+    }
 }
