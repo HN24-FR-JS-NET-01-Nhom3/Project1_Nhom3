@@ -26,7 +26,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
                 if (Request.Cookies["User"] != null)
                 {
                     var user = JsonConvert.DeserializeObject<UserVm>(Request.Cookies["User"]);
-                    TempData["UserId"] = user.Id;
+                    ViewBag.UserEmail = user.Email;
                 }
 
                 var response = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Get,
