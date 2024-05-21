@@ -23,11 +23,8 @@ public class PurchaseTicketController : BaseController
     {
         try
         {
-            var purchaseTicketResponse = await HttpUtils<Response<PurchaseTicketVm>>.SendRequest(HttpMethod.Get, $"{Constants.API_PURCHASE_TICKET}/get-all-purchase-tickets");
-            ViewData["PurchaseTickets"] = purchaseTicketResponse;
-
             var apiResponse = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Get, 
-                $"{Constants.API_PURCHASE_TICKET}/get-all-purchase-tickets");
+                $"{Constants.API_PURCHASE_TICKET}/get-all-purchase-tickets", accessToken: Request.Cookies["AccessToken"]);
 
             if (apiResponse.Errors == null)
             {
@@ -46,7 +43,7 @@ public class PurchaseTicketController : BaseController
 
     [CustomAuthorize("User, Admin")]
     [HttpPost("create")]
-    public async Task<IActionResult> Create([FromBody] PurchaseTicket purchaseTicket)
+    public async Task<IActionResult> Create(PurchaseTicket purchaseTicket)
     {
         try
         {
@@ -61,7 +58,7 @@ public class PurchaseTicketController : BaseController
             }
             var currentDate = DateTime.Now;
             purchaseTicket.PurchaseDate = currentDate;
-
+                
             var apiResponse = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Post,
                 $"{Constants.API_PURCHASE_TICKET}/create-purchase-ticket", purchaseTicket, Request.Cookies["AccessToken"]);
 
