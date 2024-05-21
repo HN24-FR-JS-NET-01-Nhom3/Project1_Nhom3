@@ -1,4 +1,4 @@
-﻿@using Microsoft.IdentityModel.Tokens
+@using Microsoft.IdentityModel.Tokens
 @model IEnumerable<LotteryChecker.Common.Models.Entities.SearchHistoryVm>
 
 @{
@@ -24,7 +24,7 @@
                     <th class="text-center">Ngày quay</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="fs-6 text-center">
                 @foreach (var item in Model)
                 {
                     <tr>

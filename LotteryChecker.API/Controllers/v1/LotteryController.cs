@@ -8,6 +8,7 @@ using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Linq;
 
 namespace LotteryChecker.API.Controllers.v1;
 

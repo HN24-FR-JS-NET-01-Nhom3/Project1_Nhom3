@@ -13,7 +13,7 @@
                     <td colspan="2">
                         @group.First().RewardName
                     </td>
-                    <td class="d-flex justify-content-evenly fw-bold">
+                    <td class="d-flex justify-content-evenly fw-bold border-0">
                         @foreach (var lottery in group)
                         {
                             <span>@lottery.LotteryNumber</span>
@@ -27,13 +27,13 @@
                 <td colspan="2">
                     @reward4.First().RewardName
                 </td>
-                <td class="d-flex justify-content-evenly fw-bold">
+                <td class="d-flex justify-content-evenly fw-bold border-0">
                     @foreach (var lottery in reward4.Take(4))
                     {
                         <span>@lottery.LotteryNumber</span>
                     }
                 </td>
-                <td class="d-flex justify-content-evenly fw-bold">
+                <td class="d-flex justify-content-evenly fw-bold border-0">
                     @foreach (var lottery in reward4.Skip(4))
                     {
                         <span>@lottery.LotteryNumber</span>
@@ -47,7 +47,7 @@
                     <td colspan="2">
                         @group.First().RewardName
                     </td>
-                    <td class="d-flex justify-content-evenly fw-bold">
+                    <td class="d-flex justify-content-evenly fw-bold border-0">
                         @foreach (var lottery in group)
                         {
                             <span>@lottery.LotteryNumber</span>

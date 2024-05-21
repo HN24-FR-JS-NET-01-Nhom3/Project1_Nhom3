@@ -23,7 +23,7 @@ public class PurchaseTicketController : BaseController
     {
         try
         {
-            var apiResponse = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Get,
+            var apiResponse = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Get, 
                 $"{Constants.API_PURCHASE_TICKET}/get-all-purchase-tickets", accessToken: Request.Cookies["AccessToken"]);
 
             if (apiResponse.Errors == null)
@@ -58,7 +58,7 @@ public class PurchaseTicketController : BaseController
             }
             var currentDate = DateTime.Now;
             purchaseTicket.PurchaseDate = currentDate;
-
+                
             var apiResponse = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Post,
                 $"{Constants.API_PURCHASE_TICKET}/create-purchase-ticket", purchaseTicket, Request.Cookies["AccessToken"]);
 

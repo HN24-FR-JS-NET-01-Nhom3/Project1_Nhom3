@@ -26,4 +26,8 @@
       <Folder Include="Areas\Admin\Models\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\SearchHistory\Index.cshtml" />
+    </ItemGroup>
+
 </Project>

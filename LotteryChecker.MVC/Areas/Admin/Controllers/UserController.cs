@@ -267,4 +267,35 @@ public class UserController : Controller
 			throw;
 		}
 	}
+	
+	[HttpPost]
+	[Route("export-user")]
+	public async Task<IActionResult> ExportUsers([FromForm] List<UserVm> userVms)
+	{
+		try
+		{
+			var response = await HttpUtils<FileResultVm>.SendRequest(HttpMethod.Post,
+				$"{Constants.API_USER}/excel-export", userVms);
+
+			if (response.Errors == null)
+			{
+				var fileResult = response.Data?.Result?.FirstOrDefault();
+				if (fileResult != null)
+				{
+					var fileBytes = Convert.FromBase64String(fileResult.FileContents);
+
+					return File(fileBytes, fileResult.ContentType, fileResult.FileDownloadName);
+				}
+			}
+
+			// Handle case where there are errors or no file result
+			TempData["ErrorMessage"] = "An error occurred while exporting the file.";
+			return RedirectToAction("Index");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			throw;
+		}
+	}
 }

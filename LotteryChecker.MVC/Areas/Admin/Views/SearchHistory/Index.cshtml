@@ -22,6 +22,10 @@
 
 <h1>Quản lý lịch sử tìm kiếm</h1>
 
+<p class="mt-4">
+    @*     <a class="btn btn-outline-primary" asp-action="Create">Thêm mới</a> *@
+</p>
+
 <table class="table">
     <thead>
         <tr>
@@ -40,15 +44,15 @@
                     @Html.DisplayFor(modelItem => item.LotteryNumber)
                 </td>
                 <td>
-                    @item.DrawDate.ToString("yyyy-MM-dd")
+                    @item.DrawDate.ToString("dd-MM-yyyy")
                 </td>
                 <td>
-                    @item.SearchDate.ToString("yyyy-MM-dd")
+                    @item.SearchDate.ToString("dd-MM-yyyy")
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
-                <td class="justify-content-evenly d-flex">
+                <td class="justify-content-center d-flex gap-2">
                     <a class="btn btn-outline-info" asp-action="Detail" asp-route-Id="@item.SearchHistoryId">Detail</a>
                     @* <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a> *@
                 </td>

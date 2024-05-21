@@ -7,7 +7,7 @@
     var pageEnd = Model.Meta.Page * Model.Meta.PageSize;
     var prevPage = Model.Meta.Page - 1;
     var nextPage = Model.Meta.Page + 1;
-    
+
     var messages = (TempData["Messages"] ?? "").ToString();
     var errors = (TempData["Errors"] ?? "").ToString();
 }
@@ -23,9 +23,16 @@
 
 <h1>Quản lý người dùng</h1>
 
-<p class="mt-4">
+<div class="mt-4 d-flex justify-content-start gap-4">
     <a class="btn btn-outline-primary" asp-action="Create">Thêm mới</a>
-</p>
+    <form asp-action="ExportUsers" method="post">
+        @foreach (var userVm in Model.Result)
+        {
+            <input type="hidden" name="userVms" value='@Html.Raw(Json.Serialize(userVm))'/>
+        }
+        <button type="submit" class="btn btn-outline-danger">Xuất file</button>
+    </form>
+</div>
 <table class="table">
     <thead>
     <tr>
@@ -70,7 +77,7 @@
                     </form>
                 </div>
             </td>
-            <td class="justify-content-evenly d-flex">
+            <td class="justify-content-center d-flex gap-2">
                 <a class="btn btn-outline-success" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                 <a class="btn btn-outline-info" asp-action="Detail" asp-route-id="@item.Id">Detail</a>
                 @* <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a> *@

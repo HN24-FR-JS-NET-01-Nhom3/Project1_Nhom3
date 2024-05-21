@@ -13,6 +13,6 @@ public class PurchaseTicketRepository : BaseRepository<PurchaseTicket>, IPurchas
 
     public IEnumerable<PurchaseTicket> GetAllPurchaseTickets()
     {
-        return DbSet;
+        return DbSet.OrderByDescending(x => x.PurchaseDate).ToList();
     }
 }

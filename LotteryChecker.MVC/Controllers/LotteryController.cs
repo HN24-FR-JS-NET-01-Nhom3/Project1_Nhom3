@@ -65,7 +65,19 @@ public class LotteryController : BaseController
 	public async Task<IActionResult> CheckTicket(string? lotteryNumber, int? year, int? month, int? day)
 	{
 		try
-		{		
+		{
+			if (TempData["User"] != null)
+			{
+				var userData = TempData["User"].ToString();
+				var user = JsonConvert.DeserializeObject<UserVm>(userData);
+				if (user != null)
+				{
+					var searchHistoryResponse = await HttpUtils<SearchHistoryVm>.SendRequest(HttpMethod.Get,
+						$"{Constants.API_SEARCH_HISTORY}/get-search-histories-by-user-id", accessToken: Request.Cookies["AccessToken"]);
+					ViewData["SearchHistories"] = searchHistoryResponse.Data?.Result;
+				}
+			}
+			
 			if (lotteryNumber != null && year != null && month != null && day != null)
 			{
 				var lotteryResponse = await HttpUtils<LotteryVm>.SendRequest(HttpMethod.Get,
@@ -78,17 +90,6 @@ public class LotteryController : BaseController
 					SearchDate = DateTime.Now,
 					DrawDate = new DateTime((int)year, (int)month, (int)day)
 				};
-                if (TempData["User"] != null)
-                {
-                    var userData = TempData["User"].ToString();
-                    var user = JsonConvert.DeserializeObject<UserVm>(userData);
-                    if (user != null)
-                    {
-                        var searchHistoryResponse = await HttpUtils<SearchHistoryVm>.SendRequest(HttpMethod.Get,
-                        $"{Constants.API_SEARCH_HISTORY}/get-search-histories-by-user-id", accessToken: Request.Cookies["AccessToken"]);
-                        ViewData["SearchHistories"] = searchHistoryResponse.Data?.Result;
-                    }
-                }
                 var searchResponse = await HttpUtils<RewardVm>.SendRequest(HttpMethod.Post,
 					$"{Constants.API_LOTTERY}/get-ticket-result", searchHistoryVm);
 				if (searchResponse.Errors.IsNullOrEmpty())
@@ -144,17 +145,16 @@ public class LotteryController : BaseController
                 {
                     var userData = TempData["User"].ToString();
                     var user = JsonConvert.DeserializeObject<UserVm>(userData);
-                    if (user != null)
-                    {
+					if(user != null)
+					{
                         var addSearchHistoryResponse = await HttpUtils<SearchHistoryVm>.SendRequest(HttpMethod.Post,
                        $"{Constants.API_SEARCH_HISTORY}/create-search-history", new SearchHistoryVm()
                        {
                            LotteryNumber = searchHistoryVm.LotteryNumber,
                            SearchDate = DateTime.Now,
                            UserId = user.Id,
-                           DrawDate = searchHistoryVm.DrawDate,
-                           Email = user.Email,
-						   Prize = searchResponse.Data?.Result?.FirstOrDefault()?.RewardValue ?? 0
+						   DrawDate = searchHistoryVm.DrawDate,
+						   Email = user.Email
                        }, accessToken: Request.Cookies["AccessToken"]);
                     }
                 }
