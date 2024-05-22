@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LotteryChecker.API", "Lotte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LotteryChecker.MVC", "LotteryChecker.MVC\LotteryChecker.MVC.csproj", "{1E3DDE3A-6ABD-4C84-99B3-32E57CC69BAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryChecker.Common", "LotteryChecker.Common\LotteryChecker.Common.csproj", "{3C288F43-7DEA-4726-B89E-4FE535B1869E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LotteryChecker.Common", "LotteryChecker.Common\LotteryChecker.Common.csproj", "{3C288F43-7DEA-4726-B89E-4FE535B1869E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryChecker.EmailService", "LotteryChecker.EmailService\LotteryChecker.EmailService.csproj", "{4A0E8FD6-8DB5-4208-91AD-A2DB2DED94EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LotteryChecker.EmailService", "LotteryChecker.EmailService\LotteryChecker.EmailService.csproj", "{4A0E8FD6-8DB5-4208-91AD-A2DB2DED94EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LotteryChecker.Test", "LotteryChecker.Test\LotteryChecker.Test.csproj", "{50B28D0B-E4D3-42C4-A9B9-3C787FD631E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{4A0E8FD6-8DB5-4208-91AD-A2DB2DED94EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A0E8FD6-8DB5-4208-91AD-A2DB2DED94EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A0E8FD6-8DB5-4208-91AD-A2DB2DED94EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50B28D0B-E4D3-42C4-A9B9-3C787FD631E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50B28D0B-E4D3-42C4-A9B9-3C787FD631E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50B28D0B-E4D3-42C4-A9B9-3C787FD631E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50B28D0B-E4D3-42C4-A9B9-3C787FD631E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
