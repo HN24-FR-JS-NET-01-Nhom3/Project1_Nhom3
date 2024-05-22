@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LotteryChecker.MVC.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Route("admin/sarch-history")]
+    [Route("admin/search-history")]
     public class SearchHistoryController : Controller
     {
         public SearchHistoryController()
@@ -14,7 +14,7 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
         [Route("")]
         [Route("{page}/{pageSize}")]
         [CustomAuthorize("Admin")]
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 5)
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 9999)
         {
             try
             {

@@ -3,10 +3,6 @@
 @{
     ViewData["Title"] = "Quản lý người dùng";
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
-    var pageStart = (Model.Meta.Page - 1) * Model.Meta.PageSize + 1;
-    var pageEnd = Model.Meta.Page * Model.Meta.PageSize;
-    var prevPage = Model.Meta.Page - 1;
-    var nextPage = Model.Meta.Page + 1;
 
     var messages = (TempData["Messages"] ?? "").ToString();
     var errors = (TempData["Errors"] ?? "").ToString();
@@ -21,7 +17,7 @@
     @await Html.PartialAsync("MessagePopup", errors)
 }
 
-<h1>Quản lý người dùng</h1>
+<h1 class="position-sticky top-0">Quản lý người dùng</h1>
 
 <div class="mt-4 d-flex justify-content-start gap-4">
     <a class="btn btn-outline-primary" asp-action="Create">Thêm mới</a>
@@ -33,82 +29,82 @@
         <button type="submit" class="btn btn-outline-danger">Xuất file</button>
     </form>
 </div>
-<table class="table">
-    <thead>
-    <tr>
-        <th>Họ và tên</th>
-        <th>Username</th>
-        <th>Email</th>
-        <th>Điện thoại</th>
-        <th>Role</th>
-        <th>Last Login</th>
-        <th>Active</th>
-        <th class="text-center">Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model.Result)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Role)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastLogin)
-            </td>
-            <td>
-                @* @Html.DisplayFor(modelItem => item.IsActive) *@
-                <div class="form-check form-switch">
-                    <form asp-area="Admin" asp-controller="User" asp-action="ChangeStatusUser" asp-route-id="@item.Id" asp-route-isActive="@item.IsActive" method="post">
-                        <input class="form-check-input" type="checkbox" style="cursor:pointer;" checked="@item.IsActive" onchange="this.form.submit()">
-                    </form>
-                </div>
-            </td>
-            <td class="justify-content-center d-flex gap-2">
-                <a class="btn btn-outline-success" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                <a class="btn btn-outline-info" asp-action="Detail" asp-route-id="@item.Id">Detail</a>
-                @* <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a> *@
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
-
-<div class="mt-5 d-flex justify-content-between">
-    <h6>Showing page @Model.Meta.Page, &nbsp;from &nbsp;@pageStart &nbsp;to &nbsp;@pageEnd</h6>
-    <div class="d-flex gap-2 buttons-change-page">
-        @{
-            if (Model.Meta.Page == 1)
+<div class="card my-4">
+    <div class="card-body">
+        <table id="datatablesSimple">
+            <thead>
+            <tr>
+                <th>Họ và tên</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Điện thoại</th>
+                <th>Role</th>
+                <th>Last Login</th>
+                <th>Active</th>
+                <th class="text-center">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.Result)
             {
-                <a class="disabled btn btn-outline-info fs-5" asp-area="Admin" asp-controller="User" asp-action="Index" asp-route-page="@prevPage" asp-route-pageSize="@Model.Meta.PageSize">&lt;</a>
+                <tr>
+                    <td>
+                        @item.FirstName
+                        @item.LastName
+                    </td>
+                    <td>
+                        @item.UserName
+                    </td>
+                    <td>
+                        @item.Email
+                    </td>
+                    <td>
+                        @{
+                            var itemPhoneNumber = item.PhoneNumber != null ? item.PhoneNumber : "__";
+                            <span>@itemPhoneNumber</span>
+                        }
+                    </td>
+                    <td>
+                        @{
+                            var itemRole = item.Role != "" ? item.Role : "__";
+                            <span>@itemRole</span>
+                        }
+                    </td>
+                    <td>
+                        @{
+                            var itemLastLogin = item.LastLogin != null ? item.LastLogin.ToString() : "__";
+                            <span>@itemLastLogin</span>
+                        }
+                    </td>
+                    <td>
+                        @* @item.IsActive *@
+                        <div class="form-check form-switch">
+                            <form asp-area="Admin" asp-controller="User" asp-action="ChangeStatusUser" asp-route-id="@item.Id" asp-route-isActive="@item.IsActive" method="post">
+                                <input class="form-check-input" type="checkbox" style="cursor:pointer;" checked="@item.IsActive" onchange="this.form.submit()">
+                            </form>
+                        </div>
+                    </td>
+                    <td class="justify-content-center d-flex gap-2">
+                        <a class="btn btn-outline-success" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                        <a class="btn btn-outline-info" asp-action="Detail" asp-route-id="@item.Id">Detail</a>
+                        @* <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a> *@
+                    </td>
+                </tr>
             }
-            else
-            {
-                <a class="btn btn-outline-info fs-5" asp-area="Admin" asp-controller="User" asp-action="Index" asp-route-page="@prevPage" asp-route-pageSize="@Model.Meta.PageSize">&lt;</a>
-            }
-
-            if (Model.Meta.Page >= Model.Meta.TotalPages)
-            {
-                <a class="disabled btn btn-outline-info fs-5" asp-area="Admin" asp-controller="User" asp-action="Index" asp-route-page="@nextPage" asp-route-pageSize="@Model.Meta.PageSize">&gt;</a>
-            }
-            else
-            {
-                <a class="btn btn-outline-info fs-5" asp-area="Admin" asp-controller="User" asp-action="Index" asp-route-page="@nextPage" asp-route-pageSize="@Model.Meta.PageSize">&gt;</a>
-            }
-        }
+            </tbody>
+            <tfoot>
+            <tr>
+                <th>Họ và tên</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Điện thoại</th>
+                <th>Role</th>
+                <th>Last Login</th>
+                <th>Active</th>
+                <th class="text-center">Actions</th>
+            </tr>
+            </tfoot>
+        </table>
     </div>
 </div>
 

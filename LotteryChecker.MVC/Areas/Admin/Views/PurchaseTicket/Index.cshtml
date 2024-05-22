@@ -24,69 +24,54 @@
 }
 
 <h1>Quản lý vé mua</h1>
+<div class="card my-4">
+    <div class="card-body">
+        <table id="datatablesSimple">
+            <thead>
 
-<p class="mt-4">
-@*     <a class="btn btn-outline-primary" asp-action="Create">Thêm mới</a> *@
-</p>
-
-<table class="table">
-    <thead>
-
-        <tr>
-            <th>Id người dùng</th>
-            <th>Số vé</th>
-            <th>Ngày quay thưởng</th>
-            <th>Ngày mua vé</th>
-            <th class="text-center">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Result)
-        {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LotteryNumber)
-                </td>
-                <td>
-                    @item.DrawDate.ToString("dd-MM-yyyy")
-                </td>
-                <td>
-                    @item.PurchaseDate?.ToString("dd-MM-yyyy")
-                </td>
-
-                <td class="justify-content-center d-flex gap-2">
-                    <a class="btn btn-outline-success" asp-action="Edit" asp-route-Id="@item.PurchaseTicketId">Edit</a>
-                    <a class="btn btn-outline-info" asp-action="Detail" asp-route-Id="@item.PurchaseTicketId">Detail</a>
-                </td>
+                <th>Id người dùng</th>
+                <th>Số vé</th>
+                <th>Ngày quay thưởng</th>
+                <th>Ngày mua vé</th>
+                <th class="text-center">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
-<div class="mt-5 d-flex justify-content-between">
-    <h6>Showing page @Model.Meta.Page, &nbsp;from &nbsp;@pageStart &nbsp;to &nbsp;@pageEnd</h6>
-    <div class="d-flex gap-2 buttons-change-page">
-        @{
-            if (Model.Meta.Page == 1)
+            </thead>
+            <tbody>
+            @foreach (var item in Model.Result?.OrderBy(pt => pt.DrawDate))
             {
-                <a class="disabled btn btn-outline-info fs-5" asp-area="Admin" asp-controller="PurchaseTicket" asp-action="Index" asp-route-page="@prevPage" asp-route-pageSize="@Model.Meta.PageSize">&lt;</a>
-            }
-            else
-            {
-                <a class="btn btn-outline-info fs-5" asp-area="Admin" asp-controller="PurchaseTicket" asp-action="Index" asp-route-page="@prevPage" asp-route-pageSize="@Model.Meta.PageSize">&lt;</a>
-            }
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LotteryNumber)
+                    </td>
+                    <td>
+                        @item.DrawDate.ToString("dd-MM-yyyy")
+                    </td>
+                    <td>
+                        @item.PurchaseDate?.ToString("dd-MM-yyyy")
+                    </td>
 
-            if (Model.Meta.Page >= Model.Meta.TotalPages)
-            {
-                <a class="disabled btn btn-outline-info fs-5" asp-area="Admin" asp-controller="PurchaseTicket" asp-action="Index" asp-route-page="@nextPage" asp-route-pageSize="@Model.Meta.PageSize">&gt;</a>
+                    <td class="justify-content-center d-flex gap-2">
+                        <a class="btn btn-outline-success" asp-action="Edit" asp-route-Id="@item.PurchaseTicketId">Edit</a>
+                        <a class="btn btn-outline-info" asp-action="Detail" asp-route-Id="@item.PurchaseTicketId">Detail</a>
+                    </td>
+                </tr>
             }
-            else
-            {
-                <a class="btn btn-outline-info fs-5" asp-area="Admin" asp-controller="PurchaseTicket" asp-action="Index" asp-route-page="@nextPage" asp-route-pageSize="@Model.Meta.PageSize">&gt;</a>
-            }
-        }
+            </tbody>
+            <tfoot>
+
+            <tr>
+                <th>Id người dùng</th>
+                <th>Số vé</th>
+                <th>Ngày quay thưởng</th>
+                <th>Ngày mua vé</th>
+                <th class="text-center">Actions</th>
+            </tr>
+            </tfoot>
+        </table>
     </div>
 </div>
 

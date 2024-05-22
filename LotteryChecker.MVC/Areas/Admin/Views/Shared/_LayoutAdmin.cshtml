@@ -29,8 +29,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@ViewData["Title"] - Xổ số kiến thiết</title>
     <link rel="shortcut icon" type="image/png" href="~/favicon.ico"/>
-    <link rel="stylesheet" href="~/assets/css/styles.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="~/css/admin.css"/>
+    <link rel="stylesheet" href="~/assets/css/styles.css"/>
 </head>
 
 <body>
@@ -180,6 +181,8 @@
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/assets/js/sidebarmenu.js" defer></script>
 <script src="~/assets/js/app.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+<script src="~/lib/datatables-simple-demo.js"></script>
 <script>
     $(function () {
         var errorMessage = '@Html.Raw(errors)';
