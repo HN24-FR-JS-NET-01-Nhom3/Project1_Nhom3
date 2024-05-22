@@ -12268,6 +12268,7 @@ header.masthead {
     padding-bottom: 8rem;
     background: no-repeat center center;
     background-size: cover;
+    z-index: -1;
 }
 
 header.masthead .page-heading,

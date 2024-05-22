@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace LotteryChecker.Core.Entities;
 
@@ -9,7 +10,10 @@ public class SearchHistory
     [Required(ErrorMessage = "Lottery number is required")]
     [RegularExpression(@"^\d{1,6}$", ErrorMessage = "Lottery number must be a 6-digit number")]
     public string LotteryNumber { get; set; }
-        
+
+    [DefaultValue(0)]
+    public int? Prize { get; set; }
+
     [Required(ErrorMessage = "Draw date is required")]
     public DateTime DrawDate { get; set; }
         

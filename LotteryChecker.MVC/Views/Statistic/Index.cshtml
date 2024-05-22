@@ -1,0 +1,52 @@
+@model LotteryChecker.Common.Models.ViewModels.StatisticVm
+
+@{
+    ViewData["Title"] = "Statistic";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var errors = TempData["ErrorMessage"] as IEnumerable<string>;
+    if (errors != null)
+    {
+        foreach (var error in errors)
+        {
+            <p class="text-danger">@error</p>
+        }
+    }
+}
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/customize.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/statistic.css" asp-append-version="true"/>
+}
+
+<div class="px-2">
+    <div class="row">
+        <div class="col-lg-2 text-center d-flex flex-column justify-content-center left-banner">
+        </div>
+        <div class="col-lg-7 mx-auto">
+            <div class="row gx-2 justify-content-center">
+                @await Html.PartialAsync("UserInfo", Model.User)
+                @await Html.PartialAsync("CountingSection", Model)
+                @await Html.PartialAsync("Chart", Model)
+            </div>
+        </div>
+        <div class="col-lg-2 d-flex flex-column align-items-center right-banner">
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/lib/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="~/js/statistic.js"></script>
+    <script>
+        var purchaseData = @Html.Raw(Json.Serialize(Model.MonthlyStatistics.Select(ms => ms.PurchaseCount)));
+        var winData = @Html.Raw(Json.Serialize(Model.MonthlyStatistics.Select(ms => ms.WinCount)));
+        var categories = @Html.Raw(Json.Serialize(Model.MonthlyStatistics.Select(ms => ms.Month)));
+
+        $(function () {
+            renderCharts(purchaseData, winData, categories);
+        });
+
+    </script>
+}

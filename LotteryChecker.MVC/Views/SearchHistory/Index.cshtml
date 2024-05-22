@@ -1,8 +1,7 @@
-﻿@using Microsoft.IdentityModel.Tokens
-@model IEnumerable<LotteryChecker.Common.Models.Entities.SearchHistoryVm>
+﻿@model IEnumerable<LotteryChecker.Common.Models.Entities.SearchHistoryVm>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Search History";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var errors = TempData["ErrorMessage"] as IEnumerable<string>;
     if (errors != null)

@@ -37,11 +37,11 @@ public class PurchaseTicketController : ControllerBase
             {
                 var purchaseTicketPaging = _unitOfWork.PurchaseTicketRepository.GetPaging(purchaseTickets, null, page, pageSize).ToList();
                 
-                var response = new Response<PurchaseTicketVm>()
+                var response = new Response<PurchaseTicket>()
                 {
-                    Data = new Data<PurchaseTicketVm>()
+                    Data = new Data<PurchaseTicket>()
                     {
-                        Result = _mapper.Map<IEnumerable<PurchaseTicketVm>>(purchaseTicketPaging),
+                        Result = purchaseTicketPaging,
                         Meta = new Meta()
                         {
                             Page = page,

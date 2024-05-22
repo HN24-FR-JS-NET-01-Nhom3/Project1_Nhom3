@@ -1,0 +1,45 @@
+@model LotteryChecker.Common.Models.ViewModels.UserVm
+
+<div class="row mb-5">
+    <div class="col-lg-2 border-end text-start border-3">
+        <p class="mt-0 fw-bold">
+            <span class="d-block">Thông tin</span>
+            <span class="d-block">cá nhân</span>
+        </p>
+    </div>
+    <div class="col-lg-10 px-4">
+        <form asp-action="EditUser" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @Html.HiddenFor(m => m.Id)
+            <div class="mb-3 d-flex">
+                <label for="firstName" class="form-label custom-form-label">First Name</label>
+                <input readonly asp-for="FirstName" type="text" class="custom-form-control form-control ms-auto d-inline-block" id="firstName" name="FirstName">
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="mb-3 d-flex">
+                <label for="lastName" class="form-label custom-form-label">Last Name</label>
+                <input readonly asp-for="LastName" type="text" class="custom-form-control form-control ms-auto d-inline-block" id="lastName" name="LastName">
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="mb-3 d-flex">
+                <label for="userName" class="form-label custom-form-label">User Name</label>
+                <input readonly asp-for="UserName" type="text" class="custom-form-control form-control ms-auto d-inline-block" id="userName" name="UserName">
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="mb-3 d-flex">
+                <label for="email" class="form-label custom-form-label">Email</label>
+                <input readonly asp-for="Email" type="email" class="custom-form-control form-control ms-auto d-inline-block" id="email" name="Email">
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3 d-flex">
+                <label for="phoneNumber" class="form-label custom-form-label">Phone Number</label>
+                <input readonly asp-for="PhoneNumber" type="tel" class="custom-form-control form-control ms-auto d-inline-block" id="phoneNumber" name="PhoneNumber" placeholder="">
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            @Html.HiddenFor(m => m.Role)
+            @Html.HiddenFor(m => m.LastLogin)
+            @Html.HiddenFor(m => m.IsActive)
+        </form>
+        <a asp-controller="Statistic" asp-action="ChangePassword" class="btn btn-for-checking-ticket">Đổi mật khẩu</a>
+    </div>
+</div>

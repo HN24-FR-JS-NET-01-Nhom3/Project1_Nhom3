@@ -1,0 +1,33 @@
+@model LotteryChecker.Common.Models.ViewModels.CardInfoVm
+
+<div class="card overflow-hidden">
+    <div class="card-body p-4">
+        <h5 class="card-title mb-9 fw-bold text-danger">@Model.Value.ToString("N0")</h5>
+        <h6 class="fw-semibold mb-3">@Model.Title</h6>
+        <p class="custom-text-detail me-1 mb-0">
+            @{
+                if (Model.DifferentPercentWithlastMonth < 100)
+                {
+                    <img src="~/images/icons/decrease.png" alt="Decrease" width="20px" height="20px"/>
+                }
+                else
+                {
+                    <img src="~/images/icons/increase.png" alt="Decrease" width="20px" height="20px"/>
+                }
+            }
+            <span class="me-2">@Model.DifferentValueWithLastMonth.ToString("N0")</span>
+            <span class="d-block">
+                @{
+                    if (Model.DifferentPercentWithlastMonth < 100)
+                    {
+                        <span class="text-danger">-@Model.DifferentPercentWithlastMonth.ToString("N")%</span><span> tháng này</span>
+                    }
+                    else
+                    {
+                        <span class="text-success">+@Model.DifferentPercentWithlastMonth.ToString("N")%</span><span> tháng này</span>
+                    }
+                }
+            </span>
+        </p>
+    </div>
+</div>

@@ -23,7 +23,7 @@ public class LotteryContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Gui
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
-		string connectionString = "Server=.;Database=FSA_Lottery;uid=sa;pwd=12345678;Trusted_Connection=true;TrustServerCertificate=True; MultipleActiveResultSets=true";
+		string connectionString = "Server=.;Database=FSA_Lottery;Trusted_Connection=True;TrustServerCertificate=True";
 		base.OnConfiguring(optionsBuilder);
 		if (!optionsBuilder.IsConfigured)
 		{

@@ -1,0 +1,23 @@
+@model LotteryChecker.Common.Models.ViewModels.StatisticVm
+
+<div class="row mb-5">
+    <div class="col-lg-2 border-end text-start border-3">
+        <p class="mt-0 fw-bold">
+            <span class="d-block">Thống kê</span>
+            <span class="d-block">chung</span>
+        </p>
+    </div>
+    <div class="col-lg-10 px-4">
+        <div class="row">
+            <div class="col-lg-4">
+                @await Html.PartialAsync("InfoSection", Model.PurchaseCount)
+            </div>
+            <div class="col-lg-4">
+                @await Html.PartialAsync("InfoSection", Model.WinCount)
+            </div>
+            <div class="col-lg-4">
+                @await Html.PartialAsync("InfoSection", Model.MoneyWinCount)
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using LotteryChecker.Common.Models.Entities;
-using LotteryChecker.Common.Models.Http;
-using LotteryChecker.Core.Entities;
 using LotteryChecker.MVC.Models;
 using LotteryChecker.MVC.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -45,16 +43,16 @@ public class PurchaseTicketController : BaseController
 
 	[CustomAuthorize("User, Admin")]
 	[HttpPost("create")]
-	public async Task<IActionResult> Create(PurchaseTicket purchaseTicket)
+	public async Task<IActionResult> Create(PurchaseTicketVm purchaseTicket)
 	{
 		var purchaseTicketResponse = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Get,
 			$"{Constants.API_PURCHASE_TICKET}/get-all-purchase-tickets-by-user",
 			accessToken: Request.Cookies["AccessToken"]);
-
 		if (purchaseTicketResponse.Errors == null)
 		{
 			ViewData["PurchaseTickets"] = purchaseTicketResponse.Data?.Result;
 		}
+		
 		if (ModelState.IsValid)
 		{
 			try

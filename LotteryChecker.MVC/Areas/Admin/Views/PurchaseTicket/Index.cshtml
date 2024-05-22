@@ -1,6 +1,6 @@
 ﻿@* @model IEnumerable<LotteryChecker.Common.Models.Entities.LotteryVm> *@
-@model LotteryChecker.Common.Models.Http.Data<LotteryChecker.Common.Models.Entities.PurchaseTicketVm>
-@using static LotteryChecker.MVC.Utils.DateTimeHelper
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model LotteryChecker.Common.Models.Http.Data<LotteryChecker.Core.Entities.PurchaseTicket>
 
 
 @{
@@ -54,7 +54,7 @@
                     @item.DrawDate.ToString("dd-MM-yyyy")
                 </td>
                 <td>
-                    @item.PurchaseDate.ToString("dd-MM-yyyy")
+                    @item.PurchaseDate?.ToString("dd-MM-yyyy")
                 </td>
 
                 <td class="justify-content-center d-flex gap-2">

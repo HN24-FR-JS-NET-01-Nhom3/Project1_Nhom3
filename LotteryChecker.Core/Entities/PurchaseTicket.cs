@@ -4,9 +4,7 @@ namespace LotteryChecker.Core.Entities;
 
 public class PurchaseTicket
 {
-    public int PurchaseTicketId { get; set; }
-        
-    [Required(ErrorMessage = "Purchase date is required")]
+    public int? PurchaseTicketId { get; set; }
     public DateTime? PurchaseDate { get; set; }
         
     [Required(ErrorMessage = "Lottery number is required")]
@@ -15,8 +13,6 @@ public class PurchaseTicket
     
     [Required(ErrorMessage = "Draw date is required")]
     public DateTime DrawDate { get; set; }
-        
-    [Required(ErrorMessage = "User is required")]
     public Guid? UserId { get; set; }
         
     public AppUser? User { get; set; }

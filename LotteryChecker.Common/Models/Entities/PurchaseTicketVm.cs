@@ -4,7 +4,6 @@ namespace LotteryChecker.Common.Models.Entities;
 
 public class PurchaseTicketVm
 {
-	public int PurchaseTicketId { get; set; }
 	[Required(ErrorMessage = "Purchase date is required")]
 	public DateTime PurchaseDate { get; set; }
         
