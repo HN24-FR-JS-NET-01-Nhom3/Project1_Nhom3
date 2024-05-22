@@ -32,7 +32,7 @@ public class StatisticsController : ControllerBase
 
 	[HttpGet("get-statistic-for-admin")]
 	[Authorize(Roles = "Admin")]
-	public async Task<IActionResult> GetAdminStatistics()
+	public async Task<IActionResult> GetAdminStatistics([FromQuery] int numberOfMonths = 4)
 	{
 		try
 		{
@@ -41,7 +41,8 @@ public class StatisticsController : ControllerBase
 				UserCount = _userManager.Users.Count(),
 				RewardCount = _unitOfWork.RewardRepository.GetAll().Count(),
 				LotteryCount = _unitOfWork.LotteryRepository.GetAll().Count(),
-				PurchaseCount = _unitOfWork.PurchaseTicketRepository.GetAll().Count()
+				PurchaseCount = _unitOfWork.PurchaseTicketRepository.GetAll().Count(),
+				MonthlyStatistic = GetMonthlyStatistics(numberOfMonths)
 			};
 
 			return Ok(new Response<AdminStatisticVm>()
@@ -59,6 +60,34 @@ public class StatisticsController : ControllerBase
 				Errors = new[] { ex.Message }
 			});
 		}
+	}
+	
+	private List<AdminMonthlyStatisticVm> GetMonthlyStatistics(int numberOfMonths)
+	{
+		var currentDate = DateTime.Now;
+
+		// Lấy dữ liệu thống kê cho từng tháng trong số tháng gần nhất
+		var monthlyStatistics = new List<AdminMonthlyStatisticVm>();
+		for (var i = 0; i < numberOfMonths; i++)
+		{
+			var monthDate = currentDate.AddMonths(-i);
+			var lotteries = _unitOfWork.LotteryRepository.Find(l => l.PublishDate?.Month == monthDate.Month && l.PublishDate?.Year == monthDate.Year);
+			var purchases = _unitOfWork.PurchaseTicketRepository.Find(pt => pt.PurchaseDate?.Month == monthDate.Month && pt.PurchaseDate?.Year == monthDate.Year);
+			var searches = _unitOfWork.SearchHistoryRepository.Find(pt => pt.SearchDate.Month == monthDate.Month && pt.SearchDate.Year == monthDate.Year);
+
+
+			monthlyStatistics.Add(new AdminMonthlyStatisticVm
+			{
+				Month = monthDate.Month,
+				Year = monthDate.Year,
+				LotteryCount = lotteries.Count(),
+				PurchaseCount = purchases.Count(),
+				SearchCount = searches.Count()
+			});
+		}
+
+		monthlyStatistics = monthlyStatistics.OrderBy(ms => ms.Year).ThenBy(ms => ms.Month).ToList();
+		return monthlyStatistics;
 	}
 
 	[HttpGet("get-statistic-for-user")]
@@ -113,7 +142,7 @@ public class StatisticsController : ControllerBase
 			});
 		}
 
-		monthlyStatistics = monthlyStatistics.OrderBy(ms => ms.Month).ToList();
+		monthlyStatistics = monthlyStatistics.OrderBy(ms => ms.Year).ThenBy(ms => ms.Month).ToList();
 
 		var thisMonthPurchases = purchaseTickets
 			.Where(pt => pt.PurchaseDate?.Month == currentDate.Month && pt.PurchaseDate?.Year == currentDate.Year)

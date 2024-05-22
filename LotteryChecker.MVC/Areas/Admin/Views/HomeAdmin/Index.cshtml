@@ -1,5 +1,4 @@
-﻿@using LotteryChecker.MVC.Areas.Admin.Models
-@model LotteryChecker.Common.Models.ViewModels.AdminStatisticVm
+﻿@model LotteryChecker.Common.Models.ViewModels.AdminStatisticVm
 
 @{
     ViewData["Title"] = "Trang chủ";
@@ -16,64 +15,87 @@
     @await Html.PartialAsync("MessagePopup", errors)
 }
 
-<!--  Row 1 -->
-<div class="row">
-    <div class="col-lg-3">
-        <div class="card overflow-hidden">
-            <div class="card-body px-4 pt-4 pb-2">
-                <h5 class="card-title mb-9 fw-bold text-black">Tổng số người dùng</h5>
-                <div class="row">
-                    <div class="col-lg-7">
-                        <h6 class="fw-bold fs-5 text-info mb-3">@Model.UserCount</h6>
+<div>
+    <div class="row mb-2">
+        <div class="col-lg-3">
+            <div class="card overflow-hidden">
+                <div class="card-body px-4 pt-4 pb-2">
+                    <h5 class="card-title mb-9 fw-bold text-black">Tổng số người dùng</h5>
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <h6 class="fw-bold fs-5 text-info mb-3">@Model.UserCount</h6>
+                        </div>
+                        <div class="col-lg-5">
+                            <a class="text-decoration-underline text-black" asp-area="Admin" asp-controller="User" asp-action="Index">Xem chi tiết</a>
+                        </div>
                     </div>
-                    <div class="col-lg-5">
-                        <a class="text-decoration-underline text-black" asp-area="Admin" asp-controller="User" asp-action="Index">Xem chi tiết</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card overflow-hidden">
+                <div class="card-body px-4 pt-4 pb-2">
+                    <h5 class="card-title mb-9 fw-bold text-black">Tổng số giải thưởng</h5>
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <h6 class="fw-bold fs-5 text-info mb-3">@Model.RewardCount</h6>
+                        </div>
+                        <div class="col-lg-5">
+                            <a class="text-decoration-underline text-black" asp-area="Admin" asp-controller="Reward" asp-action="Index">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card overflow-hidden">
+                <div class="card-body px-4 pt-4 pb-2">
+                    <h5 class="card-title mb-9 fw-bold text-black">Tổng số vé phát hành</h5>
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <h6 class="fw-bold fs-5 text-info mb-3">@Model.LotteryCount</h6>
+                        </div>
+                        <div class="col-lg-5">
+                            <a class="text-decoration-underline text-black" asp-area="Admin" asp-controller="Lottery" asp-action="Index">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card overflow-hidden">
+                <div class="card-body px-4 pt-4 pb-2">
+                    <h5 class="card-title mb-9 fw-bold text-black">Tổng số vé đã bán</h5>
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <h6 class="fw-bold fs-5 text-info mb-3">@Model.PurchaseCount</h6>
+                        </div>
+                        <div class="col-lg-5">
+                            <a class="text-decoration-underline text-black" asp-area="Admin" asp-controller="PurchaseTicket" asp-action="Index">Xem chi tiết</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-lg-3">
-        <div class="card overflow-hidden">
-            <div class="card-body px-4 pt-4 pb-2">
-                <h5 class="card-title mb-9 fw-bold text-black">Tổng số giải thưởng</h5>
-                <div class="row">
-                    <div class="col-lg-7">
-                        <h6 class="fw-bold fs-5 text-info mb-3">@Model.RewardCount</h6>
+    <div class="row">
+        <div class="col-lg-12 d-flex align-items-strech">
+            <div class="card w-100">
+                <div class="card-body">
+                    <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
+                        <div class="mb-3 mb-sm-0">
+                            <h5 class="card-title fw-semibold">Thống kê qua thời gian</h5>
+                        </div>
+                        <div>
+                            <select class="form-select" id="selectNumberOfMonths">
+                                <option value="4">4 tháng</option>
+                                <option value="8">8 tháng</option>
+                                <option value="12">12 tháng</option>
+                                <option value="24">24 tháng</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="col-lg-5">
-                        <a class="text-decoration-underline text-black" asp-area="Admin" asp-controller="Reward" asp-action="Index">Xem chi tiết</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3">
-        <div class="card overflow-hidden">
-            <div class="card-body px-4 pt-4 pb-2">
-                <h5 class="card-title mb-9 fw-bold text-black">Tổng số vé phát hành</h5>
-                <div class="row">
-                    <div class="col-lg-7">
-                        <h6 class="fw-bold fs-5 text-info mb-3">@Model.LotteryCount</h6>
-                    </div>
-                    <div class="col-lg-5">
-                        <a class="text-decoration-underline text-black" asp-area="Admin" asp-controller="Lottery" asp-action="Index">Xem chi tiết</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3">
-        <div class="card overflow-hidden">
-            <div class="card-body px-4 pt-4 pb-2">
-                <h5 class="card-title mb-9 fw-bold text-black">Tổng số vé đã bán</h5>
-                <div class="row">
-                    <div class="col-lg-7">
-                        <h6 class="fw-bold fs-5 text-info mb-3">@Model.PurchaseCount</h6>
-                    </div>
-                    <div class="col-lg-5">
-                        <a class="text-decoration-underline text-black" asp-area="Admin" asp-controller="PurchaseTicket" asp-action="Index">Xem chi tiết</a>
-                    </div>
+                    <div id="chart"></div>
                 </div>
             </div>
         </div>
@@ -84,4 +106,15 @@
 {
     <script src="~/lib/apexcharts/dist/apexcharts.min.js"></script>
     <script src="~/assets/js/dashboard.js"></script>
+    <script>
+            var lotteries = @Html.Raw(Json.Serialize(Model.MonthlyStatistic.Select(ms => ms.LotteryCount)));
+            var purchases = @Html.Raw(Json.Serialize(Model.MonthlyStatistic.Select(ms => ms.PurchaseCount)));
+            var searches = @Html.Raw(Json.Serialize(Model.MonthlyStatistic.Select(ms => ms.SearchCount)));
+            var categories = @Html.Raw(Json.Serialize(Model.MonthlyStatistic.Select(ms => $"{ms.Month}/{ms.Year}")));
+    
+            $(function () {
+                renderAdminCharts(lotteries, purchases, searches, categories);
+            });
+    
+        </script>
 }

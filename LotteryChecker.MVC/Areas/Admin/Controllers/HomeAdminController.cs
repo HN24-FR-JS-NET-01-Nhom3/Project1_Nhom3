@@ -20,4 +20,17 @@ public class HomeAdminController : Controller
         }
         return View();
     }
+    
+    [HttpGet]
+    [Route("admin/get-admin-statistics-ajax")]
+    public async Task<IActionResult> GetAdminStatisticsAjax(int numberOfMonths)
+    {
+        var response = await HttpUtils<AdminStatisticVm>.SendRequest(HttpMethod.Get,
+            $"{Constants.API_STATISTIC}/get-statistic-for-admin?numberOfMonths={numberOfMonths}", accessToken: Request.Cookies["AccessToken"]);
+        if (response.Errors == null)
+        {
+            return Json(response.Data);
+        }
+        return BadRequest(response.Errors);
+    }
 }
