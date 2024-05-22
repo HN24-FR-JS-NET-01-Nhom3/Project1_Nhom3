@@ -325,40 +325,46 @@ public class LotteryController : ControllerBase
 			});
 		}
 	}
-	[HttpPost("get-multiple-ticket-results")]
-	public IActionResult GetMultipleTicketResults([FromBody] MultipleLotteryNumbersVm multipleLotteryNumbersVm)
-	{
-		try
-		{
-			var lotteryNumbers = multipleLotteryNumbersVm.LotteryNumbers.Split(',', StringSplitOptions.RemoveEmptyEntries);
-			var results = new Dictionary<string, RewardVm?>();
-			foreach (var number in lotteryNumbers)
-			{
-				var searchHistoryVm = new SearchHistoryVm
-				{
-					LotteryNumber = number.Trim(),
-					DrawDate = multipleLotteryNumbersVm.DrawDate
-				};
-				var result = GetTicketResult(searchHistoryVm);
+    [HttpPost("get-multiple-ticket-results")]
+    public IActionResult GetMultipleTicketResults([FromBody] MultipleLotteryNumbersVm multipleLotteryNumbersVm)
+    {
+        try
+        {
+            var lotteryNumbers = multipleLotteryNumbersVm.LotteryNumbers.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            var results = new Dictionary<string, RewardVm?>();
+            foreach (var number in lotteryNumbers)
+            {
+                var searchHistoryVm = new SearchHistoryVm
+                {
+                    SearchDate = DateTime.Now,
+                    LotteryNumber = number.Trim(),
+                    DrawDate = multipleLotteryNumbersVm.DrawDate,
+                    Email = multipleLotteryNumbersVm.Email,
+                    UserId = multipleLotteryNumbersVm.UserId
+                };
+                var result = GetTicketResult(searchHistoryVm);
 
-				if (result is OkObjectResult okResult)
-				{
-					var rewardVm = (okResult.Value as Response<RewardVm>)?.Data?.Result?.FirstOrDefault();
-					results.Add(number, rewardVm);
-				}
-				else
-				{
-					results.Add(number, null);
-				}
-			}
+                if (result is OkObjectResult okResult)
+                {
+                    var rewardVm = (okResult.Value as Response<RewardVm>)?.Data?.Result?.FirstOrDefault();
+                    results.Add(number, rewardVm);
+                }
+                else
+                {
+                    results.Add(number, null);
+                }
+            }
 
-			return Ok(new Response<Dictionary<string, RewardVm>> { Data = new Data<Dictionary<string, RewardVm>> { Result = [results] } });
-		}
-		catch (Exception ex)
-		{
-			return BadRequest(new Response<IEnumerable<KeyValuePair<string, RewardVm>>> { Errors = new[] { ex.Message } });
-		}
-	}
+            return Ok(new Response<Dictionary<string, RewardVm?>> { Data = new Data<Dictionary<string, RewardVm?>> { Result = [results] } });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new Response<Dictionary<string, RewardVm?>> { Errors = new[] { ex.Message } });
+        }
+    }
+
+
+
 
     [HttpPost("update-pubished-lottery/{id}/{isPublished}")]
     public IActionResult UpdatePublishedLottery(int id, bool isPublished)

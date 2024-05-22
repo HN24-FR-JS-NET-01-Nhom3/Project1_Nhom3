@@ -9,5 +9,8 @@ namespace LotteryChecker.Common.Models.ViewModels
         [LotteryNumberValidation(ErrorMessage = "Each lottery number must be from 1 to 6 digits or multiple numbers separated by commas.")]
         public string LotteryNumbers { get; set; }
         public DateTime DrawDate { get; set; }
+        public DateTime SearchDate { get; set; }
+        public Guid UserId { get; set; }
+        public string? Email { get; set; }
     }
 }
