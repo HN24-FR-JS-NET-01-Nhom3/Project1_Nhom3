@@ -1,16 +1,20 @@
 ﻿using Asp.Versioning;
 using AutoMapper;
 using LotteryChecker.Common.Models.Entities;
+using LotteryChecker.Common.Models.Http;
+using LotteryChecker.Common.Models.ViewModels;
 using LotteryChecker.Core.Entities;
 using LotteryChecker.Core.Infrastructures;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace LotteryChecker.API.Controllers.v1;
 
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{v:apiVersion}/search-history")]
+    
 public class SearchHistoryController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -21,6 +25,37 @@ public class SearchHistoryController : ControllerBase
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
+    [HttpGet("get-search-histories-by-user-id")]
+    public IActionResult GetSearchHistoriesByUserId()
+    {
+        try
+        {
+            var userId = Guid.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var searchHistories = _unitOfWork.SearchHistoryRepository.GetByUserId(userId).OrderByDescending(x => x.SearchDate).ToList().Take(5);
+            if (!searchHistories.IsNullOrEmpty())
+            {
+                var response = new Response<SearchHistoryVm>()
+                {
+                    Data = new Data<SearchHistoryVm>()
+                    { 
+                        Result = _mapper.Map<IEnumerable<SearchHistoryVm>>(searchHistories)
+                    }
+                };
+                return Ok(response);
+            }
+            return NotFound(new Response<SearchHistoryVm>()
+            {
+                Errors = new[] { "No search historys found" }
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new Response<SearchHistoryVm>()
+            {
+                Errors = new[] { ex.Message }
+            });
+        }
+    }
 
     [HttpGet("get-all-search-histories")]
     public IActionResult GetAllSearchHistories([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
@@ -28,106 +63,139 @@ public class SearchHistoryController : ControllerBase
         try
         {
             var searchHistories = _unitOfWork.SearchHistoryRepository.GetAll().ToList();
-
             if (!searchHistories.IsNullOrEmpty())
             {
                 var searchHistoryPaging = _unitOfWork.SearchHistoryRepository.GetPaging(searchHistories, null, page, pageSize).ToList();
-
-                return Ok(new
+                
+                var response = new Response<SearchHistoryVm>()
                 {
-                    Result = searchHistoryPaging.Select(searchHistory => _mapper.Map<SearchHistoryVm>(searchHistory)),
-                    Meta = new
+                    Data = new Data<SearchHistoryVm>()
                     {
-                        page,
-                        pageSize = pageSize > searchHistoryPaging.Count ? searchHistoryPaging.Count : pageSize,
-                        totalPages = (int)Math.Ceiling((decimal)searchHistories.Count / pageSize)
+                        Result = _mapper.Map<IEnumerable<SearchHistoryVm>>(searchHistoryPaging),
+                        Meta = new Meta()
+                        {
+                            Page = page,
+                            PageSize = pageSize > searchHistoryPaging.Count ? searchHistoryPaging.Count : pageSize,
+                            TotalPages = (int)Math.Ceiling((decimal)searchHistories.Count / pageSize)
+                        }
                     }
-                });
+                };
+                
+                return Ok(response);
             }
 
-            return NotFound();
+            return NotFound(new Response<SearchHistoryVm>()
+            {
+                Errors = new[] { "No search historys found" }
+            });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Internal server error");
+            return BadRequest(new Response<SearchHistoryVm>()
+            {
+                Errors = new[] { ex.Message }
+            });
         }
+         
     }
 
     [HttpGet("get-search-history/{id}")]
-    public IActionResult GetSearchHistory(int id)
+    public IActionResult GetSearchHistoryById(int id)
     {
         try
         {
             var searchHistory = _unitOfWork.SearchHistoryRepository.GetById(id);
             if (searchHistory == null)
             {
-                return NotFound();
+                return NotFound(new Response<SearchHistoryVm>()
+                {
+                    Errors = new[] { "No search historys found" }
+                });
             }
 
             var searchHistoryVm = _mapper.Map<SearchHistoryVm>(searchHistory);
-            return Ok(searchHistoryVm);
+            return Ok(new Response<SearchHistoryVm>()
+            {
+                Data = new Data<SearchHistoryVm>()
+                {
+                    Result = [searchHistoryVm]
+                }
+            });
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Internal server error");
+            return BadRequest(new Response<SearchHistoryVm>()
+            {
+                Errors = new[] { ex.Message }
+            });
         }
     }
 
     [HttpPost("create-search-history")]
-    public ActionResult CreateSearchHistory(SearchHistoryVm? searchHistoryVm)
+    public IActionResult CreateSearchHistory([FromBody] CreateSearchHistoryVm searchHistoryVm)
     {
-        if (searchHistoryVm == null)
-        {
-            return BadRequest();
-        }
-
-        var searchHistory = _mapper.Map<SearchHistory>(searchHistoryVm);
-
         try
         {
+            var searchHistory = _mapper.Map<SearchHistory>(searchHistoryVm);         
             _unitOfWork.SearchHistoryRepository.Create(searchHistory);
             var status = _unitOfWork.SaveChanges();
+
             if (status > 0)
             {
-                return Ok(searchHistory);
+                return Ok(new Response<SearchHistory>()
+                {
+                    Data = new Data<SearchHistory>()
+                    {
+                        Result = [searchHistory]
+                    }
+                });
             }
-
-            return BadRequest();
+            return BadRequest(new Response<SearchHistory>()
+            {
+                Errors = new[] { "Error happened when saving search history to database" }
+            });
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new Response<SearchHistory>()
+            {
+                Errors = new[] { ex.Message }
+            });
         }
     }
 
-    [HttpPut("update-search-history")]
-    public IActionResult UpdateSearchHistory(int id, SearchHistoryVm? searchHistoryVm)
+    [HttpPut("update-search-history/{id}")]
+    public IActionResult UpdateSearchHistory(int id, SearchHistoryVm searchHistoryVm)
     {
-        if (searchHistoryVm == null)
-        {
-            return BadRequest();
-        }
-
-        var searchHistory = _mapper.Map<SearchHistory>(searchHistoryVm);
-        searchHistory.SearchHistoryId = id;
-
         try
         {
+            var searchHistory = _mapper.Map<SearchHistory>(searchHistoryVm);
+            searchHistory.SearchHistoryId = id;
             _unitOfWork.SearchHistoryRepository.Update(searchHistory);
             var status = _unitOfWork.SaveChanges();
-
+           
             if (status > 0)
             {
-                return Ok(searchHistory);
+                return Ok(new Response<SearchHistory>()
+                {
+                    Data = new Data<SearchHistory>()
+                    {
+                        Result = [searchHistory]
+                    }
+                });
             }
-
-            return BadRequest();
+            return BadRequest(new Response<SearchHistory>()
+            {
+                Errors = new[] { "Error happened when saving search history to database" }
+            });
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new Response<SearchHistory>()
+            {
+                Errors = new[] { ex.Message }
+            });
         }
-
     }
 
     [HttpDelete("delete-search-history/{id}")]
@@ -141,17 +209,27 @@ public class SearchHistoryController : ControllerBase
 
         try
         {
-            _unitOfWork.PurchaseTicketRepository.Delete(id);
+            _unitOfWork.SearchHistoryRepository.Delete(searchHistory);
             var status = _unitOfWork.SaveChanges();
+
             if (status > 0)
             {
-                return Ok();
+                return Ok(new Response<SearchHistory>()
+                {
+                    Message = "Search history deleted successfully!"
+                });
             }
-            return BadRequest();
+            return BadRequest(new Response<SearchHistory>()
+            {
+                Errors = new[] { "Error happened when deleting search history to database" }
+            });
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(new Response<SearchHistory>()
+            {
+                Errors = new[] { ex.Message }
+            });
         }
     }
 }

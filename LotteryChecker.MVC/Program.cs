@@ -1,6 +1,5 @@
 using LotteryChecker.Core.Data;
-using LotteryChecker.Core.Entities;
-using Microsoft.AspNetCore.Identity;
+using LotteryChecker.MVC.Utils;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,23 +11,27 @@ builder.Services.AddDbContext<LotteryContext>(options =>
 	options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<AppUser>(
-		options =>
-		{
-			options.SignIn.RequireConfirmedAccount = false;
-			options.SignIn.RequireConfirmedEmail = false;
-		}).AddRoles<IdentityRole<Guid>>()
-	.AddEntityFrameworkStores<LotteryContext>().AddDefaultTokenProviders();
+builder.Services.AddHttpClient();
 
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddAutoMapper(typeof(LotteryChecker.Common.AutoMapper.MyAutoMapper).Assembly);
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-	//Location for your Custom Login Page
-	options.LoginPath = "/authen/login";
-});
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+builder.Services.AddAuthentication(options =>
+	{
+		options.DefaultScheme = "Cookies";
+		options.DefaultChallengeScheme = "Cookies";
+	})
+	.AddCookie("Cookies", options =>
+	{
+		options.AccessDeniedPath = "/home/error";
+		options.LoginPath = "/authen/login";
+	});
+builder.Services.AddRazorPages();
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -49,22 +52,20 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseAuthentication();
+app.MapRazorPages();
+
+app.UseMiddleware<TokenMiddleware>();
 
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
-    name : "areas",
-    pattern : "{area:exists}/{controller}/{action}");
-
-app.MapControllerRoute(
-	name: "admin",
-	pattern: "/admin/{controller=Home}/{action=Index}/{id?}",
-	defaults: new { area = "Admin" }
-).RequireAuthorization();
-
-app.MapRazorPages();
+	name: "areas",
+	pattern: "{area:exists}/{controller}/{action}");
 
 app.Run();

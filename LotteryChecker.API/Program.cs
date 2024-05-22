@@ -4,7 +4,8 @@ using Asp.Versioning.ApiExplorer;
 using LotteryChecker.Core.Data;
 using LotteryChecker.Core.Infrastructures;
 using LotteryChecker.Core.Entities;
-using LotteryChecker.API.Exceptions;
+using LotteryChecker.EmailService.Entities;
+using LotteryChecker.EmailService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -91,6 +92,19 @@ builder.Services
 		config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 		config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 	})
+	.AddFacebook(facebookOptions =>
+	{
+		facebookOptions.AppId = builder.Configuration["Facebook:AppId"];
+		facebookOptions.AppSecret = builder.Configuration["Facebook:AppSecret"];
+		facebookOptions.SaveTokens = true;
+		facebookOptions.CallbackPath = "/signin-facebook";
+	})
+	.AddGoogle(options =>
+	{
+		options.ClientId = builder.Configuration["Google:ClientId"];
+		options.ClientSecret = builder.Configuration["Google:ClientSecret"];
+		options.CallbackPath = "/signin-google";
+	})
 	.AddJwtBearer(options =>
 	{
 		options.SaveToken = true;
@@ -113,6 +127,25 @@ builder.Services.AddControllersWithViews()
 		options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 	);
 
+builder.Services.AddSingleton(new TokenValidationParameters
+{
+	ValidateIssuer = true,
+	ValidateAudience = true,
+	ValidateLifetime = false, // Here we are saying that we don't care about the token's expiration date
+	ValidateIssuerSigningKey = true,
+	ValidIssuer = builder.Configuration["JWT:Issuer"],
+	ValidAudience = builder.Configuration["JWT:Audience"],
+	IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+});
+
+var emailConfig = builder.Configuration.GetSection("EmailConfig").Get<EmailConfig>();
+builder.Services.AddSingleton<EmailConfig>(emailConfig);
+
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
+	opt.TokenLifespan = TimeSpan.FromHours(2));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -132,10 +165,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.ConfigureBuildInExceptionHandler();
 
 app.Run();

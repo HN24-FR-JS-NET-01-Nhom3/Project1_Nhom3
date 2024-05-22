@@ -1,63 +1,70 @@
-﻿    @model LotteryChecker.Common.Models.ViewModels.UserVm
+﻿@model LotteryChecker.Common.Models.ViewModels.UserVm
 
-    @{
-        ViewData["Title"] = "Chỉnh sửa người dùng";
-        Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
-    }
+@{
+    ViewData["Title"] = "Chỉnh sửa người dùng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
 
-    <div class="container mt-5">
-        <h2>@ViewData["Title"]</h2>
-        <hr>
-        <div class="row">
-            <div class="col-md-6">
-                <form asp-action="Edit" method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="mb-3">
-                        <label for="id" class="form-label">Id</label>
-                        <input disabled asp-for="Id" type="text" class="form-control" id="id" name="Id">
-                        <span asp-validation-for="Id" class="text-danger"></span>
-                    </div>
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="mb-3">
-                        <label for="firstName" class="form-label">First Name</label>
-                        <input asp-for="FirstName" type="text" class="form-control" id="firstName" name="FirstName">
-                        <span asp-validation-for="FirstName" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label for="lastName" class="form-label">Last Name</label>
-                        <input asp-for="LastName" type="text" class="form-control" id="lastName" name="LastName">
-                        <span asp-validation-for="LastName" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label for="userName" class="form-label">User Name</label>
-                        <input asp-for="UserName" type="text" class="form-control" id="userName" name="UserName">
-                        <span asp-validation-for="UserName" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input asp-for="Email" type="email" class="form-control" id="email" name="Email">
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label for="phoneNumber" class="form-label">Phone Number</label>
-                        <input asp-for="PhoneNumber" type="tel" class="form-control" id="phoneNumber" name="PhoneNumber">
-                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                    </div>
-                    @Html.HiddenFor(m => m.LastLogin)
-                    <div class="mb-3 form-check">
-                        <input asp-for="IsActive" type="checkbox" class="form-check-input" id="isActive" name="IsActive">
-                        <label class="form-check-label" for="isActive">Is Active</label>
-                    </div>
-                    <div class="mb-3">
-                        <button type="submit" class="btn btn-primary">Save</button>
-                        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-                    </div>
-                </form>
-            </div>
+<div class="container mt-5">
+    <h2>@ViewData["Title"]</h2>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <label for="id" class="form-label">Id</label>
+                    <input readonly asp-for="Id" type="text" class="form-control" id="id" name="Id">
+                    <span asp-validation-for="Id" class="text-danger"></span>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input asp-for="FirstName" type="text" class="form-control" id="firstName" name="FirstName">
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input asp-for="LastName" type="text" class="form-control" id="lastName" name="LastName">
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="userName" class="form-label">User Name</label>
+                    <input readonly asp-for="UserName" type="text" class="form-control" id="userName" name="UserName">
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input readonly asp-for="Email" type="email" class="form-control" id="email" name="Email">
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                    <input asp-for="PhoneNumber" type="tel" class="form-control" id="phoneNumber" name="PhoneNumber">
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Role">Role</label>
+                    <select class="form-control form-select form-select-sm py-2 fs-3" asp-for="Role" asp-items="@ViewBag.Roles">
+                        <option value="0">Select Role</option>
+                    </select>
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+                @Html.HiddenFor(m => m.LastLogin)
+                <div class="mb-3 form-check">
+                    <input asp-for="IsActive" type="checkbox" class="form-check-input" id="isActive" name="IsActive">
+                    <label class="form-check-label" for="isActive">Is Active</label>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </form>
         </div>
-
     </div>
 
-    @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    }
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

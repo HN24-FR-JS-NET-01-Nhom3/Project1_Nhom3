@@ -1,18 +1,19 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using System.Globalization
 @using LotteryChecker.Common.Models.Entities
-@model LotteryChecker.Common.Models.ViewModels.SearchTicketVm
+@model LotteryChecker.Common.Models.Entities.SearchHistoryVm
 
 @{
     ViewData["Title"] = "Check Lottery";
     var reward = ViewData["Reward"] as RewardVm;
     var lotteryResult = ViewData["LotteryResult"] as IEnumerable<IGrouping<int, LotteryVm>>;
+    var searchHistory = ViewData["SearchHistories"] as IEnumerable<SearchHistoryVm>;    
     Layout = "_Layout";
 }
 
 @section Styles
 {
-    <link rel="stylesheet" href="~/css/customize.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/customize.css" asp-append-version="true" />
 }
 
 <div class="px-2">
@@ -23,26 +24,51 @@
         </div>
         <div class="col-lg-5 mx-auto">
             <div class="row gx-2 justify-content-center">
-                <div class="d-flex justify-content-between mb-4">
-                    <h4>Dò vé số tự động</h4>
-                </div>
-                <form asp-action="CheckTicket" method="post">
-                    <div class="card-body">
-                        <div class="form-group mb-2">
-                            <label class="text-for-checking-ticket" asp-for="TicketNumber">Nhập số vé <span class="text-danger">*</span></label>
-                            <input asp-for="TicketNumber" type="text" class="form-control input-for-checking-ticket" placeholder="Số vé"/>
-                            <span asp-validation-for="TicketNumber" class="text-danger d-block"></span>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label class="text-for-checking-ticket" asp-for="DrawDate">Ngày quay thưởng <span class="text-danger">*</span></label>
-                            <input asp-for="DrawDate" type="date" class="form-control input-for-checking-ticket" placeholder="Ngày quay thưởng"/>
-                            <span asp-validation-for="DrawDate" class="text-danger d-block"></span>
-                        </div>
+                @if (TempData["User"] == null)
+                {
+                    <div class="d-flex justify-content-between mb-4">
+                        <h4>Dò vé số tự động</h4>
                     </div>
-                    <div class="card-footer">
-                        <input type="submit" class="btn btn-for-checking-ticket" value="Dò vé"/>
+                    <form asp-action="CheckTicket" method="post">
+                        <div class="card-body">
+                            <div class="form-group mb-2">
+                                <label class="text-for-checking-ticket" asp-for="LotteryNumber">Nhập số vé <span class="text-danger">*</span></label>
+                                <input asp-for="LotteryNumber" type="text" class="form-control input-for-checking-ticket" placeholder="Số vé" />
+                                <span asp-validation-for="LotteryNumber" class="text-danger d-block"></span>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label class="text-for-checking-ticket" asp-for="DrawDate">Ngày quay thưởng <span class="text-danger">*</span></label>
+                                <input asp-for="DrawDate" type="date" class="form-control input-for-checking-ticket" placeholder="Ngày quay thưởng" />
+                                <span asp-validation-for="DrawDate" class="text-danger d-block"></span>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <input type="submit" class="btn btn-for-checking-ticket" value="Dò vé" />
+                        </div>
+                    </form>
+                }
+                @if (TempData["User"] != null)
+                {
+                    <div class="d-flex justify-content-between mb-4">
+                        <h4>Dò vé số (Một hoặc nhiều vé)</h4>
                     </div>
-                </form>
+                    <form asp-action="CheckMultipleTickets" method="post">
+                        <div class="card-body">
+                            <div class="form-group mb-2">
+                                <label class="text-for-checking-ticket" name="LotteryNumbers">Nhập số vé <span class="text-danger">*</span></label>
+                                <input required name="LotteryNumbers" type="text" class="form-control input-for-checking-ticket" placeholder="VD:123456,789012,23123" />
+                            </div>
+                            <div class="form-group mb-3">
+                                <label class="text-for-checking-ticket" name="DrawDate">Ngày quay thưởng <span class="text-danger">*</span></label>
+                                <input required name="DrawDate" type="date" class="form-control input-for-checking-ticket" placeholder="Ngày quay thưởng" />
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <input type="submit" class="btn btn-for-checking-ticket" value="Dò vé" />
+                        </div>
+                    </form>
+
+                }
                 @{
                     if (reward != null)
                     {
@@ -50,7 +76,7 @@
                     }
                     else if (ViewData["ErrorMessage"] != null)
                     {
-                        <p class="mt-4 mb-1"><strong class="text-danger"> Rất tiếc </strong >, vé số của bạn không trúng thưởng, chúc bạn may mắn lần sau! </p>
+                        <p class="mt-4 mb-1"><strong class="text-danger"> Rất tiếc </strong>, vé số của bạn không trúng thưởng, chúc bạn may mắn lần sau! </p>
                     }
 
                     if (reward != null || ViewData["ErrorMessage"] != null)
@@ -72,6 +98,7 @@
                 <div class="d-flex justify-content-between mb-4">
                     <h4>Lịch sử dò vé</h4>
                 </div>
+                @await Html.PartialAsync("_SearchHistoryPartial", searchHistory)
             </div>
             <div class="mt-4 w-100">
                 <div class="d-flex justify-content-between mb-4">

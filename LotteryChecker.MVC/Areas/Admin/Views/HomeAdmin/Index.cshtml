@@ -1,6 +1,16 @@
 ﻿@{
     ViewData["Title"] = "Trang chủ";
     Layout = "_LayoutAdmin";
+    var messages = (TempData["Messages"] ?? "").ToString();
+    var errors = (TempData["Errors"] ?? "").ToString();
+}
+@if (!string.IsNullOrEmpty(messages))
+{
+    @await Html.PartialAsync("MessagePopup", messages)
+}
+@if (!string.IsNullOrEmpty(errors))
+{
+    @await Html.PartialAsync("MessagePopup", errors)
 }
 
 <!--  Row 1 -->

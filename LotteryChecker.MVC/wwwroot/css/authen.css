@@ -58,15 +58,15 @@ form {
 
     &:hover {
         color: #a6a6a6;
-        background-color: #9b1515;
+        background-color: #dc1c1c;
     }
     &:focus {
         color: #a6a6a6;
-        background-color: #9b1515;
+        background-color: #dc1c1c;
     }
     &:focus-visible {
         color: #a6a6a6;
-        background-color: #9b1515;
+        background-color: #dc1c1c;
     }
 }
 
@@ -76,20 +76,63 @@ form {
     cursor: pointer;
 }
 
-.my-btn-register {
+.my-text-register {
+    color: #000;
+    font-size: 0.875rem;
+    font-weight: normal;
+    margin: 0;
+}
+
+.my-btn-login-facebook {
+    position: relative;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
     color: #fff;
-    background-color: #40f862;
+    border: none;
+    background-color: #1877f2;
 
     &:hover {
-        color: #a6a6a6;
-        background-color: #159b44;
+        color: #e7e7e7;
+        background-color: #136ada;
     }
     &:focus {
-        color: #a6a6a6;
-        background-color: #159b44;
+        color: #e7e7e7;
+        background-color: #136ada;
     }
     &:focus-visible {
-        color: #a6a6a6;
-        background-color: #159b44;
+        color: #e7e7e7;
+        background-color: #136ada;
     }
+}
+
+.my-btn-login-google {
+    position: relative;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    color: #000;
+    border: none;
+    background-color: #e8eaee;
+
+    &:hover {
+        background-color: #c9c4c4;
+    }
+    &:focus {
+        background-color: #c9c4c4;
+    }
+    &:focus-visible {
+        background-color: #c9c4c4;
+    }
+}
+
+.btn-icon {
+    border-radius: 10rem;
+    position: absolute;
+    left: 0.5rem;
+    top: 15%;
+    height: 70%;
+    aspect-ratio: 1;
 }

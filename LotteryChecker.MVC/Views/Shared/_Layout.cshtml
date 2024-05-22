@@ -44,11 +44,14 @@
                     <a class="nav-link" asp-controller="Lottery" asp-action="CheckTicket">Dò Vé Số</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="Home" asp-action="Index">Mua Vé Số</a>
+                    <a class="nav-link" asp-controller="PurchaseTicket" asp-action="Index">Mua Vé Số</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Home" asp-action="Index">Thống Kê</a>
                 </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="SearchHistory" asp-action="Index">History</a>
+                    </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-area="Admin" asp-controller="HomeAdmin" asp-action="Index">Go to admin</a>
                 </li>
@@ -57,7 +60,7 @@
                 @if (user == null)
                 {
                     <li class="nav-item custom-btn-register">
-                        <a class="nav-link" asp-controller="Authen" asp-action="Login">Đăng ký</a>
+                        <a class="nav-link" asp-controller="Authen" asp-action="Register">Đăng ký</a>
                     </li>
                     <li class="nav-item custom-btn-login">
                         <a class="nav-link" asp-controller="Authen" asp-action="Login">Đăng nhập</a>
@@ -69,7 +72,7 @@
                         <a class="nav-link hello-text" href="#">Xin chào, <strong>@user.LastName</strong></a>
                     </li>
                     <li class="nav-item custom-btn-login">
-                        <a class="nav-link" asp-controller="Authen" asp-action="Login">Đăng xuất</a>
+                        <a class="nav-link" asp-controller="Authen" asp-action="Logout">Đăng xuất</a>
                     </li>
                 }
             </ul>

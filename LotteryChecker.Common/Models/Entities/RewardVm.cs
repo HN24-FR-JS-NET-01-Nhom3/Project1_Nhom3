@@ -3,7 +3,8 @@ namespace LotteryChecker.Common.Models.Entities;
 
 public class RewardVm
 {
-	[Required(ErrorMessage = "Reward value is required")]
+    public int RewardId { get; set; }
+    [Required(ErrorMessage = "Reward value is required")]
 	public int RewardValue { get; set; }
 	
 	[StringLength(50)]

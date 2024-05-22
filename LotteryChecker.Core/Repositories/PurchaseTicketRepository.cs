@@ -10,4 +10,9 @@ public class PurchaseTicketRepository : BaseRepository<PurchaseTicket>, IPurchas
     public PurchaseTicketRepository(LotteryContext context) : base(context)
     {
         }
+
+    public IEnumerable<PurchaseTicket> GetAllPurchaseTickets()
+    {
+        return DbSet.OrderByDescending(x => x.PurchaseDate).ToList();
+    }
 }

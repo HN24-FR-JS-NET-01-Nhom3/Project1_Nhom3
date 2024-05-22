@@ -1,0 +1,135 @@
+﻿@* @model IEnumerable<LotteryChecker.Common.Models.Entities.LotteryVm> *@
+@using System.Globalization
+@model LotteryChecker.Common.Models.Http.Data<LotteryChecker.Common.Models.Entities.LotteryVm>
+
+
+@{
+    ViewData["Title"] = "Quản lý vé dò";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var pageStart = (Model.Meta.Page - 1) * Model.Meta.PageSize + 1;
+    var pageEnd = Model.Meta.Page * Model.Meta.PageSize;
+    var prevPage = Model.Meta.Page - 1;
+    var nextPage = Model.Meta.Page + 1;
+
+    var messages = (TempData["Messages"] ?? "").ToString();
+    var errors = (TempData["Errors"] ?? "").ToString();
+}
+@if (!string.IsNullOrEmpty(messages))
+{
+    @await Html.PartialAsync("MessagePopup", messages)
+}
+@if (!string.IsNullOrEmpty(errors))
+{
+    @await Html.PartialAsync("MessagePopup", errors)
+}
+
+<h1>Quản lý vé dò</h1>
+
+<p class="mt-4">
+    <a class="btn btn-outline-primary" asp-action="Create">Thêm mới</a>
+</p>
+<table class="table">
+    <thead>
+
+        <tr>
+            <th>Tên giải</th>
+            <th>Số vé</th>
+            <th>Ngày quay</th>
+            <th>Ngày phát hành</th>
+            <th>Publised</th>
+            <th>Công ty</th>
+            <th>Giá trị</th>
+            <th class="text-center">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Result)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RewardName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LotteryNumber)
+                </td>
+                <td>
+                    @item.DrawDate.ToString("dd-MM-yyyy")
+                </td>
+                <td>
+                    @item.PublishDate.ToString("dd-MM-yyyy")
+                </td>
+                <td>
+                    @item.PublishDate.ToString("yyyy-MM-dd")
+                </td>
+                <td class="text-center">
+                    @* @Html.DisplayFor(modelItem => item.IsPublished) *@
+                    <div class="form-check form-switch">
+                        <form asp-area="Admin" asp-controller="Lottery" asp-action="ChangePublishedLottery" asp-route-id="@item.LotteryId" asp-route-isPublished="@item.IsPublished" method="post">
+                            <input class="form-check-input" type="checkbox" style="cursor:pointer;" checked="@item.IsPublished" onchange="this.form.submit()">
+                        </form>
+                    </div>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Company)
+                </td>
+                <td>
+                    @item.RewardValue?.ToString("N0", new CultureInfo("vi-VN")) VND
+                </td>
+                <td class="justify-content-center d-flex gap-2">
+                    <a class="btn btn-outline-success" asp-action="Edit" asp-route-Id="@item.LotteryId">Edit</a>
+                    <a class="btn btn-outline-info" asp-action="Detail" asp-route-Id="@item.LotteryId">Detail</a>
+                    @* <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a> *@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="mt-5 d-flex justify-content-between">
+    <h6>Showing page @Model.Meta.Page, &nbsp;from &nbsp;@pageStart &nbsp;to &nbsp;@pageEnd</h6>
+    <div class="d-flex gap-2 buttons-change-page">
+        @{
+            if (Model.Meta.Page == 1)
+            {
+                <a class="disabled btn btn-outline-info fs-5" asp-area="Admin" asp-controller="Lottery" asp-action="Index" asp-route-page="@prevPage" asp-route-pageSize="@Model.Meta.PageSize">&lt;</a>
+            }
+            else
+            {
+                <a class="btn btn-outline-info fs-5" asp-area="Admin" asp-controller="Lottery" asp-action="Index" asp-route-page="@prevPage" asp-route-pageSize="@Model.Meta.PageSize">&lt;</a>
+            }
+
+            if (Model.Meta.Page >= Model.Meta.TotalPages)
+            {
+                <a class="disabled btn btn-outline-info fs-5" asp-area="Admin" asp-controller="Lottery" asp-action="Index" asp-route-page="@nextPage" asp-route-pageSize="@Model.Meta.PageSize">&gt;</a>
+            }
+            else
+            {
+                <a class="btn btn-outline-info fs-5" asp-area="Admin" asp-controller="Lottery" asp-action="Index" asp-route-page="@nextPage" asp-route-pageSize="@Model.Meta.PageSize">&gt;</a>
+            }
+        }
+    </div>
+</div>
+
+
+@section Scripts
+            {
+    <script>
+        $(function () {
+            var errorMessage = '@Html.Raw(errors)';
+            var message = '@Html.Raw(messages)';
+
+            if (errorMessage.length > 0) {
+                $('#errorMessageModal').modal('show');
+                setTimeout(function () {
+                    $('#errorMessageModal').modal('hide');
+                }, 2000);
+            }
+
+            if (message.length > 0) {
+                $('#messageModal').modal('show');
+                setTimeout(function () {
+                    $('#messageModal').modal('hide');
+                }, 2000);
+            }
+        });
+    </script>
+}
