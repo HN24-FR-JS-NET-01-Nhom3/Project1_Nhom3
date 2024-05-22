@@ -328,9 +328,7 @@ public class UserController : ControllerBase
 		ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 		try
 		{
-			var userVms = _mapper.Map<IEnumerable<UserVm>>(userList).ToList();
-
-			foreach (var userVm in userVms)
+			foreach (var userVm in userList)
 			{
 				userVm.Role = String.Join(",", await _userManager.GetRolesAsync(_mapper.Map<AppUser>(userVm)));
 			}
@@ -338,7 +336,7 @@ public class UserController : ControllerBase
 			using (var package = new ExcelPackage())
 			{
 				var worksheet = package.Workbook.Worksheets.Add("Sheet1");
-				worksheet.Cells.LoadFromCollection(userVms, true);
+				worksheet.Cells.LoadFromCollection(userList, true);
 
 				var fileContents = Convert.ToBase64String(package.GetAsByteArray());
 

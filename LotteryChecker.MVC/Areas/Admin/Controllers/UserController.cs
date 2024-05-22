@@ -270,12 +270,12 @@ public class UserController : Controller
 	
 	[HttpPost]
 	[Route("export-user")]
-	public async Task<IActionResult> ExportUsers([FromForm] List<UserVm> userVms)
+	public async Task<IActionResult> ExportUsers([FromForm] List<string> userVms)
 	{
 		try
 		{
 			var response = await HttpUtils<FileResultVm>.SendRequest(HttpMethod.Post,
-				$"{Constants.API_USER}/excel-export", userVms);
+				$"{Constants.API_USER}/excel-export", userVms.Select(u => JsonConvert.DeserializeObject<UserVm>(u)));
 
 			if (response.Errors == null)
 			{
