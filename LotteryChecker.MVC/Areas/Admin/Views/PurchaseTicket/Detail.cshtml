@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Chi tiết vé mua";
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var userEmail = ViewBag.UserEmail?.ToString();
 }
 
 <div class="container mt-5">
@@ -13,9 +14,8 @@
             <form asp-action="Edit" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="mb-3">
-                    <label for="id" class="form-label">User Id</label>
-                    <input readonly asp-for="UserId" type="text" class="form-control" id="userId" name="UserId">
-                    <span asp-validation-for="UserId" class="text-danger"></span>
+                    <label for="email" class="form-label">User Email</label>
+                    <input readonly value="@userEmail" type="email" class="form-control" id="userEmail" name="UserEmail">
                 </div>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="mb-3">

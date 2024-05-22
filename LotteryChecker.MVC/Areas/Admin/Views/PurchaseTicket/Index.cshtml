@@ -13,6 +13,7 @@
 
     var messages = (TempData["Messages"] ?? "").ToString();
     var errors = (TempData["Errors"] ?? "").ToString();
+    var userEmail = ViewBag.UserEmail?.ToString();
 }
 @if (!string.IsNullOrEmpty(messages))
 {
@@ -30,7 +31,7 @@
             <thead>
 
             <tr>
-                <th>Id người dùng</th>
+                <th>Email</th>
                 <th>Số vé</th>
                 <th>Ngày quay thưởng</th>
                 <th>Ngày mua vé</th>
@@ -42,7 +43,7 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.UserId)
+                        @userEmail
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.LotteryNumber)
