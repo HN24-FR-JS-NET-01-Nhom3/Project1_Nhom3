@@ -54,6 +54,13 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
             {
                 var response = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Get,
                                                   $"{Constants.API_PURCHASE_TICKET}/get-purchase-ticket/{id}", null, Request.Cookies["AccessToken"]);
+
+                if (Request.Cookies["User"] != null)
+                {
+                    var user = JsonConvert.DeserializeObject<UserVm>(Request.Cookies["User"]);
+                    ViewBag.UserEmail = user.Email;
+                }
+
                 if (response.Data?.Result != null)
                     return View(response.Data.Result.FirstOrDefault());
                 else
