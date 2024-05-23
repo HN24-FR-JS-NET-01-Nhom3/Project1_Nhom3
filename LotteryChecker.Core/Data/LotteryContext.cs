@@ -37,5 +37,7 @@ public class LotteryContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Gui
 		base.OnModelCreating(builder);
 
 		builder.Entity<Lottery>().Navigation(l => l.Reward).AutoInclude();
+		builder.Entity<SearchHistory>().Navigation(sh => sh.User).AutoInclude();
+		builder.Entity<PurchaseTicket>().Navigation(pt => pt.User).AutoInclude();
 	}
 }

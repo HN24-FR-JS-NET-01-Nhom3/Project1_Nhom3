@@ -113,25 +113,36 @@ namespace LotteryChecker.MVC.Areas.Admin.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(PurchaseTicketVm purchaseTicket)
 		{
-			try
+			if (purchaseTicket.DrawDate < DateTime.Now)
 			{
-				var response = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Post,
-					$"{Constants.API_PURCHASE_TICKET}/create-purchase-ticket", purchaseTicket,
-					Request.Cookies["AccessToken"]);
-				if (response.Data != null)
-
-					return RedirectToAction("Index");
-				else
+				ModelState.AddModelError(string.Empty, "Invalid Draw Date");
+				return View(purchaseTicket);
+			}
+			
+			if (ModelState.IsValid)
+			{
+				try
 				{
-					TempData["Errors"] = response.Errors;
-					return View();
+					var response = await HttpUtils<PurchaseTicketVm>.SendRequest(HttpMethod.Post,
+						$"{Constants.API_PURCHASE_TICKET}/create-purchase-ticket", purchaseTicket,
+						Request.Cookies["AccessToken"]);
+					if (response.Data != null)
+
+						return RedirectToAction("Index");
+					else
+					{
+						TempData["Errors"] = response.Errors;
+						return View(purchaseTicket);
+					}
+				}
+				catch (Exception ex)
+				{
+					TempData["Errors"] = ex.Message;
+					return View(purchaseTicket);
 				}
 			}
-			catch (Exception ex)
-			{
-				TempData["Errors"] = ex.Message;
-				return View();
-			}
+
+			return View(purchaseTicket);
 		}
 
 		[HttpGet]
