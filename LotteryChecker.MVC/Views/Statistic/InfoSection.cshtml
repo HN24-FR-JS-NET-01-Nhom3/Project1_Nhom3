@@ -1,5 +1,9 @@
 @model LotteryChecker.Common.Models.ViewModels.CardInfoVm
 
+@{
+    var diffPercent = Math.Abs(100 - Model.DifferentPercentWithlastMonth);
+}
+
 <div class="card overflow-hidden">
     <div class="card-body p-4">
         <h5 class="card-title mb-9 fw-bold text-danger">@Model.Value.ToString("N0")</h5>
@@ -20,11 +24,11 @@
                 @{
                     if (Model.DifferentPercentWithlastMonth < 100)
                     {
-                        <span class="text-danger">-@Model.DifferentPercentWithlastMonth.ToString("N")%</span><span> tháng này</span>
+                        <span class="text-danger">-@diffPercent.ToString("N")%</span><span> tháng này</span>
                     }
                     else
                     {
-                        <span class="text-success">+@Model.DifferentPercentWithlastMonth.ToString("N")%</span><span> tháng này</span>
+                        <span class="text-success">+@diffPercent.ToString("N")%</span><span> tháng này</span>
                     }
                 }
             </span>

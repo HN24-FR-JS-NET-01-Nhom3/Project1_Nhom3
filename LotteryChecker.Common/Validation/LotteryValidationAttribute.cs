@@ -5,15 +5,13 @@ public class LotteryNumberValidationAttribute : ValidationAttribute
 {
     protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {
-        if (value is string lotteryNumber)
+        if (value is IEnumerable<string> lotteryNumber)
         {
-            var numbers = lotteryNumber.Split(',').Select(n => n.Trim());
-
-            foreach (var number in numbers)
+            foreach (var number in lotteryNumber)
             {
-                if (!System.Text.RegularExpressions.Regex.IsMatch(number, @"^\d{1,6}$"))
+                if (!System.Text.RegularExpressions.Regex.IsMatch(number, @"^\d{6}$"))
                 {
-                    return new ValidationResult("Each lottery number must be from 1 to 6 digits.");
+                    return new ValidationResult("Each lottery number must contains exact 6 digits.");
                 }
             }
 

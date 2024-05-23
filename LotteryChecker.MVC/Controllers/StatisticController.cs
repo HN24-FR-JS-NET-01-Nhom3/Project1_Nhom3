@@ -60,7 +60,7 @@ public class StatisticController : BaseController
 				if (response.Message != null)
 				{
 					TempData["Messages"] = "Change password successfully!";
-					return RedirectToAction("Index", "HomeAdmin");
+					return RedirectToAction("Index", "Lottery");
 				}
 
 				if (response.Errors != null)

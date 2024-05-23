@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using LotteryChecker.Common.Validation;
 
 namespace LotteryChecker.Common.Models.Entities
 {

@@ -31,7 +31,7 @@ public class SearchHistoryController : ControllerBase
         try
         {
             var userId = Guid.Parse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var searchHistories = _unitOfWork.SearchHistoryRepository.GetByUserId(userId).OrderByDescending(x => x.SearchDate).ToList().Take(5);
+            var searchHistories = _unitOfWork.SearchHistoryRepository.GetByUserId(userId).OrderByDescending(x => x.SearchDate).ToList();
             if (!searchHistories.IsNullOrEmpty())
             {
                 var response = new Response<SearchHistoryVm>()

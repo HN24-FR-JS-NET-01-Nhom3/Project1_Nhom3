@@ -13,6 +13,8 @@
 
 @section Styles
 {
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet"/>
+    @* <link rel="stylesheet" href="~/css/admin.css"/> *@
     <link rel="stylesheet" href="~/css/customize.css" asp-append-version="true"/>
 }
 
@@ -74,17 +76,21 @@
                 <div class="d-flex justify-content-between mb-4">
                     <h4>Lịch sử dò vé</h4>
                 </div>
-                @await Html.PartialAsync("_SearchHistoryPartial", searchHistory)
-            </div>
-            <div class="mt-4 w-100">
-                <div class="d-flex justify-content-between mb-4">
-                    <h4>Tin tức</h4>
+                <div class="fs-6 w-100">
+                    @await Html.PartialAsync("_SearchHistoryPartial", searchHistory)
                 </div>
             </div>
+            @* <div class="mt-4 w-100"> *@
+            @*     <div class="d-flex justify-content-between mb-4"> *@
+            @*         <h4>Tin tức</h4> *@
+            @*     </div> *@
+            @* </div> *@
         </div>
     </div>
 </div>
 
 @section Scripts
 {
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+    <script src="~/lib/datatables-simple-demo.js"></script>
 }
